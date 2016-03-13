@@ -26,7 +26,6 @@
             Content: [
               'esriService',
               function(Esri) {
-                console.log(Esri);
                 return Esri.getContent();
               }
             ]

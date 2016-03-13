@@ -1,2 +1,13 @@
-article(ng-repeat="item in content")
-  h2 {{item.name}}
+.container
+  .twelve.columns
+    header
+      nav
+        form
+          input(type="text" ng-model="search" placeholder="Search anything")
+          select(ng-model="params.type" ng-options="type as type for type in availableTypes" ng-change="query()")
+            option(value="") Select content type
+      p Showing {{content.start}}-{{content.num}} out of {{content.total}} items.
+    section.results
+      article.content-item.clearfix(ng-repeat="item in content.results")
+        content-thumbnail(content="item")
+        h2 {{item.title}}

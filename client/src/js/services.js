@@ -1,4 +1,4 @@
-(function(undefined) {
+(function(angular, undefined) {
 
   module.exports = function(app) {
 
@@ -23,15 +23,75 @@
           getOrganization: function() {
             return getOrganization;
           },
-          getContent: function() {
+          getContentTypes: function() {
+            return [
+              'Web Map',
+              'CityEngine Web Scene',
+              'Web Scene',
+              'Pro Map',
+              'Feature Service',
+              'Map Service',
+              'Image Service',
+              'KML',
+              'WMS',
+              'Feature Collection',
+              'Feature Collection Template',
+              'Geodata Service',
+              'Globe Service',
+              'Geometry Service',
+              'Geocoding Service',
+              'Network Analysis Service',
+              'Geoprocessing Service',
+              'Workflow Manager Service',
+              'Web Mapping Application',
+              'Mobile Application',
+              'Code Attachment',
+              'Operations Dashboard Add In',
+              'Operation View',
+              'Operations Dashboard Extension',
+              'Native Application',
+              'Native Application Template',
+              'Native Application Installer',
+              'Workforce Project',
+              'Form',
+              'Symbol Set',
+              'Color Set',
+              'Shapefile',
+              'File geodatabase',
+              'CSV',
+              'CAD Drawing',
+              'Service Definition',
+              'Document Link',
+              'Microsoft Word',
+              'Microsoft Powerpoint',
+              'Microsoft Excel',
+              'PDF',
+              'Image',
+              'Visio Document',
+              'iWork Keynote',
+              'iWork Pages',
+              'iWork Numbers',
+              'Report Template'
+            ];
+          },
+          getContent: function(search, params) {
             var deferred = $q.defer();
+            search = search || '';
+            params = params || {};
             getOrganization.then(function(data) {
-              console.log(data);
+              var q = angular.extend({
+                orgid: data.data.id
+              }, params);
+              var qString = '"' + search + '"';
+              for(var key in q) {
+                if(q[key])
+                  qString += ' (' + key + ':"' + q[key] + '")';
+              }
               return $http.get(apiRoot + '/search', {
                 params: {
                   f: 'json',
-                  num: 100,
-                  q: 'orgid:' + data.data.id
+                  num: 20,
+                  q: qString
                 }
               }).then(function(data) {
                 console.log(data);
@@ -47,4 +107,4 @@
 
   };
 
-})();
+})(window.angular);

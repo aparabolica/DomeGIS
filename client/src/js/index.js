@@ -5,6 +5,7 @@
   ]);
 
   require('./config')(app);
+  require('./directives')(app);
   require('./services')(app);
   require('./controllers')(app);
 

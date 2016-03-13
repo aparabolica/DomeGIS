@@ -18,6 +18,7 @@
     "leaflet": "~0.7.7",
     "jquery": "~2.2.1",
     "underscore": "~1.8.3",
-    "ui-router": "~0.2.18"
+    "ui-router": "~0.2.18",
+    "skeleton": "~2.0.4"
   }
 }
