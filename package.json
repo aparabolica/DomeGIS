@@ -1,0 +1,29 @@
+{
+  "name": "domegis",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "bower install && grunt build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ecodigital/DomeGIS.git"
+  },
+  "author": "Miguel Peixe <miguel@cardume.art.br> (http://codigourbano.org/)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ecodigital/DomeGIS/issues"
+  },
+  "homepage": "https://github.com/ecodigital/DomeGIS",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^5.0.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-jade": "^1.0.0",
+    "grunt-contrib-less": "^1.2.0",
+    "grunt-contrib-uglify": "^1.0.0",
+    "grunt-contrib-watch": "^1.0.0"
+  }
+}
