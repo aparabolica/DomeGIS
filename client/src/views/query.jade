@@ -11,3 +11,4 @@
       article.content-item.clearfix(ng-repeat="item in content.results")
         content-thumbnail(content="item")
         h2 {{item.title}}
+        p(ng-show="item.snippet") {{item.snippet}}
