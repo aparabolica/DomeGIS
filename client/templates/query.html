@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="twelve columns">
+    <header>
+      <nav>
+        <form>
+          <input type="text" ng-model="search" placeholder="Search anything"/>
+          <select ng-model="params.type" ng-options="type as type for type in availableTypes" ng-change="query()">
+            <option value="">Select content type</option>
+          </select>
+        </form>
+      </nav>
+      <p>Showing {{content.start}}-{{content.num}} out of {{content.total}} items.</p>
+    </header>
+    <section class="results">
+      <article ng-repeat="item in content.results" class="content-item clearfix">
+        <content-thumbnail content="item"></content-thumbnail>
+        <h2>{{item.title}}</h2>
+        <p ng-show="item.snippet">{{item.snippet}}</p>
+      </article>
+    </section>
+  </div>
+</div>

@@ -20,7 +20,6 @@ angular
 bevanhunt:leaflet
 urigo:angular-ui-router
 less
-civilframe:angular-jade
 netanelgilad:angular-server
 underscore
 skeleton:skeleton
