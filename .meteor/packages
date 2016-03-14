@@ -18,8 +18,7 @@ autopublish             # Publish all data to the clients (for prototyping)
 insecure                # Allow all DB writes from clients (for prototyping)
 angular
 bevanhunt:leaflet
-urigo:angular-ui-router
 less
-netanelgilad:angular-server
 underscore
 skeleton:skeleton
+angularui:angular-ui-router
