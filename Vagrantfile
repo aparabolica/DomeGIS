@@ -6,6 +6,9 @@ $dependencies = <<SCRIPT
   apt-get update
   apt-get install -y build-essential git
 
+  # Meteor
+  curl https://install.meteor.com/ | sh
+
   # PostGIS
   sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main"
   wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
