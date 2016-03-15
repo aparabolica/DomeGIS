@@ -1,0 +1,9 @@
+<h1>Contents</h1>
+<section class="results">
+  <article ng-repeat="content in contentsList.contents" class="content-item clearfix">
+    <img class="thumbnail" ng-src="{{'https://panda.maps.arcgis.com/sharing/rest/content/items/' + content.id + '/info/' + content.thumbnail}}" />
+    <h2>{{content.title}}</h2>
+    <p ng-show="content.snippet">{{content.snippet}}</p>
+    <button ng-click="contentsList.enableContent(content)">Enable content</button>
+  </article>
+</section>
