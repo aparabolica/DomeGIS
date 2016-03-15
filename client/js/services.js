@@ -74,10 +74,11 @@ angular.module('domegis')
           'Report Template'
         ];
       },
-      getContent: function(search, params) {
+      getContent: function(search, params, query) {
         var deferred = $q.defer();
         search = search || '';
         params = params || {};
+        query = query || {};
         getOrganization.then(function(data) {
           var q = angular.extend({
             orgid: data.data.id
@@ -88,11 +89,11 @@ angular.module('domegis')
               qString += ' (' + key + ':"' + q[key] + '")';
           }
           return $http.get(apiRoot + '/search', {
-            params: {
+            params: _.extend({
               f: 'json',
               num: 20,
               q: qString
-            }
+            }, query)
           }).then(function(data) {
             console.log(data);
             deferred.resolve(data);
