@@ -6,9 +6,6 @@ $dependencies = <<SCRIPT
   apt-get update
   apt-get install -y build-essential git
 
-  # Meteor
-  curl https://install.meteor.com/ | sh
-
   # PostGIS
   sudo add-apt-repository "deb http://apt.postgresql.org/pub/repos/apt/ trusty-pgdg main"
   wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
@@ -42,6 +39,13 @@ $dependencies = <<SCRIPT
   apt-get install -y libmapnik2.2 redis-server node-node-redis
   apt-get install -y libcairo2-dev libpango1.0-dev libjpeg8-dev libgif-dev
 
+  # Meteor
+  # curl https://install.meteor.com/ | sh
+
+  # Download sample data
+  git clone https://github.com/hacklabr/camadas-cti.git
+  cd camadas-cti
+  shp2pgsql -W "Latin1" Unidades_conservacao.shp public.unidades | psql -d domegis -U vagrant
 
 SCRIPT
 
@@ -62,5 +66,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.provision "shell", inline: $dependencies
+
+  config.vm.network :forwarded_port, host: 4000, guest: 4000
 
 end
