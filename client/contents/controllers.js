@@ -22,7 +22,7 @@ angular.module('domegis')
     });
 
     $scope.syncItem = (item) => {
-      Contents.insert(angular.copy(item));
+      Meteor.call('syncContent', angular.copy(item));
     };
 
     $scope.unsyncItem = (item) => {
