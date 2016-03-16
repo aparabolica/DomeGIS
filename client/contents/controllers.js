@@ -41,7 +41,7 @@ angular.module('domegis')
 
     $scope.availableTypes = Esri.getContentTypes();
 
-    $scope.doQuery = function() {
+    $scope.doQuery = () => {
       $scope.doSort();
       Esri.getContent(
         $scope.search,

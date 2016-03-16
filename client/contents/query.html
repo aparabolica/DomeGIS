@@ -44,14 +44,14 @@
       <article ng-repeat="item in synced" class="content-item clearfix">
         <div class="clearfix">
           <content-thumbnail content="item"></content-thumbnail>
-          <h3>{{item.title}}</h3>
+          <h3>{{item.data.title}}</h3>
         </div>
         <div class="meta">
-          <p>Created: {{item.created | formatDate}}</p>
-          <p>Modified: {{item.modified | formatDate}}</p>
+          <p>Created: {{item.data.created | formatDate}}</p>
+          <p>Modified: {{item.data.modified | formatDate}}</p>
           <p>Last synchronized: {{item.syncedAt | formatDate}}</p>
         </div>
-        <p ng-show="item.snippet">{{item.snippet}}</p>
+        <p ng-show="item.snippet">{{item.data.snippet}}</p>
         <button ng-click="unsyncItem(item)">Remove</button>
       </article>
     </section>
