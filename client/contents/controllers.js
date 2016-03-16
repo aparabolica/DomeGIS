@@ -10,7 +10,9 @@ angular.module('domegis')
     });
 
     $scope.syncItem = (item) => {
-      Contents.insert(angular.copy(item));
+      Contents.insert({
+        id: item.id
+      });
     };
 
     $scope.unsyncItem = (item) => {
