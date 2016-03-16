@@ -9,14 +9,14 @@ angular.module('domegis')
       synced: () => Contents.find({})
     });
 
-    $scope.sort = {
+    $scope.syncedSort = {
       syncedAt: -1
     };
 
     $scope.subscribe('synced', () => {
       return [
         {
-          sort: $scope.getReactively('sort')
+          sort: $scope.getReactively('syncedSort')
         }
       ]
     });
@@ -56,7 +56,7 @@ angular.module('domegis')
       $scope.doQuery();
     }, 500), true);
 
-    $scope.doSort = function() {
+    $scope.doSort = () => {
       $scope.params = _.extend($scope.params, {
         sortField: $scope.sort,
         sortOrder: getSortOrder($scope.sort)
