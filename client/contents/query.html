@@ -23,9 +23,16 @@
 <div class="container">
   <div class="six columns">
     <section class="results">
+      <h2>Results</h2>
       <article ng-repeat="item in content.results" class="content-item clearfix">
-        <content-thumbnail content="item"></content-thumbnail>
-        <h2>{{item.title}}</h2>
+        <div class="clearfix">
+          <content-thumbnail content="item"></content-thumbnail>
+          <h3>{{item.title}}</h3>
+        </div>
+        <div class="meta">
+          <p>Created: {{item.created | formatDate}}</p>
+          <p>Modified: {{item.modified | formatDate}}</p>
+        </div>
         <p ng-show="item.snippet">{{item.snippet}}</p>
         <button ng-click="syncItem(item)">Synchronize</button>
       </article>
@@ -34,13 +41,19 @@
   <div class="six columns">
     <section id="synced" ng-show="synced.length">
       <h2>Synced data</h2>
-      <ul>
-        <li ng-repeat="item in synced">
-          <h2>{{item.title}}</h2>
-          <p>{{item.syncedAt}}</p>
-          <a href="javascript:void(0);" ng-click="unsyncItem(item)">Remover</a>
-          </li>
-      </ul>
+      <article ng-repeat="item in synced" class="content-item clearfix">
+        <div class="clearfix">
+          <content-thumbnail content="item"></content-thumbnail>
+          <h3>{{item.title}}</h3>
+        </div>
+        <div class="meta">
+          <p>Created: {{item.created | formatDate}}</p>
+          <p>Modified: {{item.modified | formatDate}}</p>
+          <p>Last synchronized: {{item.syncedAt | formatDate}}</p>
+        </div>
+        <p ng-show="item.snippet">{{item.snippet}}</p>
+        <button ng-click="unsyncItem(item)">Remove</button>
+      </article>
     </section>
   </div>
 </div>

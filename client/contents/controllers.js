@@ -10,7 +10,7 @@ angular.module('domegis')
     });
 
     $scope.sort = {
-      syncedAt: 1
+      syncedAt: -1
     };
 
     $scope.subscribe('synced', () => {
