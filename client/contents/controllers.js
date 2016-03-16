@@ -1,27 +1,21 @@
 angular.module('domegis')
 .controller('QueryCtrl', [
   '$scope',
-  '$meteor',
-  '$reactive',
   'Content',
   'esriService',
-  function($scope, $meteor, $reactive, Content, Esri) {
-
-    // DEPRECATED METHOD
-    // $scope.synced = $meteor.collection(Contents);
-    // $scope.syncContent = function(content) {
-    //   $scope.synced.push(content);
-    // };
-
-    $reactive($scope).attach($scope);
+  function($scope, Content, Esri) {
 
     $scope.helpers({
       synced: () => Contents.find({})
     });
 
-    // cnosole.log($scope.contents);
-    console.log($scope);
-    console.log(this);
+    $scope.syncItem = (item) => {
+      Contents.insert(angular.copy(item));
+    };
+
+    $scope.unsyncItem = (item) => {
+      Contents.remove({_id: item._id});
+    };
 
     $scope.content = Content.data;
 

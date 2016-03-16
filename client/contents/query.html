@@ -27,7 +27,7 @@
         <content-thumbnail content="item"></content-thumbnail>
         <h2>{{item.title}}</h2>
         <p ng-show="item.snippet">{{item.snippet}}</p>
-        <button ng-click="syncContent(item)">Synchronize</button>
+        <button ng-click="syncItem(item)">Synchronize</button>
       </article>
     </section>
   </div>
@@ -37,7 +37,7 @@
       <ul>
         <li ng-repeat="item in synced">
           {{item.title}}
-          <a href="javascript:void(0);" ng-click="synced.remove(item)">Remover</a>
+          <a href="javascript:void(0);" ng-click="unsyncItem(item)">Remover</a>
           </li>
       </ul>
     </section>
