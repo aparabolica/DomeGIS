@@ -4,7 +4,7 @@
       <nav>
         <form>
           <input type="text" ng-model="search" placeholder="Search anything"/>
-          <select ng-model="params.type" ng-options="type as type for type in availableTypes" ng-change="doQuery()">
+          <select ng-model="query.type" ng-options="type as type for type in availableTypes" ng-change="doQuery()">
             <option value="">Select content type</option>
           </select>
           <select ng-model="sort" ng-change="doQuery()">
@@ -18,12 +18,28 @@
       </nav>
       <p>Showing {{content.start}}-{{content.num}} out of {{content.total}} items.</p>
     </header>
+  </div>
+</div>
+<div class="container">
+  <div class="six columns">
     <section class="results">
       <article ng-repeat="item in content.results" class="content-item clearfix">
         <content-thumbnail content="item"></content-thumbnail>
         <h2>{{item.title}}</h2>
         <p ng-show="item.snippet">{{item.snippet}}</p>
+        <button ng-click="syncContent(item)">Synchronize</button>
       </article>
+    </section>
+  </div>
+  <div class="six columns">
+    <section id="synced" ng-show="synced.length">
+      <h2>Synced data</h2>
+      <ul>
+        <li ng-repeat="item in synced">
+          {{item.title}}
+          <a href="javascript:void(0);" ng-click="synced.remove(item)">Remover</a>
+          </li>
+      </ul>
     </section>
   </div>
 </div>

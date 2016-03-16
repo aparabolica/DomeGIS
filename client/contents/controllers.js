@@ -1,51 +1,46 @@
-'use strict';
-
 angular.module('domegis')
-
-.controller('MainCtrl', [
-  '$scope',
-  function($scope) {
-
-  }
-])
-
 .controller('QueryCtrl', [
   '$scope',
+  '$meteor',
   'Content',
   'esriService',
-  function($scope, Content, Esri) {
+  function($scope, $meteor, Content, Esri) {
+
+    $scope.synced = $meteor.collection(Contents);
+
+    $scope.syncContent = function(content) {
+      $scope.synced.push(content);
+    };
+
     $scope.content = Content.data;
 
-
     $scope.search = '';
-    $scope.params = {
+    $scope.query = {
       type: ''
     };
-    $scope.sort = 'numviews';
+    $scope.params = {};
 
-    $scope.query = {};
+    $scope.sort = 'numviews';
 
     $scope.availableTypes = Esri.getContentTypes();
 
     $scope.doQuery = function() {
-
       $scope.doSort();
-
       Esri.getContent(
         $scope.search,
-        $scope.params,
-        $scope.query
+        $scope.query,
+        $scope.params
       ).then(function(data) {
         $scope.content = data.data;
       });
     };
 
-    $scope.$watchGroup(['search', 'params'], _.debounce(function() {
+    $scope.$watchGroup(['search', 'query'], _.debounce(function() {
       $scope.doQuery();
     }, 500), true);
 
     $scope.doSort = function() {
-      $scope.query = _.extend($scope.query, {
+      $scope.params = _.extend($scope.params, {
         sortField: $scope.sort,
         sortOrder: getSortOrder($scope.sort)
       });

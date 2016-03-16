@@ -1,9 +1,4 @@
-'use strict';
-
 angular.module('domegis')
-
-.constant('esriOrganization', 'panda')
-
 .config([
   '$stateProvider',
   '$urlRouterProvider',
@@ -21,7 +16,7 @@ angular.module('domegis')
     .state('home', {
       url: '/',
       controller: 'QueryCtrl',
-      templateUrl: 'client/templates/query.html',
+      templateUrl: 'client/contents/query.html',
       resolve: {
         Content: [
           'esriService',
@@ -30,6 +25,10 @@ angular.module('domegis')
           }
         ]
       }
+    })
+    .state('list', {
+      url: '/list/',
+      template: '<content-list></content-list>'
     });
 
     /*

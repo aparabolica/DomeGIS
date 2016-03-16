@@ -1,28 +1,10 @@
-'use strict';
-
 angular.module('domegis')
-
 .factory('esriService', [
   '$http',
   '$q',
-  'esriOrganization',
-  function($http, $q, Organization) {
-
-    var apiRoot = 'https://' + Organization + '.maps.arcgis.com/sharing/rest';
-
-    var getOrganization = $http.get(apiRoot + '/portals/self', {
-      params: {
-        f: 'json'
-      }
-    });
+  function($http, $q) {
 
     return {
-      getApiRoot: function() {
-        return apiRoot;
-      },
-      getOrganization: function() {
-        return getOrganization;
-      },
       getContentTypes: function() {
         return [
           'Web Map',
@@ -74,30 +56,10 @@ angular.module('domegis')
           'Report Template'
         ];
       },
-      getContent: function(search, params, query) {
+      getContent: function(search, query, params) {
         var deferred = $q.defer();
-        search = search || '';
-        params = params || {};
-        query = query || {};
-        getOrganization.then(function(data) {
-          var q = angular.extend({
-            orgid: data.data.id
-          }, params);
-          var qString = '"' + search + '"';
-          for(var key in q) {
-            if(q[key])
-              qString += ' (' + key + ':"' + q[key] + '")';
-          }
-          return $http.get(apiRoot + '/search', {
-            params: _.extend({
-              f: 'json',
-              num: 20,
-              q: qString
-            }, query)
-          }).then(function(data) {
-            console.log(data);
-            deferred.resolve(data);
-          });
+        arcgis.getContent(search, query, params, function(res) {
+          deferred.resolve(res);
         });
         return deferred.promise;
       }
