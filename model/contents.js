@@ -3,9 +3,12 @@ Contents = new Mongo.Collection("contents");
 Meteor.methods({
   syncContent: function(content){
 
-    content.syncedAt = Date.now();
-
-    Contents.update({id: content.id}, { $set: { data: content } }, { upsert: true });
+    Contents.update({_id: content.id}, {
+      $set: {
+        data: content,
+        syncedAt: Date.now()
+      }
+    }, { upsert: true });
 
   }
 });

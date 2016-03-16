@@ -4,16 +4,10 @@ Meteor.startup(function(){
     var content = Contents.findOne({}, {sort: {syncedAt: 1}});
 
     if (content) {
-      console.log(content.id);
-      console.log(content.syncedAt);
 
-      var res = arcgis.getItemSync(content.id);
-
-      console.log(res.data.modified);
-      console.log(content.data.modified);
+      var res = arcgis.getItemSync(content._id);
 
       if (res.data && (res.data.modified != content.data.modified)) {
-        console.log('modified');
         Contents.update({
           _id: content._id
         }, _.extend(res.data, {
@@ -21,7 +15,6 @@ Meteor.startup(function(){
         }));
       }
     }
-
 
     Meteor.setTimeout(updateContent, 2000);
   }
