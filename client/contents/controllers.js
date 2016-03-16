@@ -10,17 +10,19 @@ angular.module('domegis')
     });
 
     $scope.sort = {
-      syncedAt: -1
+      syncedAt: 1
     };
 
     $scope.subscribe('synced', () => {
-      return {
-        sort: $scope.getReactively('sort')
-      }
-    })
+      return [
+        {
+          sort: $scope.getReactively('sort')
+        }
+      ]
+    });
 
     $scope.syncItem = (item) => {
-      Contents.insert(item);
+      Contents.insert(angular.copy(item));
     };
 
     $scope.unsyncItem = (item) => {
