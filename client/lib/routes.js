@@ -26,6 +26,10 @@ angular.module('domegis')
         ]
       }
     })
+    .state('styles', {
+      url: '/styles/',
+      template: '<domegis-styles></domegis-styles>'
+    })
     .state('list', {
       url: '/list/',
       template: '<content-list></content-list>'
