@@ -13,6 +13,10 @@ angular.module('domegis')
         '$reactive',
         function($scope, $reactive) {
 
+          $scope.table = {
+            title: 'table'
+          };
+
           $scope.styles = {
             polygon: {
               composite: 'None',
@@ -25,7 +29,9 @@ angular.module('domegis')
               }
             },
             marker: {
+              composite: 'None',
               fill: {
+                width: 10,
                 opacity: 1
               },
               stroke: {
@@ -34,6 +40,55 @@ angular.module('domegis')
               }
             }
           };
+
+          $scope.$watch('styles', function(styles, prevStyles) {
+
+            console.log(styles, prevStyles);
+
+            if(styles != prevStyles || !$scope.cartocss) {
+
+              var cartocss = '';
+
+              cartocss += '#' + $scope.table.title + ' {\n';
+              if($scope.isType('polygon')) {
+
+                cartocss += '\tpolygon-fill: ' + ';\n';
+                cartocss += '\tpolygon-opacity: ' + styles.polygon.fill.opacity + ';\n';
+                if(styles.polygon.composite !== 'None') {
+                  cartocss += '\tpolygon-comp-op: ' + styles.polygon.composite.toLowerCase().replace(' ', '-') + ';\n'
+                }
+                cartocss += '\tline-color: ' + ';\n';
+                cartocss += '\tline-width: ' + styles.polygon.stroke.width + ';\n';
+                cartocss += '\tline-opacity: ' + styles.polygon.stroke.opacity + ';\n';
+
+              }
+
+              if($scope.isType('polygon') && $scope.isType('point')) {
+                cartocss + '\n\n';
+              }
+
+              if($scope.isType('point')) {
+
+                cartocss += '\tmarker-width: ' + styles.marker.fill.width + ';\n';
+                cartocss += '\tmarker-fill: ' + ';\n';
+                cartocss += '\tmarker-fill-opacity: ' + styles.marker.fill.opacity + ';\n';
+                if(styles.marker.composite !== 'None') {
+                  cartocss += '\tmarker-comp-op: ' + styles.marker.composite.toLowerCase().replace(' ', '-') + ';\n'
+                }
+                cartocss += '\tmarker-line-color: ' + ';\n';
+                cartocss += '\tmarker-line-width: ' + styles.marker.stroke.width + ';\n';
+                cartocss += '\tmarker-line-opacity: ' + styles.marker.stroke.opacity + ';\n';
+
+
+              }
+
+              cartocss += '}';
+
+              $scope.cartocss = cartocss;
+
+            }
+
+          }, true);
 
           $scope.composites = [
             'None',

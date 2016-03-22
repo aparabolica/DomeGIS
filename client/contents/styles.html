@@ -1,7 +1,11 @@
 <div class="container">
   <div class="twelve columns">
     <h2>Styles</h2>
-    <form class="cartocss-wizard">
+  </div>
+</div>
+<form class="cartocss-wizard">
+  <div class="container">
+    <div class="six columns">
       <table>
         <tbody>
           <tr ng-show="isType('polygon')">
@@ -20,7 +24,7 @@
             </td>
           </tr>
           <tr ng-show="isType('polygon')">
-            <td>Composite operation</td>
+            <td>Polygon composite operation</td>
             <td>
               <select ng-options="composite for composite in composites" ng-model="styles.polygon.composite"></select>
             </td>
@@ -29,6 +33,7 @@
             <td>Marker fill</td>
             <td>
               Color
+              <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.marker.fill.width" />
               <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.marker.fill.opacity" />
             </td>
           </tr>
@@ -38,6 +43,12 @@
               Color
               <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.marker.stroke.width" />
               <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.marker.stroke.opacity" />
+            </td>
+          </tr>
+          <tr ng-show="isType('polygon')">
+            <td>Marker composite operation</td>
+            <td>
+              <select ng-options="composite for composite in composites" ng-model="styles.marker.composite"></select>
             </td>
           </tr>
           <tr>
@@ -56,6 +67,9 @@
           </tr>
         </tbody>
       </table>
-    </form>
+    </div>
+    <div class="six columns">
+      <textarea class="ace" ng-model="cartocss"></textarea>
+    </div>
   </div>
-</div>
+</form>
