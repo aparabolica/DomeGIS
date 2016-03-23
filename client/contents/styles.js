@@ -1,4 +1,3 @@
-
 var ace = AceEditor.instance();
 
 angular.module('domegis')
@@ -14,7 +13,8 @@ angular.module('domegis')
       controller: [
         '$scope',
         '$reactive',
-        function($scope, $reactive) {
+        '$compile',
+        function($scope, $reactive, $compile) {
 
           $scope.aceOption = {
             mode: 'css',
@@ -31,9 +31,11 @@ angular.module('domegis')
             polygon: {
               composite: 'None',
               fill: {
+                color: '#f00',
                 opacity: .8,
               },
               stroke: {
+                color: '#0f0',
                 width: 1,
                 opacity: .8
               }
@@ -42,58 +44,92 @@ angular.module('domegis')
               composite: 'None',
               fill: {
                 width: 10,
+                color: '#00f',
                 opacity: 1
               },
               stroke: {
+                color: '#0f0',
                 width: .5,
                 opacity: .8
               }
             }
           };
 
+          var mapCarto = {
+            'polygon': {
+              'polygon-fill': 'fill.color',
+              'polygon-opacity': 'fill.opacity',
+              'polygon-comp-op': 'composite',
+              'line-color': 'stroke.color',
+              'line-width': 'stroke.width',
+              'line-opacity': 'stroke.opacity'
+            },
+            'marker': {
+              'marker-width': 'fill.width',
+              'marker-fill': 'fill.color',
+              'marker-fill-opacity': 'fill.opacity',
+              'marker-comp-op': 'composite',
+              'marker-line-color': 'stroke.color',
+              'marker-line-width': 'stroke.width',
+              'marker-line-opacity': 'stroke.opacity'
+            }
+          };
+
+          var getProp = function(type, name) {
+            var val = '';
+            if(mapCarto[type][name]) {
+              return eval('$scope.styles.' + type + '.' + mapCarto[type][name]);
+            }
+            $scope.$broadcast('cartocss.get.prop', name, val);
+            return val;
+          }
+
+          $scope.$on('cartocss.get.prop', function(ev, name, val) {
+            if(name.indexOf('comp-op') !== -1 && val) {
+              val = val.toLowerCase().replace(' ', '-');
+              if(val == 'none') {
+                val = '';
+              }
+            }
+          });
+
+          function regexEscape(str) {
+            return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+          }
+
+          $scope.cartocss = '';
+
+          var tableRegex = new RegExp(regexEscape('#' + $scope.table.title + ' {') + '([\\s\\S]*?)}');
+
           $scope.$watch('styles', function(styles, prevStyles) {
 
-            if(styles != prevStyles || !$scope.cartocss) {
+            var tableMatch = $scope.cartocss.match(tableRegex);
 
-              var cartocss = '';
+            var cartocss = '';
 
-              cartocss += '#' + $scope.table.title + ' {\n';
-              if($scope.isType('polygon')) {
+            if(tableMatch != null && tableMatch[1]) {
+              cartocss = tableMatch[1];
+            }
 
-                cartocss += '\tpolygon-fill: ' + '#f00' + ';\n';
-                cartocss += '\tpolygon-opacity: ' + styles.polygon.fill.opacity + ';\n';
-                if(styles.polygon.composite !== 'None') {
-                  cartocss += '\tpolygon-comp-op: ' + styles.polygon.composite.toLowerCase().replace(' ', '-') + ';\n'
+            for(var type in mapCarto) {
+              if($scope.isType(type)) {
+                for(var prop in mapCarto[type]) {
+                  var propRegex = new RegExp(regexEscape(prop) + ':(.*?);');
+                  var propMatch = cartocss.match(propRegex);
+                  var val = getProp(type, prop);
+                  if(propMatch != null) {
+                    cartocss = cartocss.replace(propRegex, '' + prop + ': ' + val + ';');
+                  } else {
+                    cartocss += '\t' + prop + ': ' + val + ';\n';
+                  }
                 }
-                cartocss += '\tline-color: ' + '#0f0' + ';\n';
-                cartocss += '\tline-width: ' + styles.polygon.stroke.width + ';\n';
-                cartocss += '\tline-opacity: ' + styles.polygon.stroke.opacity + ';\n';
-
               }
+            }
 
-              if($scope.isType('polygon') && $scope.isType('point')) {
-                cartocss + '\n\n';
-              }
-
-              if($scope.isType('point')) {
-
-                cartocss += '\tmarker-width: ' + styles.marker.fill.width + ';\n';
-                cartocss += '\tmarker-fill: ' + '#00f' + ';\n';
-                cartocss += '\tmarker-fill-opacity: ' + styles.marker.fill.opacity + ';\n';
-                if(styles.marker.composite !== 'None') {
-                  cartocss += '\tmarker-comp-op: ' + styles.marker.composite.toLowerCase().replace(' ', '-') + ';\n'
-                }
-                cartocss += '\tmarker-line-color: ' + '#0f0' + ';\n';
-                cartocss += '\tmarker-line-width: ' + styles.marker.stroke.width + ';\n';
-                cartocss += '\tmarker-line-opacity: ' + styles.marker.stroke.opacity + ';\n';
-
-
-              }
-
-              cartocss += '}';
-
-              $scope.cartocss = cartocss;
-
+            if(tableMatch != null && tableMatch[1]) {
+              $scope.cartocss = $scope.cartocss.replace(tableRegex, '#' + $scope.table.title + ' {' + cartocss + '}');
+            } else {
+              $scope.cartocss = '#' + $scope.table.title + ' {\n' + cartocss + '}';
             }
 
           }, true);
@@ -109,7 +145,7 @@ angular.module('domegis')
             'Color burn'
           ];
 
-          $scope.types = ['polygon', 'point'];
+          $scope.types = ['polygon', 'marker'];
 
           $scope.isType = function(type) {
             return $scope.types.indexOf(type) !== -1;
