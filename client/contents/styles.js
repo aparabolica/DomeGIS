@@ -123,15 +123,19 @@ angular.module('domegis')
             for(var type in mapCarto) {
               if($scope.isType(type)) {
                 for(var prop in mapCarto[type]) {
-                  var propRegex = new RegExp(regexEscape(prop) + ':(.*?);');
+                  var propRegex = new RegExp('\t' + regexEscape(prop) + ':(.*?);\n');
                   var propMatch = cartocss.match(propRegex);
                   var val = getProp(type, prop);
                   if(propMatch != null) {
+                    var rep = '';
+                    if(val !== '')
+                      rep = '\t' + prop + ': ' + val + ';\n';
                     if(propMatch[1].trim().toLowerCase() != val) {
-                      cartocss = cartocss.replace(propRegex, prop + ': ' + val + ';');
+                      cartocss = cartocss.replace(propRegex, rep);
                     }
                   } else {
-                    cartocss += '\t' + prop + ': ' + val + ';\n';
+                    if(val !== '')
+                      cartocss += '\t' + prop + ': ' + val + ';\n';
                   }
                 }
               }
