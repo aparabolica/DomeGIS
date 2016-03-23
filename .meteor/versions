@@ -3,6 +3,7 @@ angular-meteor-data@0.3.0
 angular-templates@1.0.0
 angular:angular@1.4.8
 angularui:angular-ui-router@0.2.15
+arch:ace-editor@1.2.1
 autopublish@1.0.4
 autoupdate@1.2.4
 babel-compiler@5.8.24_1
@@ -71,6 +72,7 @@ spacebars@1.0.7
 spacebars-compiler@1.0.7
 standard-minifiers@1.0.2
 templating-tools@1.0.0
+thospaeth:angular-ui-ace@0.1.1
 tracker@1.0.9
 ui@1.0.8
 underscore@1.0.4

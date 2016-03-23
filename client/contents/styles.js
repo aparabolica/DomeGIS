@@ -1,3 +1,6 @@
+
+var ace = AceEditor.instance();
+
 angular.module('domegis')
 
 .directive('domegisStyles', [
@@ -12,6 +15,13 @@ angular.module('domegis')
         '$scope',
         '$reactive',
         function($scope, $reactive) {
+
+          $scope.aceOption = {
+            mode: 'css',
+            useWrapMode: false,
+            showGutter: false,
+            theme: 'github'
+          };
 
           $scope.table = {
             title: 'table'
@@ -43,8 +53,6 @@ angular.module('domegis')
 
           $scope.$watch('styles', function(styles, prevStyles) {
 
-            console.log(styles, prevStyles);
-
             if(styles != prevStyles || !$scope.cartocss) {
 
               var cartocss = '';
@@ -52,12 +60,12 @@ angular.module('domegis')
               cartocss += '#' + $scope.table.title + ' {\n';
               if($scope.isType('polygon')) {
 
-                cartocss += '\tpolygon-fill: ' + ';\n';
+                cartocss += '\tpolygon-fill: ' + '#f00' + ';\n';
                 cartocss += '\tpolygon-opacity: ' + styles.polygon.fill.opacity + ';\n';
                 if(styles.polygon.composite !== 'None') {
                   cartocss += '\tpolygon-comp-op: ' + styles.polygon.composite.toLowerCase().replace(' ', '-') + ';\n'
                 }
-                cartocss += '\tline-color: ' + ';\n';
+                cartocss += '\tline-color: ' + '#0f0' + ';\n';
                 cartocss += '\tline-width: ' + styles.polygon.stroke.width + ';\n';
                 cartocss += '\tline-opacity: ' + styles.polygon.stroke.opacity + ';\n';
 
@@ -70,12 +78,12 @@ angular.module('domegis')
               if($scope.isType('point')) {
 
                 cartocss += '\tmarker-width: ' + styles.marker.fill.width + ';\n';
-                cartocss += '\tmarker-fill: ' + ';\n';
+                cartocss += '\tmarker-fill: ' + '#00f' + ';\n';
                 cartocss += '\tmarker-fill-opacity: ' + styles.marker.fill.opacity + ';\n';
                 if(styles.marker.composite !== 'None') {
                   cartocss += '\tmarker-comp-op: ' + styles.marker.composite.toLowerCase().replace(' ', '-') + ';\n'
                 }
-                cartocss += '\tmarker-line-color: ' + ';\n';
+                cartocss += '\tmarker-line-color: ' + '#0f0' + ';\n';
                 cartocss += '\tmarker-line-width: ' + styles.marker.stroke.width + ';\n';
                 cartocss += '\tmarker-line-opacity: ' + styles.marker.stroke.opacity + ';\n';
 

@@ -20,8 +20,10 @@ bevanhunt:leaflet
 less
 underscore
 skeleton:skeleton
+arch:ace-editor
 angularui:angular-ui-router
 http
 momentjs:moment
 autopublish
 mizzao:jquery-ui
+thospaeth:angular-ui-ace
