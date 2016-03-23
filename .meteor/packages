@@ -27,3 +27,5 @@ momentjs:moment
 autopublish
 mizzao:jquery-ui
 thospaeth:angular-ui-ace
+eastamis:angular-bootstrap-colorpicker
+twbs:bootstrap

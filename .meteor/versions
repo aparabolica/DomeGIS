@@ -26,6 +26,7 @@ ddp-common@1.2.2
 ddp-server@1.2.2
 deps@1.0.9
 diff-sequence@1.0.1
+eastamis:angular-bootstrap-colorpicker@0.1.0
 ecmascript@0.1.6
 ecmascript-runtime@0.2.6
 ejson@1.0.7
@@ -74,6 +75,7 @@ standard-minifiers@1.0.2
 templating-tools@1.0.0
 thospaeth:angular-ui-ace@0.1.1
 tracker@1.0.9
+twbs:bootstrap@3.3.6
 ui@1.0.8
 underscore@1.0.4
 url@1.0.5
