@@ -11,14 +11,14 @@
           <tr ng-show="isType('polygon')">
             <td>Polygon fill</td>
             <td>
-              Color
+              {{styles.polygon.fill.color}}
               <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.polygon.fill.opacity" />
             </td>
           </tr>
           <tr ng-show="isType('polygon')">
             <td>Polygon stroke</td>
             <td>
-              Color
+              {{styles.polygon.stroke.color}}
               <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.polygon.stroke.width" />
               <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.polygon.stroke.opacity" />
             </td>
@@ -26,13 +26,13 @@
           <tr ng-show="isType('polygon')">
             <td>Polygon composite operation</td>
             <td>
-              <select ng-options="composite for composite in composites" ng-model="styles.polygon.composite"></select>
+              <select ng-options="key as value for (key, value) in composites" ng-model="styles.polygon.composite"></select>
             </td>
           </tr>
           <tr ng-show="isType('marker')">
             <td>Marker fill</td>
             <td>
-              Color
+              {{styles.marker.fill.color}}
               <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.marker.fill.width" />
               <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.marker.fill.opacity" />
             </td>
@@ -40,7 +40,7 @@
           <tr ng-show="isType('marker')">
             <td>Marker stroke</td>
             <td>
-              Color
+              {{styles.marker.stroke.color}}
               <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.marker.stroke.width" />
               <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.marker.stroke.opacity" />
             </td>
@@ -48,7 +48,7 @@
           <tr ng-show="isType('marker')">
             <td>Marker composite operation</td>
             <td>
-              <select ng-options="composite for composite in composites" ng-model="styles.marker.composite"></select>
+              <select ng-options="key as value for (key, value) in composites" ng-model="styles.marker.composite"></select>
             </td>
           </tr>
           <tr>

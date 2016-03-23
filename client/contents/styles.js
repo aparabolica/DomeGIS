@@ -29,7 +29,7 @@ angular.module('domegis')
 
           $scope.styles = {
             polygon: {
-              composite: 'None',
+              composite: '',
               fill: {
                 color: '#f00',
                 opacity: .8,
@@ -41,7 +41,7 @@ angular.module('domegis')
               }
             },
             marker: {
-              composite: 'None',
+              composite: '',
               fill: {
                 width: 10,
                 color: '#00f',
@@ -80,18 +80,8 @@ angular.module('domegis')
             if(mapCarto[type][name]) {
               return eval('$scope.styles.' + type + '.' + mapCarto[type][name]);
             }
-            $scope.$broadcast('cartocss.get.prop', name, val);
             return val;
           }
-
-          $scope.$on('cartocss.get.prop', function(ev, name, val) {
-            if(name.indexOf('comp-op') !== -1 && val) {
-              val = val.toLowerCase().replace(' ', '-');
-              if(val == 'none') {
-                val = '';
-              }
-            }
-          });
 
           function regexEscape(str) {
             return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -101,6 +91,25 @@ angular.module('domegis')
 
           var tableRegex = new RegExp(regexEscape('#' + $scope.table.title + ' {') + '([\\s\\S]*?)}');
 
+          // Update styles object from raw CartoCSS
+          $scope.$watch('cartocss', function(cartocss) {
+            var tableMatch = cartocss.match(tableRegex);
+            if(tableMatch != null && tableMatch[1]) {
+              for(var type in mapCarto) {
+                if($scope.isType(type)) {
+                  for(var prop in mapCarto[type]) {
+                    var propRegex = new RegExp(regexEscape(prop) + ':(.*?);');
+                    var propMatch = cartocss.match(propRegex);
+                    if(propMatch != null) {
+                      eval('$scope.styles.' + type + '.' + mapCarto[type][prop] + ' = propMatch[1].trim().toLowerCase()');
+                    }
+                  }
+                }
+              }
+            }
+          });
+
+          // Update CartoCSS output from styles object
           $scope.$watch('styles', function(styles, prevStyles) {
 
             var tableMatch = $scope.cartocss.match(tableRegex);
@@ -118,7 +127,9 @@ angular.module('domegis')
                   var propMatch = cartocss.match(propRegex);
                   var val = getProp(type, prop);
                   if(propMatch != null) {
-                    cartocss = cartocss.replace(propRegex, '' + prop + ': ' + val + ';');
+                    if(propMatch[1].trim().toLowerCase() != val) {
+                      cartocss = cartocss.replace(propRegex, prop + ': ' + val + ';');
+                    }
                   } else {
                     cartocss += '\t' + prop + ': ' + val + ';\n';
                   }
@@ -134,16 +145,16 @@ angular.module('domegis')
 
           }, true);
 
-          $scope.composites = [
-            'None',
-            'Multiply',
-            'Screen',
-            'Overlay',
-            'Darken',
-            'Lighten',
-            'Color dodge',
-            'Color burn'
-          ];
+          $scope.composites = {
+            '': 'None',
+            'multiply': 'Multiply',
+            'screen': 'Screen',
+            'overlay': 'Overlay',
+            'darken': 'Darken',
+            'lighten': 'Lighten',
+            'color-dodge': 'Color dodge',
+            'color-burn': 'Color burn'
+          };
 
           $scope.types = ['polygon', 'marker'];
 
