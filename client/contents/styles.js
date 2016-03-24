@@ -1,4 +1,4 @@
-var ace = AceEditor.instance();
+var ace;
 
 angular.module('domegis')
 
@@ -10,22 +10,52 @@ angular.module('domegis')
       scope: {
         content: '='
       },
+      compile: function compile(element, attrs) {
+        return {
+          pre: function prelink(scope, element, attrs) {
+            ace = AceEditor.instance();
+          }
+        }
+      },
       controller: [
         '$scope',
         '$reactive',
         '$compile',
         function($scope, $reactive, $compile) {
 
-          $scope.aceOption = {
-            mode: 'css',
-            useWrapMode: false,
-            showGutter: false,
-            theme: 'github'
-          };
-
           $scope.table = {
             title: 'table'
           };
+
+          $scope.composites = {
+            '': 'None',
+            'multiply': 'Multiply',
+            'screen': 'Screen',
+            'overlay': 'Overlay',
+            'darken': 'Darken',
+            'lighten': 'Lighten',
+            'color-dodge': 'Color dodge',
+            'color-burn': 'Color burn'
+          };
+
+          $scope.types = ['polygon', 'marker'];
+
+          $scope.isType = function(type) {
+            return $scope.types.indexOf(type) !== -1;
+          };
+
+          $scope.properties = [
+            {
+              key: 'amount',
+              type: 'number',
+              values: [1,2,3,4,5,6,7,8,9,10]
+            },
+            {
+              key: 'category',
+              type: 'string',
+              values: ['category 1', 'category 2', 'category 3']
+            }
+          ];
 
           $scope.styles = {
             polygon: {
@@ -148,38 +178,34 @@ angular.module('domegis')
             }
 
           }, true);
-
-          $scope.composites = {
-            '': 'None',
-            'multiply': 'Multiply',
-            'screen': 'Screen',
-            'overlay': 'Overlay',
-            'darken': 'Darken',
-            'lighten': 'Lighten',
-            'color-dodge': 'Color dodge',
-            'color-burn': 'Color burn'
-          };
-
-          $scope.types = ['polygon', 'marker'];
-
-          $scope.isType = function(type) {
-            return $scope.types.indexOf(type) !== -1;
-          };
-
-          $scope.properties = [
-            {
-              key: 'amount',
-              type: 'number',
-              values: [1,2,3,4,5,6,7,8,9,10]
-            },
-            {
-              key: 'category',
-              type: 'string',
-              values: ['category 1', 'category 2', 'category 3']
-            }
-          ];
         }
       ]
+    }
+  }
+])
+
+.directive('cartoEditor', [
+  '$compile',
+  function($compile) {
+    return {
+      restrict: 'EA',
+      scope: {
+        css: '=ngModel'
+      },
+      require: 'ngModel',
+      template: '<div class="carto-editor"></div>',
+      replace: true,
+      link: function(scope, element, attrs, controller) {
+        scope.aceOption = {
+          mode: 'css',
+          useWrapMode: false,
+          showGutter: false,
+          theme: 'github'
+        };
+        AceEditor.instance(element[0], null, function() {
+          element.html($compile('<div ui-ace="aceOption" ng-model="css">{{css}}</div>')(scope));
+        });
+      }
     }
   }
 ])
