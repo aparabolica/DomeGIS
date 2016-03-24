@@ -1,3 +1,27 @@
+function regexEscape(str) {
+  return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
+
+var mapCarto = {
+  'polygon': {
+    'polygon-fill': 'fill.color',
+    'polygon-opacity': 'fill.opacity',
+    'polygon-comp-op': 'composite',
+    'line-color': 'stroke.color',
+    'line-width': 'stroke.width',
+    'line-opacity': 'stroke.opacity'
+  },
+  'marker': {
+    'marker-width': 'fill.width',
+    'marker-fill': 'fill.color',
+    'marker-fill-opacity': 'fill.opacity',
+    'marker-comp-op': 'composite',
+    'marker-line-color': 'stroke.color',
+    'marker-line-width': 'stroke.width',
+    'marker-line-opacity': 'stroke.opacity'
+  }
+};
+
 angular.module('domegis')
 
 .directive('domegisStyles', [
@@ -76,26 +100,6 @@ angular.module('domegis')
             }
           };
 
-          var mapCarto = {
-            'polygon': {
-              'polygon-fill': 'fill.color',
-              'polygon-opacity': 'fill.opacity',
-              'polygon-comp-op': 'composite',
-              'line-color': 'stroke.color',
-              'line-width': 'stroke.width',
-              'line-opacity': 'stroke.opacity'
-            },
-            'marker': {
-              'marker-width': 'fill.width',
-              'marker-fill': 'fill.color',
-              'marker-fill-opacity': 'fill.opacity',
-              'marker-comp-op': 'composite',
-              'marker-line-color': 'stroke.color',
-              'marker-line-width': 'stroke.width',
-              'marker-line-opacity': 'stroke.opacity'
-            }
-          };
-
           var getProp = function(type, name) {
             var val = '';
             if(mapCarto[type][name]) {
@@ -104,31 +108,9 @@ angular.module('domegis')
             return val;
           }
 
-          function regexEscape(str) {
-            return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-          }
-
           $scope.cartocss = '';
 
           var tableRegex = new RegExp(regexEscape('#' + $scope.table.title + ' {') + '([\\s\\S]*?)}');
-
-          // Update styles object from raw CartoCSS
-          $scope.$watch('cartocss', function(cartocss) {
-            var tableMatch = cartocss.match(tableRegex);
-            if(tableMatch != null && tableMatch[1]) {
-              for(var type in mapCarto) {
-                if($scope.isType(type)) {
-                  for(var prop in mapCarto[type]) {
-                    var propRegex = new RegExp(regexEscape(prop) + ':(.*?);');
-                    var propMatch = cartocss.match(propRegex);
-                    if(propMatch != null) {
-                      eval('$scope.styles.' + type + '.' + mapCarto[type][prop] + ' = propMatch[1].trim().toLowerCase()');
-                    }
-                  }
-                }
-              }
-            }
-          });
 
           // Update CartoCSS output from styles object
           $scope.$watch('styles', function(styles, prevStyles) {
@@ -181,20 +163,57 @@ angular.module('domegis')
     return {
       restrict: 'EA',
       scope: {
-        css: '=ngModel'
+        cartoEditor: '=',
+        group: '=',
+        css: '=ngModel',
       },
       require: 'ngModel',
       template: '<div class="carto-editor"></div>',
       replace: true,
       link: function(scope, element, attrs, controller) {
+
         scope.aceOption = {
           mode: 'css',
           useWrapMode: false,
           showGutter: false,
           theme: 'github'
         };
-        AceEditor.instance(element[0], null, function() {
+
+        var editor;
+
+        var ace = AceEditor.instance(element[0], null, function(ed) {
+          editor = ed;
           element.html($compile('<div ui-ace="aceOption" ng-model="css">{{css}}</div>')(scope));
+        });
+
+        scope.$on('$destroy', function() {
+          editor.destroy();
+        });
+
+        var tableRegex = '';
+
+        scope.$watch('group', function(g) {
+          tableRegex = new RegExp(regexEscape('#' + g + ' {') + '([\\s\\S]*?)}');
+        });
+
+        // Update styles object from raw CartoCSS
+        scope.$watch('css', function(cartocss) {
+          if(cartocss) {
+            var tableMatch = cartocss.match(tableRegex);
+            if(tableMatch != null && tableMatch[1]) {
+              for(var type in mapCarto) {
+                for(var prop in mapCarto[type]) {
+                  var propRegex = new RegExp(regexEscape(prop) + ':(.*?);');
+                  var propMatch = cartocss.match(propRegex);
+                  if(propMatch != null) {
+                    eval('scope.cartoEditor.' + type + '.' + mapCarto[type][prop] + ' = propMatch[1].trim().toLowerCase()');
+                  } else {
+                    eval('scope.cartoEditor.' + type + '.' + mapCarto[type][prop] + ' = "";');
+                  }
+                }
+              }
+            }
+          }
         });
       }
     }
