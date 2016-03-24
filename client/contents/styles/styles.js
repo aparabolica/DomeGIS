@@ -28,7 +28,7 @@ angular.module('domegis')
   function() {
     return {
       restrict: 'E',
-      templateUrl: 'client/contents/styles.html',
+      templateUrl: 'client/contents/styles/styles.html',
       scope: {
         content: '='
       },
@@ -40,6 +40,12 @@ angular.module('domegis')
 
           $scope.table = {
             title: 'table'
+          };
+
+          $scope.mapType = 'simple';
+
+          $scope.setMapType = function(type) {
+            $scope.mapType = type;
           };
 
           $scope.composites = {
@@ -63,7 +69,7 @@ angular.module('domegis')
             {
               key: 'amount',
               type: 'number',
-              values: [1,2,3,4,5,6,7,8,9,10]
+              values: [1,2,3,4,5,6,7,8,9,10,500,200,150,1000]
             },
             {
               key: 'category',
@@ -71,6 +77,18 @@ angular.module('domegis')
               values: ['category 1', 'category 2', 'category 3']
             }
           ];
+
+          $scope.selectColumn = function() {
+            if(!$scope.column) {
+              $scope.categories = [];
+            } else {
+              if($scope.column.type == 'number') {
+                $scope.categories = quantiles($scope.column.values, 3);
+              } else {
+                $scope.categories = $scope.column.values;
+              }
+            }
+          };
 
           $scope.styles = {
             polygon: {
@@ -102,8 +120,9 @@ angular.module('domegis')
 
           var getProp = function(type, name) {
             var val = '';
-            if(mapCarto[type][name]) {
-              return eval('$scope.styles.' + type + '.' + mapCarto[type][name]);
+            var name = eval('mapCarto.' + type)[name];
+            if(name) {
+              val = eval('$scope.styles.' + type + '.' + name);
             }
             return val;
           }
@@ -146,8 +165,44 @@ angular.module('domegis')
 
             if(tableMatch != null && tableMatch[1]) {
               $scope.cartocss = $scope.cartocss.replace(tableRegex, '#' + $scope.table.title + ' {' + cartocss + '}');
+            } else if(!$scope.cartocss) {
+              $scope.cartocss = '#' + $scope.table.title + ' {\n' + cartocss + '}\n\n';
             } else {
-              $scope.cartocss = '#' + $scope.table.title + ' {\n' + cartocss + '}';
+              $scope.cartocss = '#' + $scope.table.title + ' {\n' + cartocss + '}\n\n' + $scope.cartocss;
+            }
+
+          }, true);
+
+          $scope.$watch('styles.category', function(styles) {
+
+            if(styles) {
+              for(var category in styles) {
+
+                var cartocss = '';
+
+                var catRegex = new RegExp(regexEscape('#' + $scope.table.title + ' [ ' + $scope.column.key + ' = "' + category + '" ] {') + '([\\s\\S]*?)}');
+
+                var catMatch = $scope.cartocss.match(catRegex);
+
+                if(catMatch != null && catMatch[1]) {
+                  cartocss = catMatch[1];
+                }
+
+                // Go to the props
+                // for(var type in mapCarto.category) {
+                //   if($scope.isType(type)) {
+                //     for(var prop in mapCarto.category[type]) {
+                //       var propRegex = new RegExp('\t' + regexEscape(prop) + ':(.*?);\n');
+                //       console.log(type, prop);
+                //       var propMatch = cartocss.match(propRegex);
+                //       var val = getProp('category.' + type, prop);
+                //       console.log(val);
+                //     }
+                //   }
+                // }
+
+                // console.log('#' + $scope.table.title + ' [ ' + $scope.column.key + ' = "' + category + '" ] {\n' + cartocss + '}\n\n');
+              }
             }
 
           }, true);
@@ -202,13 +257,15 @@ angular.module('domegis')
             var tableMatch = cartocss.match(tableRegex);
             if(tableMatch != null && tableMatch[1]) {
               for(var type in mapCarto) {
-                for(var prop in mapCarto[type]) {
-                  var propRegex = new RegExp(regexEscape(prop) + ':(.*?);');
-                  var propMatch = cartocss.match(propRegex);
-                  if(propMatch != null) {
-                    eval('scope.cartoEditor.' + type + '.' + mapCarto[type][prop] + ' = propMatch[1].trim().toLowerCase()');
-                  } else {
-                    eval('scope.cartoEditor.' + type + '.' + mapCarto[type][prop] + ' = "";');
+                if(type !== 'category') {
+                  for(var prop in mapCarto[type]) {
+                    var propRegex = new RegExp(regexEscape(prop) + ':(.*?);');
+                    var propMatch = cartocss.match(propRegex);
+                    if(propMatch != null) {
+                      eval('scope.cartoEditor.' + type + '.' + mapCarto[type][prop] + ' = propMatch[1].trim().toLowerCase()');
+                    } else {
+                      eval('scope.cartoEditor.' + type + '.' + mapCarto[type][prop] + ' = "";');
+                    }
                   }
                 }
               }

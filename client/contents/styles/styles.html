@@ -6,9 +6,37 @@
 <form class="cartocss-wizard">
   <div class="container">
     <div class="six columns">
-      <table>
+      <ul class="type-selector">
+        <li>
+          <a href="javascript:void(0);" ng-click="setMapType('simple')">Simple</a>
+        </li>
+        <li>
+          <a href="javascript:void(0);" ng-click="setMapType('choropleth')">Choropleth</a>
+        </li>
+      </ul>
+      <table ng-show="mapType == 'choropleth'">
         <tbody>
-          <tr ng-show="isType('polygon')">
+          <tr>
+            <td>
+              <label for="category_column">Select column</label>
+            </td>
+            <td>
+              <select ng-options="property.key for property in properties track by property.key" ng-model="column" ng-change="selectColumn()">
+                <option value=''>Select a column</option>
+              </select>
+            </td>
+          </tr>
+          <tr ng-show="categories && column.type != 'number'" ng-repeat="category in categories">
+            <td>{{category}}</td>
+            <td>
+              <input colorpicker ng-model="styles.category[category]" type="text" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="default_styles">
+        <tbody>
+          <tr ng-show="isType('polygon') && mapType == 'simple'">
             <td>Polygon fill</td>
             <td>
               <input colorpicker ng-model="styles.polygon.fill.color" type="text" />
@@ -29,7 +57,7 @@
               <select ng-options="key as value for (key, value) in composites" ng-model="styles.polygon.composite"></select>
             </td>
           </tr>
-          <tr ng-show="isType('marker')">
+          <tr ng-show="isType('marker') && mapType == 'simple'">
             <td>Marker fill</td>
             <td>
               <input colorpicker ng-model="styles.marker.fill.color" type="text" />
@@ -50,20 +78,6 @@
             <td>
               <select ng-options="key as value for (key, value) in composites" ng-model="styles.marker.composite"></select>
             </td>
-          </tr>
-          <tr>
-            <td>
-              <label for="category_column">Select column</label>
-            </td>
-            <td>
-              <select ng-options="property.key for property in properties track by property.key" ng-model="column">
-                <option value=''>Select a column</option>
-              </select>
-            </td>
-          </tr>
-          <tr ng-show="column" ng-repeat="val in column.values">
-            <td>{{val}}</td>
-            <td>Color</td>
           </tr>
         </tbody>
       </table>
