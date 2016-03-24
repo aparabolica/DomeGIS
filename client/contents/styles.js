@@ -1,5 +1,3 @@
-var ace;
-
 angular.module('domegis')
 
 .directive('domegisStyles', [
@@ -9,13 +7,6 @@ angular.module('domegis')
       templateUrl: 'client/contents/styles.html',
       scope: {
         content: '='
-      },
-      compile: function compile(element, attrs) {
-        return {
-          pre: function prelink(scope, element, attrs) {
-            ace = AceEditor.instance();
-          }
-        }
       },
       controller: [
         '$scope',
