@@ -1,6 +1,5 @@
 angular.module('domegis', [
   'ui.router',
-  'angular-meteor',
   'ui.ace',
   'colorpicker.module'
 ]);

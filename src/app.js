@@ -18,19 +18,13 @@ const app = feathers();
 
 app.configure(configuration(path.join(__dirname, '..')));
 
-const whitelist = app.get('corsWhitelist');
-const corsOptions = {
-  origin(origin, callback){
-    const originIsWhitelisted = whitelist.indexOf(origin) !== -1;
-    callback(null, originIsWhitelisted);
-  }
-};
-
 app.use(compress())
-  .options('*', cors(corsOptions))
-  .use(cors(corsOptions))
+  .options('*', cors())
+  .use(cors())
   .use(favicon( path.join(app.get('public'), 'favicon.ico') ))
   .use('/', serveStatic( app.get('public') ))
+  .use('/assets', serveStatic( 'bower_components' ))
+  .use('/styles', require('express-less')( 'public/styles', {compress: true}))
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   .configure(hooks())

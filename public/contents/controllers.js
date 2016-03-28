@@ -5,30 +5,6 @@ angular.module('domegis')
   'esriService',
   function($scope, Content, Esri) {
 
-    $scope.helpers({
-      synced: () => Contents.find({})
-    });
-
-    $scope.syncedSort = {
-      syncedAt: -1
-    };
-
-    $scope.subscribe('synced', () => {
-      return [
-        {
-          sort: $scope.getReactively('syncedSort')
-        }
-      ]
-    });
-
-    $scope.syncItem = (item) => {
-      Meteor.call('syncContent', angular.copy(item));
-    };
-
-    $scope.unsyncItem = (item) => {
-      Contents.remove({_id: item._id});
-    };
-
     $scope.content = Content.data;
 
     $scope.search = '';

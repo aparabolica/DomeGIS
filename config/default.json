@@ -5,9 +5,8 @@
   "public": "../public/",
   "auth": {
     "token": {
-      "secret": "NE4OROrSJIq/ORQX+dDehNC+kOyxsJeKXDdBWTgTKAZVBtko/hSWNQGVnPvGpD4bKkjCFQCwjQiciZ5ic16WGw=="
+      "secret": "xwFMZSmo+NG44kVUdcoGGMwLojbh2wTfd/2fa6GgJJuAfqq0iTfPSSSUSTQRS/j2w/lpHf72gKt0FabC0Av+Iw=="
     },
     "local": {}
-  },
-  "corsWhitelist": []
+  }
 }

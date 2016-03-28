@@ -16,7 +16,7 @@ angular.module('domegis')
     .state('home', {
       url: '/',
       controller: 'QueryCtrl',
-      templateUrl: 'client/contents/query.html',
+      templateUrl: '/contents/query.html',
       resolve: {
         Content: [
           'esriService',
