@@ -158,6 +158,11 @@ angular.module('domegis')
               key: 'category',
               type: 'string',
               values: ['category 1', 'category 2', 'category 3']
+            },
+            {
+              key: 'something_else',
+              type: 'string',
+              values: ['something 1', 'something 2']
             }
           ];
 
@@ -174,6 +179,12 @@ angular.module('domegis')
           };
 
           var updateCategories = function(styles) {
+
+            if(styles[$scope.column.key]) {
+              styles = styles[$scope.column.key];
+            } else {
+              styles = false;
+            }
 
             if(styles && $scope.mapType == 'category' && $scope.column) {
 

@@ -32,7 +32,28 @@
           <tr ng-show="categories && column.type != 'number'" ng-repeat="category in categories">
             <td>{{category}}</td>
             <td>
-              <input colorpicker ng-model="styles.category[category]" type="text" />
+              <input colorpicker ng-model="styles.category[column.key][category]" type="text" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="choropleth_settings" ng-show="mapType == 'choropleth' && column">
+        <tbody>
+          <tr>
+            <td>Bucket size</td>
+            <td>
+              <select ng-model="styles.choropleth[column.key].bucket_size">
+                <option value="3">3</option>
+                <option value="5">5</option>
+                <option value="7">7</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>Color ramp</td>
+            <td>
+              <select ng-model="styles.choropleth[column.key].color_ramp">
+              </select>
             </td>
           </tr>
         </tbody>
