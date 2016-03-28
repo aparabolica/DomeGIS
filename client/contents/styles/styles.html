@@ -13,15 +13,18 @@
         <li>
           <a href="javascript:void(0);" ng-click="setMapType('choropleth')">Choropleth</a>
         </li>
+        <li>
+          <a href="javascript:void(0);" ng-click="setMapType('category')">Category</a>
+        </li>
       </ul>
-      <table ng-show="mapType == 'choropleth'">
+      <table ng-show="mapType == 'choropleth' || mapType == 'category'">
         <tbody>
           <tr>
             <td>
               <label for="category_column">Select column</label>
             </td>
             <td>
-              <select ng-options="property.key for property in properties track by property.key" ng-model="column" ng-change="selectColumn()">
+              <select ng-options="column.key for column in (columns | mapType:mapType) track by column.key" ng-model="column" ng-change="selectColumn(column.key, '{{column.key}}')">
                 <option value=''>Select a column</option>
               </select>
             </td>
