@@ -6,7 +6,6 @@ angular.module('domegis')
   'esriService',
   function($scope, Content, Server, Esri) {
 
-
     $scope.content = Content;
 
     $scope.search = '';
@@ -43,11 +42,15 @@ angular.module('domegis')
 
     var contentService = Server.service('contents');
 
-    $scope.syncItem = function() {
-      Server.create(contentService, {
-        text: "testing"
-      }).then(function(res) {
+    Server.find(contentService).then(function(data) {
+      console.log(data);
+    });
+
+    $scope.syncItem = function(item) {
+      Server.create(contentService, item).then(function(res) {
         console.log(res);
+      }, function(err) {
+        console.log(err);
       });
     };
 

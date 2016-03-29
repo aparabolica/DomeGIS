@@ -14,7 +14,7 @@ module.exports = function(){
       max: 25
     }
   };
-
+  
   // Initialize our service with any options it requires
   app.use('/contents', service(options));
 

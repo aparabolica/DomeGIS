@@ -11,19 +11,29 @@ angular.module('domegis')
       .configure(feathers.hooks())
       .configure(rest.jquery(window.jQuery));
 
+    var req = function(req) {
+      var deferred = $q.defer();
+      req.then(function(res) {
+        deferred.resolve(res);
+      }).catch(function(err) {
+        deferred.reject(err);
+      });
+      return deferred.promise;
+    };
+
     return {
       app: app,
       service: function(serviceName) {
         return app.service(serviceName);
       },
       create: function(service, data) {
-        var deferred = $q.defer();
-        service.create(data).then(function(res) {
-          deferred.resolve(res);
-        }).catch(function(err) {
-          deferred.reject(err);
-        });
-        return deferred.promise;
+        return req(service.create(data));
+      },
+      find: function(service, params) {
+        return req(service.find(params));
+      },
+      get: function(service, id) {
+        return req(service.get(id));
       }
     };
 
