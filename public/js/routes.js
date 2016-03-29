@@ -16,7 +16,7 @@ angular.module('domegis')
     .state('home', {
       url: '/',
       controller: 'QueryCtrl',
-      templateUrl: '/contents/query.html',
+      templateUrl: '/views/query.html',
       resolve: {
         Content: [
           'esriService',
@@ -29,10 +29,6 @@ angular.module('domegis')
     .state('styles', {
       url: '/styles/',
       template: '<domegis-styles></domegis-styles>'
-    })
-    .state('list', {
-      url: '/list/',
-      template: '<content-list></content-list>'
     });
 
     /*

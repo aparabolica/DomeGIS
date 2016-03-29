@@ -28,7 +28,7 @@ angular.module('domegis')
   function() {
     return {
       restrict: 'E',
-      templateUrl: '/contents/styles/styles.html',
+      templateUrl: '/views/styles.html',
       scope: {
         content: '='
       },

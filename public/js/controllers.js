@@ -2,10 +2,12 @@ angular.module('domegis')
 .controller('QueryCtrl', [
   '$scope',
   'Content',
+  'Server',
   'esriService',
-  function($scope, Content, Esri) {
+  function($scope, Content, Server, Esri) {
 
-    $scope.content = Content.data;
+
+    $scope.content = Content;
 
     $scope.search = '';
     $scope.query = {
@@ -24,7 +26,7 @@ angular.module('domegis')
         $scope.query,
         $scope.params
       ).then(function(data) {
-        $scope.content = data.data;
+        $scope.content = data;
       });
     };
 
@@ -36,6 +38,16 @@ angular.module('domegis')
       $scope.params = _.extend($scope.params, {
         sortField: $scope.sort,
         sortOrder: getSortOrder($scope.sort)
+      });
+    };
+
+    var contentService = Server.service('contents');
+
+    $scope.syncItem = function() {
+      Server.create(contentService, {
+        text: "testing"
+      }).then(function(res) {
+        console.log(res);
       });
     };
 
