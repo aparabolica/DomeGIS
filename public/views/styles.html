@@ -42,11 +42,7 @@
           <tr>
             <td>Bucket size</td>
             <td>
-              <select ng-model="styles.choropleth[column.key].bucket_size">
-                <option value="3">3</option>
-                <option value="5">5</option>
-                <option value="7">7</option>
-              </select>
+              <select ng-model="styles.choropleth[column.key].bucket_size" ng-options="size as size for size in [3,5,7] track by size"></select>
             </td>
           </tr>
           <tr>

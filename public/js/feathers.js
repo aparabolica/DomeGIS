@@ -5,11 +5,11 @@ angular.module('domegis')
   '$q',
   function($rootScope, $q) {
 
-    var rest = feathers.rest();
+    var socket = io();
 
     var app = feathers()
       .configure(feathers.hooks())
-      .configure(rest.jquery(window.jQuery));
+      .configure(feathers.socketio(socket));
 
     var req = function(req) {
       var deferred = $q.defer();
@@ -34,6 +34,14 @@ angular.module('domegis')
       },
       get: function(service, id) {
         return req(service.get(id));
+      },
+      on: function(service, eventName, callback) {
+        service.on(eventName, function() {
+          var args = arguments;
+          $rootScope.$apply(function() {
+            callback.apply(service, args);
+          });
+        });
       }
     };
 

@@ -46,8 +46,15 @@ angular.module('domegis')
       console.log(data);
     });
 
+    Server.on(contentService, 'created', function(data) {
+      console.log('listened and created');
+      console.log(data);
+    });
+
     $scope.syncItem = function(item) {
-      Server.create(contentService, item).then(function(res) {
+      Server.create(contentService, {
+        text: 'testing 2'
+      }).then(function(res) {
         console.log(res);
       }, function(err) {
         console.log(err);
