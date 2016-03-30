@@ -122,3 +122,9 @@ sudo -u postgres psql -d domegis -c "CREATE EXTENSION postgis;"
 sudo -u postgres psql -d domegis -c "CREATE EXTENSION schema_triggers;"
 sudo -u postgres psql -d domegis -c "CREATE EXTENSION plpythonu;"
 sudo -u postgres psql -d domegis -c "CREATE EXTENSION cartodb;"
+
+# Install Node.js, Mapnik, Redis
+apt-get install -y nodejs npm
+update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+apt-get install -y libmapnik2.2 redis-server node-node-redis
+apt-get install -y libcairo2-dev libpango1.0-dev libjpeg8-dev libgif-dev
