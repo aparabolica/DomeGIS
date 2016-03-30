@@ -33,4 +33,42 @@ app.use(compress())
   .configure(services)
   .configure(middleware);
 
+app.use('/dummy', {
+  get: function(req, res) {
+    res.send('dummy');
+  }
+});
+
+global.environment = require('./tiler/config');
+
+require('./tiler')(app, {
+  base_url: '/database/:dbname/table/:table',
+  base_url_mapconfig: '/database/:dbname/layergroup',
+  grainstore: {
+    datasource: {
+      user:'domegis',
+      host: '/var/run/postgresql',
+      port: 5432,
+      geometry_field: 'the_geom'
+    }
+  },
+  redis: {host: '127.0.0.1', port: 6379},
+  enable_cors: true,
+  req2params: function(req, callback){
+
+    req.params.dbuser = 'domegis';
+    req.params.dbname = 'domegis';
+    req.params.dbpassword = 'domegis';
+
+    // this is in case you want to test sql parameters eg ...png?sql=select * from my_table limit 10
+    req.params =  _.extend({}, req.params);
+    _.extend(req.params, req.query);
+
+    // send the finished req object on
+    callback(null,req);
+
+  }
+
+});
+
 module.exports = app;

@@ -1,0 +1,12 @@
+{
+  "host": "localhost",
+  "port": 3030,
+  "postgres": "postgres://domegis:domegis@localhost:5432/domegis",
+  "public": "../public/",
+  "auth": {
+    "token": {
+      "secret": "xwFMZSmo+NG44kVUdcoGGMwLojbh2wTfd/2fa6GgJJuAfqq0iTfPSSSUSTQRS/j2w/lpHf72gKt0FabC0Av+Iw=="
+    },
+    "local": {}
+  }
+}
