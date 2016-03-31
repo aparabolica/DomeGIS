@@ -1,14 +1,12 @@
 'use strict';
 
-const authentication = require('feathers-authentication');
+var authentication = require('feathers-authentication');
 
 
 module.exports = function() {
-  const app = this;
+  var app = this;
 
-  let config = app.get('auth');
-  
+  var config = app.get('auth');
 
-  
   app.configure(authentication(config));
 };

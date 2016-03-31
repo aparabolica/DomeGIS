@@ -1,24 +1,60 @@
 var RedisPool = require('redis-mpool');
 var _ = require('underscore');
 var mapnik = require('mapnik');
-
 var windshaft = require('windshaft');
 
 var MapController = require('./controllers/map');
 
-module.exports = function(app, opts) {
+global.environment = require('./config');
+
+var config = {
+  base_url_mapconfig: '/tiles',
+  grainstore: {
+    datasource: {
+      user: 'domegis',
+      host: '/var/run/postgresql',
+      port: 5432,
+      geometry_field: 'the_geom'
+    }
+  },
+  redis: {host: '127.0.0.1', port: 6379},
+  enable_cors: true,
+  req2params: function(req, callback){
+
+    req.params.dbuser = 'domegis';
+    req.params.dbname = 'domegis';
+    req.params.dbpassword = 'domegis';
+
+    // this is in case you want to test sql parameters eg ...png?sql=select * from my_table limit 10
+    req.params =  _.extend({}, req.params);
+    _.extend(req.params, req.query);
+
+    // send the finished req object on
+    callback(null,req);
+
+  }
+
+};
+
+module.exports = function() {
+
+  const app = this;
+
+  init(app, config);
+
+};
+
+// init(app, );
+
+function init(app, opts) {
 
   opts = opts || {};
 
   opts.grainstore = opts.grainstore || {};
   opts.grainstore.mapnik_version = mapnikVersion(opts);
 
-  validateOptions(opts);
-
   bootstrapFonts(opts);
 
-  // initialize express server
-  // var app = bootstrap(opts); -- not bootstraping server, using featherjs
   addFilters(app, opts);
 
   var redisPool = makeRedisPool(opts.redis);
@@ -78,7 +114,6 @@ module.exports = function(app, opts) {
     }
     var log_msg = olabel + " -- " + statusCode + ": " + tolog;
     //if ( tolog.stack ) log_msg += "\n" + tolog.stack;
-    debug(log_msg); // use console.log for statusCode != 500 ?
     // If a callback was requested, force status to 200
     if ( res.req ) {
       // NOTE: res.req can be undefined when we fake a call to
@@ -95,7 +130,7 @@ module.exports = function(app, opts) {
     err = err.replace(/is the server.*encountered/im, 'encountered');
     err = JSON.parse(err);
 
-    res.send(err, statusCode);
+    res.status(statusCode).send(err);
   };
 
   /*******************************************************************************************************************
@@ -124,18 +159,6 @@ module.exports = function(app, opts) {
 
   return app;
 };
-
-function validateOptions(opts) {
-  if (!_.isString(opts.base_url) || !_.isFunction(opts.req2params) || !_.isString(opts.base_url_mapconfig)) {
-    throw new Error("Must initialise Windshaft with: 'base_url'/'base_url_mapconfig' URLs and req2params function");
-  }
-
-  // Be nice and warn if configured mapnik version is != instaled mapnik version
-  if (mapnik.versions.mapnik !== opts.grainstore.mapnik_version) {
-    console.warn('WARNING: detected mapnik version (' + mapnik.versions.mapnik + ')' +
-    ' != configured mapnik version (' + opts.grainstore.mapnik_version + ')');
-  }
-}
 
 function makeRedisPool(redisOpts) {
   redisOpts = redisOpts || {};

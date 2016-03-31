@@ -1,9 +1,10 @@
 'use strict';
 
-const app = require('./app');
-const port = app.get('port');
-const server = app.listen(port);
+var app = require('./app');
+var host = app.get('host');
+var port = app.get('port');
+var server = app.listen(port);
 
-server.on('listening', () =>
-  console.log(`Feathers application started on ${app.get('host')}:${port}`)
-);
+server.on('listening', function() {
+  console.log('Feathers application started on ' + host + ':' + port);
+});

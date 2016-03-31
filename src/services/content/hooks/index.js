@@ -1,7 +1,7 @@
 'use strict';
 
-const globalHooks = require('../../../hooks');
-const hooks = require('feathers-hooks');
+var globalHooks = require('../../../hooks');
+var hooks = require('feathers-hooks');
 
 
 exports.before = {

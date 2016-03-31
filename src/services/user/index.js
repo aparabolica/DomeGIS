@@ -1,13 +1,13 @@
 'use strict';
 
-const service = require('feathers-sequelize');
-const user = require('./user-model');
-const hooks = require('./hooks');
+var service = require('feathers-sequelize');
+var user = require('./user-model');
+var hooks = require('./hooks');
 
 module.exports = function(){
-  const app = this;
+  var app = this;
 
-  const options = {
+  var options = {
     Model: user(app.get('sequelize')),
     paginate: {
       default: 5,
@@ -19,7 +19,7 @@ module.exports = function(){
   app.use('/users', service(options));
 
   // Get our initialize service to that we can bind hooks
-  const userService = app.service('/users');
+  var userService = app.service('/users');
 
   // Set up our before hooks
   userService.before(hooks.before);

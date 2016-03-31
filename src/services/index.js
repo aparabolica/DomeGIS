@@ -1,12 +1,13 @@
 'use strict';
-const content = require('./content');
-const authentication = require('./authentication');
-const user = require('./user');
-const Sequelize = require('sequelize');
+var content = require('./content');
+var tile = require('./tile');
+var authentication = require('./authentication');
+var user = require('./user');
+var Sequelize = require('sequelize');
 module.exports = function() {
-  const app = this;
+  var app = this;
 
-  const sequelize = new Sequelize(app.get('postgres'), {
+  var sequelize = new Sequelize(app.get('postgres'), {
     dialect: 'postgres',
     logging: false
   });
@@ -15,4 +16,5 @@ module.exports = function() {
   app.configure(authentication);
   app.configure(user);
   app.configure(content);
+  app.configure(tile);
 };
