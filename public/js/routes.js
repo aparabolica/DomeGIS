@@ -26,6 +26,31 @@ angular.module('domegis')
         ]
       }
     })
+    .state('map', {
+      url: '/map/',
+      templateUrl: '/views/map.html',
+      controller: [
+        '$scope',
+        function($scope) {
+          $scope.url = '/tiles';
+          $scope.config = JSON.stringify({
+            "version": "1.2.0",
+            "layers": [
+              {
+                "type": "mapnik",
+                "options": {
+                  "sql": "select * from domegis",
+                  "geom_column": "the_geom",
+                  "cartocss": "#style{ polygon-fill: blue; line-color: red;}",
+                  "cartocss_version": "2.0.0",
+                  "interactivity": "subprefeit"
+                }
+              }
+            ]
+          }, null, 2);
+        }
+      ]
+    })
     .state('styles', {
       url: '/styles/',
       template: '<domegis-styles></domegis-styles>'
