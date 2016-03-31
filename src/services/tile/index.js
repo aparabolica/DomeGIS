@@ -38,7 +38,7 @@ var config = {
 
 module.exports = function() {
 
-  const app = this;
+  var app = this;
 
   init(app, config);
 
