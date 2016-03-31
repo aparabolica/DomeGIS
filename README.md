@@ -19,6 +19,12 @@ Access VM shell and start the application:
     cd /vagrant
     npm start
 
+To load sample data, run:
+
+    sudo apt-get install postgis
+    shp2pgsql -s 3857 -g the_geom samples/subprefectures-srid-3857.shp public.domegis | psql -U domegis -d domegis
+
+
 ## License
 
 Copyright (c) 2015

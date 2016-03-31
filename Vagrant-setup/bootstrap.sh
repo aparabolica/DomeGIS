@@ -73,6 +73,7 @@ PG_DIR="/var/lib/postgresql/$PG_VERSION/main"
 sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" "$PG_CONF"
 
 # Append to pg_hba.conf to add password auth:
+echo "local    all             all             trust" > "$PG_HBA"
 echo "host    all             all             all                     md5" >> "$PG_HBA"
 
 # Explicitly set default client_encoding
