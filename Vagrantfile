@@ -13,4 +13,5 @@ Vagrant.configure("2") do |config|
 
   # PostgreSQL Server port forwarding
   config.vm.network :forwarded_port, host: 15432, guest: 5432
+  config.vm.network :forwarded_port, host: 3030, guest: 3030
 end

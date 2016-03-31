@@ -28,33 +28,15 @@ ArcGIS.prototype.getContent = function(search, query, params, cb) {
   });
 };
 
-ArcGIS.prototype.getItemSync = function(id) {
-  var res = HTTP.call('GET', this.getApiRoot() + '/content/items/' + id, {
-    params: {
-      f: 'json'
-    }
-  });
-
-  if (res.content) {
-    res.data = JSON.parse(res.content);
-  }
-
-  return res;
-}
-
 ArcGIS.prototype.getItem = function(id, cb) {
-  HTTP.call('GET', this.getApiRoot() + '/content/items/' + id, {
-    params: {
-      f: 'json'
-    }
-  }, function(err, res) {
-    if(!err)
-      res.data = JSON.parse(res.content);
+  $.get(this.getApiRoot() + '/content/items/' + id, {
+    f: 'json'
+  }, function(res) {
     if(typeof cb == 'function') {
-      cb(err || res);
+      cb(res);
     }
-  });
-}
+  }, 'json');
+};
 
 function buildSearchQuery(orgId, search, query, params) {
   search = search || '';
