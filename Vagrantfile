@@ -15,6 +15,13 @@ Vagrant.configure("2") do |config|
     v.cpus = 2
   end
 
+  if Vagrant.has_plugin?("vagrant-cachier")
+    # Configure cached packages to be shared between instances of the same base box.
+    # More info on the "Usage" link above
+    config.cache.scope = :box
+  end
+
+
   config.vm.provision :shell, :path => "Vagrant-setup/bootstrap.sh"
 
   # PostgreSQL Server port forwarding

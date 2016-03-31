@@ -1,7 +1,7 @@
 {
   "name": "DomeGIS",
   "description": "Publishing platform for Arcgis Online maps",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "homepage": "",
   "main": "src/",
   "keywords": [
@@ -11,14 +11,13 @@
   "repository": {},
   "author": {},
   "contributors": [],
-  "bugs": {},
   "engines": {
     "node": ">= 0.12.0"
   },
   "scripts": {
     "test": "npm run jshint && npm run mocha",
     "jshint": "jshint src/. test/. --config",
-    "start": "node src/",
+    "start": "NODE_ENV=vagrant node src/",
     "mocha": "mocha test/ --compilers js:babel-core/register --recursive"
   },
   "dependencies": {

@@ -1,49 +1,23 @@
 # DomeGIS
 
-> Publishing platform for Arcgis Online maps
+Publishing platform for Arcgis Online maps
 
-## About
+# Running
 
-This project uses [Feathers](http://feathersjs.com). An open source web  framework for building modern real-time applications.
+Clone this repository locally:
 
-## Getting Started
+    git clone git@github.com:ecodigital/DomeGIS.git
 
-Getting up and running is as easy as 1, 2, 3.
+Install VM:
 
-1. Make sure you have [NodeJS](https://nodejs.org/) and [npm](https://www.npmjs.com/) installed.
-2. Install your dependencies
-    
-    ```
-    cd path/to/DomeGIS; npm install
-    ```
+    cd DomeGIS
+    vagrant up
 
-3. Start your app
-    
-    ```
+Access VM shell and start the application:
+
+    vagrant ssh
+    cd /vagrant
     npm start
-    ```
-
-## Testing
-
-Simply run `npm test` and all your tests in the `test/` directory will be run.
-
-## Scaffolding
-
-Feathers has a powerful generator. Here's just a few things that it can do:
-
-- **Generate a new Service:** `yo feathers:service`
-- **Generate a new Hook:** `yo feathers:hook`
-- **Generate a new Model:** `yo feathers:model`
-
-## Help
-
-For more information on all the things you can do with Feathers visit [docs.feathersjs.com](http://docs.feathersjs.com).
-
-## Changelog
-
-__0.1.0__
-
-- Initial release
 
 ## License
 
