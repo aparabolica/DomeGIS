@@ -133,3 +133,5 @@ apt-get install -y libcairo2-dev libpango1.0-dev libjpeg8-dev libgif-dev
 cd /vagrant
 export NODE_ENV=vagrant
 npm install
+sudo npm install -g bower
+bower install
