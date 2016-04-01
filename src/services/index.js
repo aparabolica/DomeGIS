@@ -1,9 +1,11 @@
 'use strict';
 var content = require('./content');
-var tile = require('./tile');
+// var tile = require('./tile');
+var tilesNew = require('./tiles-new');
 var authentication = require('./authentication');
 var user = require('./user');
 var Sequelize = require('sequelize');
+
 module.exports = function() {
   var app = this;
 
@@ -16,5 +18,6 @@ module.exports = function() {
   app.configure(authentication);
   app.configure(user);
   app.configure(content);
-  app.configure(tile);
+  // app.configure(tile);
+  app.configure(tilesNew);
 };
