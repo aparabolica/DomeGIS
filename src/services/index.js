@@ -1,6 +1,5 @@
 'use strict';
 var content = require('./content');
-// var tile = require('./tile');
 var tilesNew = require('./tiles-new');
 var authentication = require('./authentication');
 var user = require('./user');
@@ -18,6 +17,8 @@ module.exports = function() {
   app.configure(authentication);
   app.configure(user);
   app.configure(content);
-  // app.configure(tile);
-  app.configure(tilesNew);
+
+  if (process.env.NODE_ENV != 'test') {
+    app.configure(tilesNew);
+  }
 };
