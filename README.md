@@ -32,7 +32,6 @@ Install Node.js and dependencies:
 
 To load sample data, run:
 
-    sudo apt-get install postgis
     shp2pgsql -s 3857 -g the_geom samples/subprefectures-srid-3857.shp public.domegis | psql -U domegis -d domegis
 
 

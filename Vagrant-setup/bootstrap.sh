@@ -103,7 +103,7 @@ print_db_usage
 
 # install postgis
 echo "Installing extensions..."
-apt-get -y install "build-essential" "git" "postgresql-$PG_VERSION-postgis-2.2"
+apt-get -y install "build-essential" "git" "postgresql-$PG_VERSION-postgis-2.2" "postgis"
 
 # install pg_schema_triggers
 git clone https://github.com/CartoDB/pg_schema_triggers.git
