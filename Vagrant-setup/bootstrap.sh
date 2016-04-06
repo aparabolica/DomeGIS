@@ -129,10 +129,3 @@ apt-get install -y nodejs npm
 update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 apt-get install -y libmapnik2.2 redis-server node-node-redis
 apt-get install -y libcairo2-dev libpango1.0-dev libjpeg8-dev libgif-dev
-
-# Install app
-cd /vagrant
-export NODE_ENV=vagrant
-npm install
-sudo npm install -g bower
-bower install
