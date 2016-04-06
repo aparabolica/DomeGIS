@@ -70,4 +70,24 @@ angular.module('domegis')
     }
 
   }
+])
+
+.controller('LayerEditCtrl', [
+  '$scope',
+  'Edit',
+  function($scope, Edit) {
+
+    $scope.layer = Edit;
+
+  }
+])
+
+.controller('ContentEditCtrl', [
+  '$scope',
+  'Edit',
+  function($scope, Edit) {
+
+    $scope.content = Edit;
+
+  }
 ]);
