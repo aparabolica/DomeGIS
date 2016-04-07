@@ -29,6 +29,12 @@ angular.module('domegis')
       create: function(service, data) {
         return req(service.create(data));
       },
+      update: function(service, id, data) {
+        return req(service.update(id, data));
+      },
+      remove: function(service, id) {
+        return req(service.remove(id, data));
+      },
       find: function(service, params) {
         return req(service.find(params));
       },

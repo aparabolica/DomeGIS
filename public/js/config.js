@@ -48,9 +48,10 @@ angular.module('domegis')
       resolve: {
         Edit: [
           '$stateParams',
-          function($stateParams) {
+          'Server',
+          function($stateParams, Server) {
             if($stateParams.id) {
-              return demo.contents[0];
+              return Server.get(Server.service('contents'), $stateParams.id);
             } else {
               return {};
             }
