@@ -1,8 +1,8 @@
 <div class="container">
   <div class="twelve columns">
     <h1>
-      <span ng-show="content._id">Editing {{content.title}}</span>
-      <span ng-hide="content._id">New content</span>
+      <span ng-show="content.id">Editing {{content.title}}</span>
+      <span ng-hide="content.id">New content</span>
     </h1>
     <form id="edit_content" class="main-form" ng-submit="save(content)">
       <p>

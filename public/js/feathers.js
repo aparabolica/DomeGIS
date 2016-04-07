@@ -33,7 +33,7 @@ angular.module('domegis')
         return req(service.update(id, data));
       },
       remove: function(service, id) {
-        return req(service.remove(id, data));
+        return req(service.remove(id));
       },
       find: function(service, params) {
         return req(service.find(params));

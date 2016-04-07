@@ -43,7 +43,6 @@
       <h2>Synced data</h2>
       <article ng-repeat="item in synced" class="content-item clearfix">
         <div class="clearfix">
-          <content-thumbnail content="item"></content-thumbnail>
           <h3>{{item.title}}</h3>
         </div>
         <div class="meta">
@@ -53,7 +52,7 @@
         </div>
         <p ng-show="item.snippet">{{item.snippet}}</p>
         <button ng-click="unsyncItem(item)">Remove</button>
-        <a class="button" ui-sref="editContent({id: item._id})">Edit</a>
+        <a class="button" ui-sref="editContent({id: item.id})">Edit</a>
       </article>
     </section>
   </div>

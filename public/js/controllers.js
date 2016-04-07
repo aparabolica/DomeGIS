@@ -43,27 +43,32 @@ angular.module('domegis')
     var contentService = Server.service('contents');
 
     Server.find(contentService).then(function(data) {
-      console.log(data.data);
+      console.log('find', data.data);
       $scope.synced = data.data;
     });
 
     Server.on(contentService, 'created', function(data) {
       $scope.synced.push(data);
     });
+    Server.on(contentService, 'removed', function(data) {
+      $scope.synced = _.filter($scope.synced, function(item) {
+        return item.id !== data.id;
+      });
+    });
 
     $scope.syncItem = function(item) {
       Server.create(contentService, item).then(function(res) {
-        console.log(res);
+        console.log('create', res);
       }, function(err) {
-        console.log(err);
+        console.log('create error', err);
       });
     };
 
     $scope.unsyncItem = function(item) {
-      Server.remove(contentService, item._id).then(function(res) {
-        console.log(res);
+      Server.remove(contentService, item.id).then(function(res) {
+        console.log('remove', res);
       }, function(err) {
-        console.log(err);
+        console.log('remove error', err);
       });
     };
 
@@ -107,11 +112,11 @@ angular.module('domegis')
 
     var contentService = Server.service('contents');
 
-    $scope.content = Edit;
+    $scope.content = angular.copy(Edit);
 
     $scope.save = function(content) {
-      if(content._id) {
-        Server.update(contentService, content._id, content);
+      if(Edit.id) {
+        Server.update(contentService, Edit.id, content);
       } else {
         Server.create(contentService, content);
       }
