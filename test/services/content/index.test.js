@@ -77,7 +77,7 @@ describe('content service', function()  {
     Contents
       .create(payload)
       .then(function(content) {
-        content.should.have.property('_id', payload.id);
+        content.should.have.property('id', payload.id);
         doneIt();
       })
       .catch(doneIt);

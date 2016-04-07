@@ -9,7 +9,6 @@ exports.before = {
   find: [],
   get: [],
   create: [function(hook){
-    hook.data._id = hook.data.id;
     hook.data.createdAt = hook.data.created;
     hook.data.modifiedAt = hook.data.modified;
   }],
