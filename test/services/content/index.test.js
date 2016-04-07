@@ -1,6 +1,6 @@
 'use strict';
 
-var assert = require('assert');
+var should = require('should');
 var app = require('../../../src/app');
 var Contents;
 
@@ -59,7 +59,7 @@ describe('content service', function()  {
     Contents = app.service('contents');
     this.server.once('listening', function(){
       // wait for server to sync db
-      setTimeout(done, 3000);
+      setTimeout(done, 1000);
     });
   });
 
@@ -69,7 +69,7 @@ describe('content service', function()  {
 
 
   it('registered the contents service', function() {
-    assert.ok(Contents);
+    should.exist(Contents);
   });
 
 
@@ -77,7 +77,7 @@ describe('content service', function()  {
     Contents
       .create(payload)
       .then(function(content) {
-        assert.equal(content._id, payload.id);
+        content.should.have.property('_id', payload.id);
         doneIt();
       })
       .catch(doneIt);
@@ -85,9 +85,18 @@ describe('content service', function()  {
 
   it('content is inserted properly', function(doneIt){
     Contents
-      .find({_id: payload.id})
-      .then(function(content){
-        assert.ok(content);
+      .get(payload.id)
+      .then(function(result){
+        var content = result.dataValues;
+        should.exist(content);
+        content.should.have.property('createdAt', new Date(payload.created));
+        content.should.have.property('modifiedAt', new Date(payload.modified));
+        content.should.have.property('name', payload.name);
+        content.should.have.property('title', payload.title);
+        content.should.have.property('description', payload.description);
+        content.should.have.property('url', payload.url);
+        content.should.have.property('tags');
+        content.tags.should.be.an.Array();
         doneIt();
       })
       .catch(doneIt);

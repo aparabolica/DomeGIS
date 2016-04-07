@@ -1,6 +1,5 @@
 'use strict';
 var content = require('./content');
-var tilesNew = require('./tiles-new');
 var authentication = require('./authentication');
 var user = require('./user');
 var Sequelize = require('sequelize');
@@ -20,6 +19,6 @@ module.exports = function() {
 
   // disable windshaft when testing
   if (process.env.NODE_ENV != 'test') {
-    app.configure(tilesNew);
+    app.configure(require('./tiles-new'));
   }
 };
