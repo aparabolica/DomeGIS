@@ -13,22 +13,12 @@ Install VM:
     cd DomeGIS
     vagrant up
 
-Access VM shell and install NVM:
-
-    vagrant ssh
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.31.0/install.sh | bash
-    exit
-
-Install Node.js and dependencies:
+Install dependencies and run app:
 
     vagrant ssh
     cd /vagrant
-    nvm install # install node 0.10, defined at .nvmrc
-    npm install -g npm@1  # install
     npm install
-
-
-    npm start
+    npm start    
 
 To load sample data, run:
 
