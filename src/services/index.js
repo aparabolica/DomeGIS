@@ -18,6 +18,7 @@ module.exports = function() {
   app.configure(user);
   app.configure(content);
 
+  // disable windshaft when testing
   if (process.env.NODE_ENV != 'test') {
     app.configure(tilesNew);
   }

@@ -9,15 +9,15 @@ var Sequelize = require('sequelize');
 
 module.exports = function(sequelize) {
   var content = sequelize.define('contents', {
-    text: {
-      type: Sequelize.STRING,
-      allowNull: false
-    }
+    _id: { type: Sequelize.STRING, primaryKey: true},
+    name: { type: Sequelize.STRING, required: true},
+    title: { type: Sequelize.STRING, required: true},
+    type: { type: Sequelize.STRING, required: true}
   }, {
     freezeTableName: true
   });
 
-  content.sync();
+  content.sync({ force: true, match: /_test$/ });
 
   return content;
 };

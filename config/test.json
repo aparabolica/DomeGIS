@@ -8,7 +8,7 @@
     },
     "local": {}
   },
-  "postgres": "postgres://domegis:domegis@localhost:5432/domegis",
+  "postgres": "postgres://domegis:domegis@localhost:5432/domegis_test",
   "windshaftOpts": {
     "baseUrl": "/tiles",
     "layergroup_ttl": 60000,

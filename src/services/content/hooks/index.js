@@ -8,7 +8,9 @@ exports.before = {
   all: [],
   find: [],
   get: [],
-  create: [],
+  create: [function(hook){
+    hook.data._id = hook.data.id
+  }],
   update: [],
   patch: [],
   remove: []
