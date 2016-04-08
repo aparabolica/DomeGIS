@@ -80,6 +80,26 @@ angular.module('domegis')
       }
     }
 
+    var viewService = Server.service('views');
+    Server.on(viewService, 'created', function(data) {
+      $scope.views.push(data);
+    });
+    Server.on(viewService, 'removed', function(data) {
+      $scope.views = _.filter($scope.views, function(item) {
+        return item.id !== data.id;
+      });
+    });
+
+
+    Server.find(viewService).then(function(data) {
+      $scope.views = data.data;
+      console.log('views', $scope.views);
+    });
+
+    $scope.removeView = function(item) {
+      Server.remove(viewService, item.id);
+    };
+
   }
 ])
 
@@ -119,6 +139,35 @@ angular.module('domegis')
         Server.update(contentService, Edit.id, content);
       } else {
         Server.create(contentService, content);
+      }
+    };
+
+  }
+])
+
+.controller('ViewEditCtrl', [
+  '$scope',
+  'Server',
+  'Edit',
+  function($scope, Server, Edit) {
+
+    var viewService = Server.service('views');
+
+    $scope.view = angular.copy(Edit);
+
+    $scope.save = function(view) {
+      if(Edit.id) {
+        Server.update(viewService, Edit.id, view).then(function(view) {
+          $scope.view = view;
+        }, function(err) {
+          console.log(err);
+        });
+      } else {
+        Server.create(viewService, view).then(function(view) {
+          $scope.view = view;
+        }, function(err) {
+          console.log(err);
+        });
       }
     };
 

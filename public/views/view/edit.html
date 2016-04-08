@@ -1,0 +1,16 @@
+<div class="container">
+  <div class="twelve columns">
+    <h1>
+      <span ng-show="view.id">Editing {{view.name}}</span>
+      <span ng-hide="view.id">New view</span>
+    </h1>
+    <form id="edit_content" class="main-form" ng-submit="save(view)">
+      <p>
+        <label for="name_input">Name</label>
+        <input id="name_input" type="text" placeholder="View name" ng-model="view.name" />
+      </p>
+      <domegis-styles ng-model="view.style" cartocss="view.cartocss"></domegis-styles>
+      <p><input type="submit" value="Save view" /></p>
+    </form>
+  </div>
+</div>

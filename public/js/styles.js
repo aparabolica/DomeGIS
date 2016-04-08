@@ -30,8 +30,11 @@ angular.module('domegis')
       restrict: 'E',
       templateUrl: '/views/styles.html',
       scope: {
-        content: '='
+        content: '=',
+        styles: '=ngModel',
+        cartocss: '='
       },
+      require: 'ngModel',
       controller: [
         '$scope',
         '$compile',
@@ -60,7 +63,9 @@ angular.module('domegis')
             return $scope.types.indexOf(type) !== -1;
           };
 
-          $scope.styles = {
+          $scope.cartocss = $scope.cartocss || '';
+
+          $scope.styles = $scope.styles || {
             polygon: {
               composite: '',
               fill: {
@@ -97,48 +102,50 @@ angular.module('domegis')
             return val;
           }
 
-          $scope.cartocss = '';
-
           var tableRegex = new RegExp(regexEscape('#' + $scope.table.title + ' {') + '([\\s\\S]*?)}');
 
           // Update CartoCSS output from styles object
           $scope.$watch('styles', function(styles, prevStyles) {
 
-            var tableMatch = $scope.cartocss.match(tableRegex);
+            if(styles) {
 
-            var cartocss = '';
+              var tableMatch = $scope.cartocss ? $scope.cartocss.match(tableRegex) : null;
 
-            if(tableMatch != null && tableMatch[1]) {
-              cartocss = tableMatch[1];
-            }
+              var cartocss = '';
 
-            for(var type in mapCarto) {
-              if($scope.isType(type)) {
-                for(var prop in mapCarto[type]) {
-                  var propRegex = new RegExp('\t' + regexEscape(prop) + ':(.*?);\n');
-                  var propMatch = cartocss.match(propRegex);
-                  var val = getProp(type, prop);
-                  if(propMatch != null) {
-                    var rep = '';
-                    if(val !== '')
-                      rep = '\t' + prop + ': ' + val + ';\n';
-                    if(propMatch[1].trim().toLowerCase() != val) {
-                      cartocss = cartocss.replace(propRegex, rep);
+              if(tableMatch != null && tableMatch[1]) {
+                cartocss = tableMatch[1];
+              }
+
+              for(var type in mapCarto) {
+                if($scope.isType(type)) {
+                  for(var prop in mapCarto[type]) {
+                    var propRegex = new RegExp('\t' + regexEscape(prop) + ':(.*?);\n');
+                    var propMatch = cartocss.match(propRegex);
+                    var val = getProp(type, prop);
+                    if(propMatch != null) {
+                      var rep = '';
+                      if(val !== '')
+                        rep = '\t' + prop + ': ' + val + ';\n';
+                      if(propMatch[1].trim().toLowerCase() != val) {
+                        cartocss = cartocss.replace(propRegex, rep);
+                      }
+                    } else {
+                      if(val !== '')
+                        cartocss += '\t' + prop + ': ' + val + ';\n';
                     }
-                  } else {
-                    if(val !== '')
-                      cartocss += '\t' + prop + ': ' + val + ';\n';
                   }
                 }
               }
-            }
 
-            if(tableMatch != null && tableMatch[1]) {
-              $scope.cartocss = $scope.cartocss.replace(tableRegex, '#' + $scope.table.title + ' {' + cartocss + '}');
-            } else if(!$scope.cartocss) {
-              $scope.cartocss = '#' + $scope.table.title + ' {\n' + cartocss + '}\n\n';
-            } else {
-              $scope.cartocss = '#' + $scope.table.title + ' {\n' + cartocss + '}\n\n' + $scope.cartocss;
+              if(tableMatch != null && tableMatch[1]) {
+                $scope.cartocss = $scope.cartocss.replace(tableRegex, '#' + $scope.table.title + ' {' + cartocss + '}');
+              } else if(!$scope.cartocss) {
+                $scope.cartocss = '#' + $scope.table.title + ' {\n' + cartocss + '}\n\n';
+              } else {
+                $scope.cartocss = '#' + $scope.table.title + ' {\n' + cartocss + '}\n\n' + $scope.cartocss;
+              }
+
             }
 
           }, true);

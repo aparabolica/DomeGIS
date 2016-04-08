@@ -53,6 +53,15 @@
         <p ng-show="item.snippet">{{item.snippet}}</p>
         <button ng-click="unsyncItem(item)">Remove</button>
         <a class="button" ui-sref="editContent({id: item.id})">Edit</a>
+        <a class="button" ui-sref="editView({contentId: item.id})">Create view</a>
+      </article>
+    </section>
+    <section id="views" ng-show="views.length">
+      <h2>Views</h2>
+      <article ng-repeat="view in views" class="view-item clearfix">
+        <h3>{{view.name}}</h3>
+        <a class="button" ui-sref="editView({id: view.id})">Edit view</a>
+        <button ng-click="removeView(view)">Delete view</button>
       </article>
     </section>
   </div>

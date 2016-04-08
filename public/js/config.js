@@ -59,6 +59,30 @@ angular.module('domegis')
         ]
       }
     })
+    .state('editView', {
+      url: '/views/edit?id&contentId',
+      templateUrl: '/views/view/edit.html',
+      controller: 'ViewEditCtrl',
+      resolve: {
+        Edit: [
+          '$stateParams',
+          'Server',
+          function($stateParams, Server) {
+            if($stateParams.id) {
+              return Server.get(Server.service('views'), $stateParams.id);
+            } else {
+              if($stateParams.contentId) {
+                return {
+                  contentId: $stateParams.contentId
+                }
+              } else {
+                return false;
+              }
+            }
+          }
+        ]
+      }
+    })
     .state('layers', {
       url: '/layers/',
       controller: 'LayerCtrl',
