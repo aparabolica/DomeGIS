@@ -10,6 +10,7 @@ module.exports = function(sequelize) {
     classMethods: {
       associate: function(models){
         layer.belongsTo(models.contents);
+        layer.hasMany(models.views);
       }
     }
   });

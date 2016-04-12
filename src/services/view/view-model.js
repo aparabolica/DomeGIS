@@ -8,7 +8,12 @@ module.exports = function(sequelize) {
     style: { type: Sequelize.JSON, required: true},
     cartocss: { type: Sequelize.TEXT, required: true}
   }, {
-    freezeTableName: true
+    freezeTableName: true,
+    classMethods: {
+      associate: function(models){
+        view.belongsTo(models.layers);
+      }
+    }
   });
 
   return view;
