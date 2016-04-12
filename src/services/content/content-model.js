@@ -18,10 +18,13 @@ module.exports = function(sequelize) {
     tags: { type: Sequelize.ARRAY(Sequelize.TEXT) },
     modifiedAt: { type: Sequelize.DATE, required: true}
   }, {
-    freezeTableName: true
+    freezeTableName: true,
+    classMethods: {
+      associate: function(models){
+        content.hasMany(models.layers);
+      }
+    }
   });
-
-  content.sync({ force: true, match: /_test$/ });
 
   return content;
 };

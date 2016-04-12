@@ -6,10 +6,13 @@ module.exports = function(sequelize) {
   var layer = sequelize.define('layers', {
     name: { type: Sequelize.STRING, required: true}
   }, {
-    freezeTableName: true
+    freezeTableName: true,
+    classMethods: {
+      associate: function(models){
+        layer.belongsTo(models.contents);
+      }
+    }
   });
-
-  layer.sync();
 
   return layer;
 };

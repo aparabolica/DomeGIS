@@ -1,10 +1,10 @@
 'use strict';
+var Sequelize = require('sequelize');
+var user = require('./user');
 var content = require('./content');
 var layer = require('./layer');
 var view = require('./view');
 var authentication = require('./authentication');
-var user = require('./user');
-var Sequelize = require('sequelize');
 
 module.exports = function() {
   var app = this;
@@ -18,8 +18,17 @@ module.exports = function() {
   app.configure(authentication);
   app.configure(user);
   app.configure(content);
-  app.configure(view);
   app.configure(layer);
+  app.configure(view);
+
+  // Setup relationships
+  var models = sequelize.models;
+  Object.keys(models)
+   .map(function(name) { return models[name] })
+   .filter(function(model) { return model.associate })
+   .forEach(function(model) { return  model.associate(models) } );
+
+  sequelize.sync({force: true});
 
   // disable windshaft when testing
   if (process.env.NODE_ENV != 'test') {

@@ -1,8 +1,10 @@
 'use strict';
 
+var async = require('async');
 var should = require('should');
 var app = require('../../../src/app');
 var Contents;
+var Layers;
 
 describe('content service', function()  {
   this.timeout(10000)
@@ -54,12 +56,18 @@ describe('content service', function()  {
       "numViews": 19326
   }
 
-  before(function(done) {
+  before(function(doneBefore) {
     this.server = app.listen(3030);
-    Contents = app.service('contents');
     this.server.once('listening', function(){
+
+      Contents = app.service('contents');
+      Layers = app.service('layers');
+
+
       // wait for server to sync db
-      setTimeout(done, 1000);
+      setTimeout(function(){
+        doneBefore()
+      }, 3000);
     });
   });
 
@@ -78,7 +86,14 @@ describe('content service', function()  {
       .create(payload)
       .then(function(content) {
         content.should.have.property('id', payload.id);
-        doneIt();
+        return Layers.create({name: 'my_layer'}).then(function(layer){
+          return layer.setContent(content).then(function(){
+            return content.getLayers().then(function(result){
+              result.should.be.an.Array().and.have.length(1);
+              doneIt();
+            });
+          });
+        });
       })
       .catch(doneIt);
   });
@@ -101,4 +116,5 @@ describe('content service', function()  {
       })
       .catch(doneIt);
   });
+
 });

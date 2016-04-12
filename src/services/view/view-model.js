@@ -11,7 +11,5 @@ module.exports = function(sequelize) {
     freezeTableName: true
   });
 
-  view.sync();
-
   return view;
 };
