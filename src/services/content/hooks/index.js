@@ -21,8 +21,24 @@ exports.after = {
   all: [],
   find: [],
   get: [],
-  create: [],
-  update: [],
+  create: [function(hook){
+    hook.app.service('layers').create({
+      name: 'layer 1',
+      contentId: hook.data.id
+    }).then(function(result){
+      return hook.app.service('layers').create({
+            name: 'layer 2',
+            contentId: hook.data.id
+      }).then(function(result){
+        return hook;
+      })
+    }).catch(function(err){
+      console.log('erro');
+      console.log(err);
+    });
+  }],
+  update: [function(hook){
+  }],
   patch: [],
   remove: []
 };
