@@ -89,16 +89,31 @@ angular.module('domegis')
         return item.id !== data.id;
       });
     });
-
-
     Server.find(viewService).then(function(data) {
       $scope.views = data.data;
       console.log('views', $scope.views);
     });
-
     $scope.removeView = function(item) {
       Server.remove(viewService, item.id);
     };
+
+    var layerService = Server.service('layers');
+    Server.on(layerService, 'created', function(data) {
+      $scope.layers.push(data);
+    });
+    Server.on(layerService, 'removed', function(data) {
+      $scope.layers = _.filter($scope.layers, function(item) {
+        return item.id !== data.id;
+      });
+    });
+    Server.find(layerService).then(function(data) {
+      $scope.layers = data.data;
+      console.log('layers', $scope.layers);
+    });
+    $scope.removeLayer = function(item) {
+      Server.remove(layerService, item.id);
+    };
+
 
   }
 ])
@@ -109,16 +124,24 @@ angular.module('domegis')
   'Edit',
   function($scope, Server, Edit) {
 
-    // var layerService = Server.service('layers');
+    var layerService = Server.service('layers');
 
-    $scope.layer = Edit;
+    $scope.layer = angular.copy(Edit);
 
     $scope.save = function(layer) {
-      // if(layer._id) {
-      //   Server.update(layerService, layer._id, layer);
-      // } else {
-      //   Server.create(layerService, layer);
-      // }
+      if(Edit.id) {
+        Server.update(layerService, Edit.id, layer).then(function(layer) {
+          $scope.layer = layer;
+        }, function(err) {
+          console.log(err);
+        });
+      } else {
+        Server.create(layerService, layer).then(function(layer) {
+          $scope.layer = layer;
+        }, function(err) {
+          console.log(err);
+        });
+      }
     };
 
   }

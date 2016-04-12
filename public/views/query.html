@@ -53,7 +53,16 @@
         <p ng-show="item.snippet">{{item.snippet}}</p>
         <button ng-click="unsyncItem(item)">Remove</button>
         <a class="button" ui-sref="editContent({id: item.id})">Edit</a>
-        <a class="button" ui-sref="editView({contentId: item.id})">Create view</a>
+        <a class="button" ui-sref="editLayer({contentId: item.id})">Add layer</a>
+      </article>
+    </section>
+    <section id="layers" ng-show="layers.length">
+      <h2>Layers</h2>
+      <article ng-repeat="layer in layers" class="layer-item clearfix">
+        <h3>{{layer.name}}</h3>
+        <a class="button" ui-sref="editLayer({id: layer.id})">Edit layer</a>
+        <button ng-click="removeLayer(layer)">Delete layer</button>
+        <a class="button" ui-sref="editView({layerId: layer.id})">Create view</a>
       </article>
     </section>
     <section id="views" ng-show="views.length">

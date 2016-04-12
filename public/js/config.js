@@ -60,7 +60,7 @@ angular.module('domegis')
       }
     })
     .state('editView', {
-      url: '/views/edit?id&contentId',
+      url: '/views/edit?id&layerId',
       templateUrl: '/views/view/edit.html',
       controller: 'ViewEditCtrl',
       resolve: {
@@ -71,9 +71,9 @@ angular.module('domegis')
             if($stateParams.id) {
               return Server.get(Server.service('views'), $stateParams.id);
             } else {
-              if($stateParams.contentId) {
+              if($stateParams.layerId) {
                 return {
-                  contentId: $stateParams.contentId
+                  layerId: $stateParams.layerId
                 }
               } else {
                 return false;
@@ -95,17 +95,24 @@ angular.module('domegis')
       }
     })
     .state('editLayer', {
-      url: '/layers/edit?id',
+      url: '/layers/edit?id&contentId',
       templateUrl: '/views/layer/edit.html',
       controller: 'LayerEditCtrl',
       resolve: {
         Edit: [
           '$stateParams',
-          function($stateParams) {
+          'Server',
+          function($stateParams, Server) {
             if($stateParams.id) {
-              return demo.layers[0];
+              return Server.get(Server.service('layers'), $stateParams.id);
             } else {
-              return {};
+              if($stateParams.contentId) {
+                return {
+                  contentId: $stateParams.contentId
+                }
+              } else {
+                return false;
+              }
             }
           }
         ]
