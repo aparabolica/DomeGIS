@@ -18,7 +18,7 @@ angular.module('domegis')
 
     $scope.availableTypes = Esri.getContentTypes();
 
-    $scope.doQuery = () => {
+    $scope.doQuery = function() {
       $scope.doSort();
       Esri.getContent(
         $scope.search,
@@ -33,42 +33,10 @@ angular.module('domegis')
       $scope.doQuery();
     }, 500), true);
 
-    $scope.doSort = () => {
+    $scope.doSort = function() {
       $scope.params = _.extend($scope.params, {
         sortField: $scope.sort,
         sortOrder: getSortOrder($scope.sort)
-      });
-    };
-
-    var contentService = Server.service('contents');
-
-    Server.find(contentService).then(function(data) {
-      console.log('find', data.data);
-      $scope.synced = data.data;
-    });
-
-    Server.on(contentService, 'created', function(data) {
-      $scope.synced.push(data);
-    });
-    Server.on(contentService, 'removed', function(data) {
-      $scope.synced = _.filter($scope.synced, function(item) {
-        return item.id !== data.id;
-      });
-    });
-
-    $scope.syncItem = function(item) {
-      Server.create(contentService, item).then(function(res) {
-        console.log('create', res);
-      }, function(err) {
-        console.log('create error', err);
-      });
-    };
-
-    $scope.unsyncItem = function(item) {
-      Server.remove(contentService, item.id).then(function(res) {
-        console.log('remove', res);
-      }, function(err) {
-        console.log('remove error', err);
       });
     };
 
@@ -80,40 +48,28 @@ angular.module('domegis')
       }
     }
 
-    var viewService = Server.service('views');
-    Server.on(viewService, 'created', function(data) {
-      $scope.views.push(data);
+    var contentService = Server.service('contents');
+
+    $scope.syncItem = function(item) {
+      Server.create(contentService, item).then(function(res) {
+        console.log('create', res);
+      }, function(err) {
+        console.log('create error', err);
+      });
+    };
+
+    Server.find(contentService).then(function(res) {
+      console.log('synced contents', res);
+      $scope.synced = res.data;
     });
-    Server.on(viewService, 'removed', function(data) {
-      $scope.views = _.filter($scope.views, function(item) {
+    Server.on(contentService, 'created', function(data) {
+      $scope.synced.push(data);
+    });
+    Server.on(contentService, 'removed', function(data) {
+      $scope.synced = _.filter($scope.synced, function(item) {
         return item.id !== data.id;
       });
     });
-    Server.find(viewService).then(function(data) {
-      $scope.views = data.data;
-      console.log('views', $scope.views);
-    });
-    $scope.removeView = function(item) {
-      Server.remove(viewService, item.id);
-    };
-
-    var layerService = Server.service('layers');
-    Server.on(layerService, 'created', function(data) {
-      $scope.layers.push(data);
-    });
-    Server.on(layerService, 'removed', function(data) {
-      $scope.layers = _.filter($scope.layers, function(item) {
-        return item.id !== data.id;
-      });
-    });
-    Server.find(layerService).then(function(data) {
-      $scope.layers = data.data;
-      console.log('layers', $scope.layers);
-    });
-    $scope.removeLayer = function(item) {
-      Server.remove(layerService, item.id);
-    };
-
 
   }
 ])

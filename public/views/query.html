@@ -21,7 +21,7 @@
   </div>
 </div>
 <div class="container">
-  <div class="six columns">
+  <div class="four columns">
     <section class="results">
       <h2>Results</h2>
       <article ng-repeat="item in content.results" class="content-item clearfix">
@@ -38,32 +38,10 @@
       </article>
     </section>
   </div>
-  <div class="six columns">
+  <div class="eight columns">
     <section id="synced" ng-show="synced.length">
       <h2>Synced data</h2>
-      <article ng-repeat="item in synced" class="content-item clearfix">
-        <div class="clearfix">
-          <h3>{{item.title}}</h3>
-        </div>
-        <div class="meta">
-          <p>Created: {{item.createdAt | formatDate}}</p>
-          <p>Modified: {{item.modifiedAt | formatDate}}</p>
-          <p>Updated (synced): {{item.updatedAt | formatDate}}</p>
-        </div>
-        <p ng-show="item.snippet">{{item.snippet}}</p>
-        <button ng-click="unsyncItem(item)">Remove</button>
-        <a class="button" ui-sref="editContent({id: item.id})">Edit</a>
-        <a class="button" ui-sref="editLayer({contentId: item.id})">Add layer</a>
-      </article>
-    </section>
-    <section id="layers" ng-show="layers.length">
-      <h2>Layers</h2>
-      <article ng-repeat="layer in layers" class="layer-item clearfix">
-        <h3>{{layer.name}}</h3>
-        <a class="button" ui-sref="editLayer({id: layer.id})">Edit layer</a>
-        <button ng-click="removeLayer(layer)">Delete layer</button>
-        <a class="button" ui-sref="editView({layerId: layer.id})">Create view</a>
-      </article>
+      <article ng-repeat="item in synced" content-item="item" class="content-item clearfix"></article>
     </section>
     <section id="views" ng-show="views.length">
       <h2>Views</h2>
