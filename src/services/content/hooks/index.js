@@ -1,8 +1,9 @@
 'use strict';
 
+var async = require('async');
+var request = require('request');
 var globalHooks = require('../../../hooks');
 var hooks = require('feathers-hooks');
-
 
 exports.before = {
   all: [],
@@ -11,6 +12,7 @@ exports.before = {
   create: [function(hook){
     hook.data.createdAt = hook.data.created;
     hook.data.modifiedAt = hook.data.modified;
+    return hook;
   }],
   update: [],
   patch: [],
@@ -22,23 +24,43 @@ exports.after = {
   find: [],
   get: [],
   create: [function(hook){
-    hook.app.service('layers').create({
-      name: 'layer 1',
-      contentId: hook.data.id
-    }).then(function(result){
-      return hook.app.service('layers').create({
-            name: 'layer 2',
-            contentId: hook.data.id
-      }).then(function(result){
-        return hook;
-      })
-    }).catch(function(err){
-      console.log('erro');
-      console.log(err);
+    return new Promise(function(resolve, reject){
+      var Layers = hook.app.service('layers');
+      request({
+        url: hook.data.url,
+        qs: {
+          f: 'json'
+        }
+      }, function(err, res, body){
+        if (err) return reject(err);
+
+        var results = JSON.parse(body);
+        var layers = results.layers;
+
+        async.eachSeries(layers, function(layer, doneLayer){
+          // set content id
+          layer.contentId = hook.data.id;
+          layer.index = layer.id;
+          layer.id = hook.data.id + '_' + layer.id;
+          Layers
+            .create(layer)
+            .then(function(result){
+              doneLayer();
+            })
+            .catch(reject);
+        }, resolve);
+      });
     });
   }],
-  update: [function(hook){
-  }],
+  update: [],
   patch: [],
-  remove: []
+  remove: [function(hook){
+    return new Promise(function(resolve, reject){
+      hook.app.service('layers')
+        .remove(null, {contentId: hook.id})
+        .then(function(results){
+          resolve();
+        });
+    });
+  }]
 };

@@ -1,6 +1,6 @@
 'use strict';
 
-var async = require('async');
+var request = require('request');
 var should = require('should');
 var app = require('../../../src/app');
 var Contents;
@@ -86,13 +86,9 @@ describe('content service', function()  {
       .create(payload)
       .then(function(content) {
         content.should.have.property('id', payload.id);
-        return Layers.create({name: 'my_layer'}).then(function(layer){
-          return layer.setContent(content).then(function(){
-            return content.getLayers().then(function(result){
-              result.should.be.an.Array().and.have.length(1);
-              doneIt();
-            });
-          });
+        return content.getLayers().then(function(result){
+          result.should.be.an.Array().and.have.length(28);
+          doneIt();
         });
       })
       .catch(doneIt);
@@ -117,4 +113,28 @@ describe('content service', function()  {
       .catch(doneIt);
   });
 
+  it('layers are created with content', function(doneIt){
+    Layers
+      .find({
+        contentId: payload.id
+      })
+      .then(function(result){
+        result.should.have.property('total', 28);
+        doneIt();
+      })
+      .catch(doneIt);
+  });
+
+  it('layers are removed with content', function(doneIt){
+    Contents
+      .remove(payload.id)
+      .then(function(result){
+        Layers
+          .find({ contentId: payload.id })
+          .then(function(result){
+            result.should.have.property('total', 0);
+            doneIt();
+          })
+      });
+  });
 });
