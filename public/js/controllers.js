@@ -26,6 +26,7 @@ angular.module('domegis')
         $scope.params
       ).then(function(data) {
         $scope.content = data;
+        console.log(data);
       });
     };
 
@@ -100,6 +101,15 @@ angular.module('domegis')
       }
     };
 
+  }
+])
+
+.controller('ArcGisCtrl', [
+  '$scope',
+  function($scope) {
+    $scope.getArcGisUrl = function(content) {
+      return 'http://' + arcgis.organization + '.maps.arcgis.com/home/item.html?id=' + content.id;
+    }
   }
 ])
 

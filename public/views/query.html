@@ -21,10 +21,33 @@
   </div>
 </div>
 <div class="container">
-  <div class="four columns">
+  <div class="twelve columns">
     <section class="results">
       <h2>Results</h2>
-      <article ng-repeat="item in content.results" class="content-item clearfix">
+      <table class="results" ng-controller="ArcGisCtrl">
+        <thead>
+          <tr>
+            <td>Name</td>
+            <td>Date</td>
+            <td>Type</td>
+            <td>Synchronize</td>
+            <td>Source</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in content.results">
+            <td class="main">{{item.title}}</td>
+            <td>
+              {{item.created | formatDate}}
+              <span class="modified">Modified: {{item.modified | formatDate}}</span>
+            </td>
+            <td>{{item.type}}</td>
+            <td><a href="javascript:void(0);" ng-click="syncItem(item)" class="fa fa-toggle-on"></a></td>
+            <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link"></a></td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- <article ng-repeat="item in content.results" class="content-item clearfix">
         <div class="clearfix">
           <content-thumbnail content="item"></content-thumbnail>
           <h3>{{item.title}}</h3>
@@ -35,9 +58,11 @@
         </div>
         <p ng-show="item.snippet">{{item.snippet}}</p>
         <button ng-click="syncItem(item)">Synchronize</button>
-      </article>
+      </article> -->
     </section>
   </div>
+</div>
+<div class="container">
   <div class="eight columns">
     <section id="synced" ng-show="synced.length">
       <h2>Synced data</h2>
