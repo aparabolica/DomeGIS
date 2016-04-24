@@ -71,11 +71,6 @@ describe('content service', function()  {
     });
   });
 
-  after(function(done) {
-    this.server.close(done);
-  });
-
-
   it('registered the contents service', function() {
     should.exist(Contents);
   });
@@ -126,15 +121,26 @@ describe('content service', function()  {
   });
 
   it('layers are removed with content', function(doneIt){
-    Contents
-      .remove(payload.id)
-      .then(function(result){
-        Layers
-          .find({ contentId: payload.id })
+    // create a layer not related to content
+    Layers
+      .create({
+        id: 'aaaaa',
+        name: 'title'
+      })
+      .then(function(layer) {
+        Contents
+          .remove(payload.id)
           .then(function(result){
-            result.should.have.property('total', 0);
-            doneIt();
+            Layers
+              .find({ contentId: payload.id })
+              .then(function(result){
+                result.should.have.property('total', 1);
+                doneIt();
+              })
+              .catch(doneIt);
           })
-      });
+          .catch(doneIt);
+      })
+      .catch(doneIt);
   });
 });

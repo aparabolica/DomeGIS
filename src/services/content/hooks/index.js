@@ -57,7 +57,7 @@ exports.after = {
   remove: [function(hook){
     return new Promise(function(resolve, reject){
       hook.app.service('layers')
-        .remove(null, {contentId: hook.id})
+        .remove(null, { query: { contentId: hook.id }})
         .then(function(results){
           resolve();
         });
