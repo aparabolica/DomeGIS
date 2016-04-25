@@ -10,12 +10,17 @@
       <tr>
         <td>Name</td>
         <td>Synchronize</td>
+        <td>Views</td>
+      </tr>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="layer in layers">
         <td class="main">{{layer.name}}</td>
         <td><a class="fa fa-toggle-off" href="javascript:void(0);"></a></td>
+        <td>
+          <a class="button disabled" ui-sref="editView({layerId: layer.id})">Create view</a>
+        </td>
       </tr>
     </tbody>
   </table>
