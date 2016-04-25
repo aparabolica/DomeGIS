@@ -1,15 +1,9 @@
-<div class="clearfix">
-  <h3>{{content.title}}</h3>
-</div>
 <div class="meta">
-  <p>Created: {{content.createdAt | formatDate}}</p>
-  <p>Modified: {{content.modifiedAt | formatDate}}</p>
-  <p>Updated (synced): {{content.updatedAt | formatDate}}</p>
+  <p>Last sync: {{content.updatedAt | formatDate}}</p>
 </div>
 <p ng-show="content.snippet">{{content.snippet}}</p>
-<button ng-click="unsyncItem(content)">Remove</button>
-<a class="button" ui-sref="editContent({id: content.id})">Edit</a>
-
+<!-- <button ng-click="unsyncItem(content)">Remove</button>
+<a class="button" ui-sref="editContent({id: content.id})">Edit</a> -->
 <section id="{{content.id}}_layers" ng-show="layers.length">
   <article ng-repeat="layer in layers" layer-item="layer" class="layer-item clearfix"></article>
 </section>

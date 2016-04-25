@@ -27,6 +27,7 @@
       <table class="results" ng-controller="ArcGisCtrl">
         <thead>
           <tr>
+            <td></td>
             <td>Name</td>
             <td>Date</td>
             <td>Type</td>
@@ -34,8 +35,11 @@
             <td>Source</td>
           </tr>
         </thead>
-        <tbody ng-repeat="item in content.results">
+        <tbody ng-repeat="item in content.results" ng-init="synced = isSynced(item)">
           <tr>
+            <td class="full">
+              <content-thumbnail content="item"></content-thumbnail>
+            </td>
             <td class="main">{{item.title}}</td>
             <td>
               {{item.created | formatDate}}
@@ -45,7 +49,10 @@
             <td><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
             <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link"></a></td>
           </tr>
-          <tr ng-show="isSynced(item)">
+          <tr ng-show="synced">
+            <td class="sub" colspan="6">
+              <div content-item="synced"></div>
+            </td>
           </tr>
         </tbody>
       </table>
