@@ -1,9 +1,23 @@
 <div class="meta">
-  <p>Last sync: {{content.updatedAt | formatDate}}</p>
+  <p class="info">Last sync: {{content.updatedAt | formatDate}}</p>
 </div>
 <p ng-show="content.snippet">{{content.snippet}}</p>
 <!-- <button ng-click="unsyncItem(content)">Remove</button>
 <a class="button" ui-sref="editContent({id: content.id})">Edit</a> -->
 <section id="{{content.id}}_layers" ng-show="layers.length">
-  <article ng-repeat="layer in layers" layer-item="layer" class="layer-item clearfix"></article>
+  <table class="sub-table">
+    <thead>
+      <tr>
+        <td>Name</td>
+        <td>Synchronize</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="layer in layers">
+        <td class="main">{{layer.name}}</td>
+        <td><a class="fa fa-toggle-off" href="javascript:void(0);"></a></td>
+      </tr>
+    </tbody>
+  </table>
+  <!-- <article ng-repeat="layer in layers" layer-item="layer" class="layer-item clearfix"></article> -->
 </section>

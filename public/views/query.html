@@ -31,12 +31,12 @@
             <td>Name</td>
             <td>Date</td>
             <td>Type</td>
-            <td>Synchronize</td>
             <td>Source</td>
+            <td>Add to collection</td>
           </tr>
         </thead>
-        <tbody ng-repeat="item in content.results" ng-init="synced = isSynced(item)">
-          <tr>
+        <tbody ng-repeat="item in content.results" ng-class="{active: item.$viewLayers}">
+          <tr class="clickable" ng-click="toggleLayers(item)">
             <td class="full">
               <content-thumbnail content="item"></content-thumbnail>
             </td>
@@ -46,12 +46,12 @@
               <span class="modified">Modified: {{item.modified | formatDate}}</span>
             </td>
             <td><span class="tag">{{item.type}}</span></td>
-            <td><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
             <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link"></a></td>
+            <td><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
           </tr>
-          <tr ng-show="synced">
+          <tr ng-show="isSynced(item)">
             <td class="sub" colspan="6">
-              <div content-item="synced"></div>
+              <div content-item="isSynced(item)"></div>
             </td>
           </tr>
         </tbody>

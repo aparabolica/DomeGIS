@@ -3,6 +3,22 @@ body {
   font-family: "Open Sans", "Helvetica", "Arial", sans-serif;
 }
 
+p.info {
+  background: #fff;
+  padding: 5px 12px;
+  border-radius: 15px;
+  color: #999;
+  box-shadow: 0 0 2px rgba(0,0,0,0.1);
+  &:hover {
+    color: #666;
+    box-shadow: 0 0 2px rgba(0,0,0,0.15);
+  }
+}
+
+table {
+  width: 100%;
+}
+
 table.results {
   thead {
     td {
@@ -11,6 +27,12 @@ table.results {
     }
   }
   tbody {
+    tr.clickable:hover {
+      box-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 2;
+      cursor: pointer;
+    }
     td.main {
       font-size: 1.2em;
     }
@@ -60,6 +82,12 @@ table.results {
       font-size: .8em;
       background: #f6f6f6;
       padding: 20px;
+      display: none;
+    }
+    &.active {
+      td.sub {
+        display: table-cell;
+      }
     }
   }
 }

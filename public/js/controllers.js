@@ -52,11 +52,13 @@ angular.module('domegis')
     }
 
     $scope.syncItem = function(item) {
-      Server.create(contentService, item).then(function(res) {
+      var promise = Server.create(contentService, item);
+      promise.then(function(res) {
         console.log('create', res);
       }, function(err) {
         console.log('create error', err);
       });
+      return promise;
     };
 
     $scope.unsyncItem = function(item) {
@@ -70,11 +72,22 @@ angular.module('domegis')
 
     $scope.toggleSync = function(item) {
       if(!$scope.isSynced(item)) {
-        $scope.syncItem(item);
+        $scope.syncItem(item).then(function() {
+          item.$viewLayers = true;
+        });
       } else {
-        $scope.unsyncItem(item);
+        if(confirm('Are you sure you\'d like to remove this content from collection?'))
+          $scope.unsyncItem(item);
       }
     };
+
+    $scope.toggleLayers = function(item) {
+      if(item.$viewLayers) {
+        item.$viewLayers = false;
+      } else {
+        item.$viewLayers = true;
+      }
+    }
 
     Server.find(contentService).then(function(res) {
       console.log('synced contents', res);
