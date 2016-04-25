@@ -85,7 +85,13 @@ angular.module('domegis')
       if(item.$viewLayers) {
         item.$viewLayers = false;
       } else {
-        item.$viewLayers = true;
+        if(!$scope.isSynced(item)) {
+          if(confirm('Would you like to add this content to collection?')) {
+            $scope.toggleSync(item);
+          }
+        } else {
+          item.$viewLayers = true;
+        }
       }
     }
 
