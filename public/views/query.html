@@ -34,16 +34,18 @@
             <td>Source</td>
           </tr>
         </thead>
-        <tbody>
-          <tr ng-repeat="item in content.results">
+        <tbody ng-repeat="item in content.results">
+          <tr>
             <td class="main">{{item.title}}</td>
             <td>
               {{item.created | formatDate}}
               <span class="modified">Modified: {{item.modified | formatDate}}</span>
             </td>
-            <td>{{item.type}}</td>
-            <td><a href="javascript:void(0);" ng-click="syncItem(item)" class="fa fa-toggle-on"></a></td>
+            <td><span class="tag">{{item.type}}</span></td>
+            <td><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
             <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link"></a></td>
+          </tr>
+          <tr ng-show="isSynced(item)">
           </tr>
         </tbody>
       </table>

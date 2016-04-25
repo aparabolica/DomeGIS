@@ -6,6 +6,8 @@ angular.module('domegis')
   'esriService',
   function($scope, Content, Server, Esri) {
 
+    var contentService = Server.service('contents');
+
     $scope.content = Content;
 
     $scope.search = '';
@@ -49,14 +51,29 @@ angular.module('domegis')
       }
     }
 
-    var contentService = Server.service('contents');
-
     $scope.syncItem = function(item) {
       Server.create(contentService, item).then(function(res) {
         console.log('create', res);
       }, function(err) {
         console.log('create error', err);
       });
+    };
+
+    $scope.unsyncItem = function(item) {
+      Server.remove(contentService, item.id).then(function(res) {
+        console.log('remove', res);
+      }, function(err) {
+        console.log('remove error', err);
+      });
+    };
+
+
+    $scope.toggleSync = function(item) {
+      if(!$scope.isSynced(item)) {
+        $scope.syncItem(item);
+      } else {
+        $scope.unsyncItem(item);
+      }
     };
 
     Server.find(contentService).then(function(res) {
@@ -71,6 +88,12 @@ angular.module('domegis')
         return item.id !== data.id;
       });
     });
+
+    $scope.isSynced = function(item) {
+      return _.find($scope.synced, function(s) {
+        return item.id == s.id;
+      });
+    };
 
   }
 ])
