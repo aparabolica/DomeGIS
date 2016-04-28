@@ -41,6 +41,7 @@ exports.after = {
           // set content id
           layer.contentId = hook.data.id;
           layer.index = layer.id;
+          layer.url = hook.data.url + '/' + + layer.id;
           layer.id = hook.data.id + '_' + layer.id;
           Layers
             .create(layer)
