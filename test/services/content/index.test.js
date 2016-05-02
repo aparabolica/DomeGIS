@@ -9,53 +9,46 @@ var Contents;
 var Layers;
 
 describe('content service', function()  {
-  this.timeout(10000)
+  this.timeout(600000)
 
   var payloadContent1 = {
-      "id": "cf11ef6d41044be287e31f5a017f4f96",
-      "owner": "WWF_Globil",
-      "created": 1416245605000,
-      "modified": 1454435077000,
-      "guid": null,
-      "name": "Amazon_Globil",
-      "title": "Amazon_Globil",
-      "type": "Feature Service",
-      "typeKeywords": ["ArcGIS Server", "Data", "Feature Access",
-          "Feature Service", "Service", "Hosted Service"
-      ],
-      "description": null,
-      "tags": ["WWF", "GLOBIL",
-          "South America", "Brazil", "Bolivia", "Peru", "Ecuador", "Colombia", "Venezuela", "Guiana",
-          "Suriname", "French Guiana", "Amazon", "Amazon and Guianas", "Panamazon", "biodiversity", "biome",
-          "boundary", "ecosystem", "infrastructure", "landuse", "landcover", "natural resources", "threats",
-          "terrestrial", "fire", "protected area", "overlay layers", "web map", "webmap", "interactive map"
-      ],
-      "snippet": "overview of the amazon ecoregion",
-      "thumbnail": "thumbnail/thumbnail.png",
-      "documentation": null,
-      "extent": [
-          [-79.9000015, -30.832888891],
-          [-35.203611112, 10.5]
-      ],
-      "spatialReference": "WGS_1984_Web_Mercator_Auxiliary_Sphere",
-      "accessInformation": null,
-      "licenseInfo": null,
-      "culture": "de-de",
-      "properties": null,
-      "url": "http://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/Amazon_Globil/FeatureServer",
-      "access": "public",
-      "size": -1,
-      "appCategories": [],
-      "industries": [],
-      "languages": [],
-      "largeThumbnail": null,
-      "banner": null,
-      "screenshots": [],
-      "listed": false,
-      "numComments": 0,
-      "numRatings": 0,
-      "avgRating": 0,
-      "numViews": 19326
+    "id": "4831c454070f4571a14230d3c3b1253f",
+    "owner": "bernardo@wwf.org.br_panda",
+    "created": 1452008850000,
+    "modified": 1452008865000,
+    "guid": null,
+    "name": "BASE_DE_DADOS",
+    "title": "BASE_DE_DADOS",
+    "type": "Feature Service",
+    "typeKeywords": ["ArcGIS Server", "Data", "Feature Access", "Feature Service", "Metadata", "Multilayer", "Service", "Hosted Service"],
+    "description": null,
+    "tags": ["xxx"],
+    "snippet": "xxx",
+    "thumbnail": "thumbnail/thumbnail.png",
+    "documentation": null,
+    "extent": [
+        [-47.6417808970707, -20.93332468845277],
+        [-36.30010159391338, -7.266646618809102]
+    ],
+    "spatialReference": "GCS_SIRGAS_2000",
+    "accessInformation": null,
+    "licenseInfo": null,
+    "culture": "pt-br",
+    "properties": null,
+    "url": "http://services1.arcgis.com/RTK5Unh1Z71JKIiR/arcgis/rest/services/BASE_DE_DADOS/FeatureServer",
+    "access": "public",
+    "size": -1,
+    "appCategories": [],
+    "industries": [],
+    "languages": [],
+    "largeThumbnail": null,
+    "banner": null,
+    "screenshots": [],
+    "listed": false,
+    "numComments": 0,
+    "numRatings": 0,
+    "avgRating": 0,
+    "numViews": 31
   }
 
   var payloadContent2 = {
@@ -124,7 +117,7 @@ describe('content service', function()  {
       .then(function(content) {
         content.should.have.property('id', payloadContent1.id);
         return content.getLayers().then(function(result){
-          result.should.be.an.Array().and.have.length(28);
+          result.should.be.an.Array().and.have.length(3);
           doneIt();
         });
       })
@@ -156,7 +149,7 @@ describe('content service', function()  {
         contentId: payloadContent1.id
       })
       .then(function(result){
-        result.should.have.property('total', 28);
+        result.should.have.property('total', 3);
 
         doneIt();
       })

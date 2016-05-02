@@ -6,6 +6,7 @@ module.exports = function(sequelize) {
   var layer = sequelize.define('layers', {
     id: { type: Sequelize.STRING, primaryKey: true},
     contentId: { type: Sequelize.STRING },
+    geometryType: { type: Sequelize.STRING },
     index: { type: Sequelize.INTEGER},
     name: { type: Sequelize.STRING, required: true},
     fields: { type: Sequelize.ARRAY(Sequelize.JSON) },
