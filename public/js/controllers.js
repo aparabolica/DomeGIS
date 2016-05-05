@@ -1,4 +1,12 @@
 angular.module('domegis')
+
+.controller('AuthCtrl', [
+  '$scope',
+  function($scope) {
+
+  }
+])
+
 .controller('QueryCtrl', [
   '$scope',
   'Content',

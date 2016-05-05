@@ -1,6 +1,66 @@
-html,
+@blue: #295f94;
+
 body {
-  font-family: "Open Sans", "Helvetica", "Arial", sans-serif;
+  background: #fff;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar{
+  width: 15px;
+  background-color: #fff;
+}
+::-webkit-scrollbar-thumb{
+  background-color: @blue;
+  border-radius: 15px;
+  border: 3.5px solid #fff;
+}
+::-webkit-scrollbar-thumb:hover{
+  background-color: lighten(@blue, 10%);
+}
+::-webkit-scrollbar-thumb:active{
+  background-color: lighten(@blue, 15%);
+}
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.container {
+  width: 90%;
+  max-width: 1600px;
+  .twelve.columns {
+    .container {
+      width: 100%;
+    }
+  }
+}
+
+h1 {
+  letter-spacing: 0;
+}
+
+button,
+.button,
+a.button,
+input[type='submit'] {
+  background: #0abd56;
+  border-radius: 0;
+  border: 0;
+  color: #fff;
+  height: auto;
+  padding: 10px 15px;
+  line-height: 1.6;
+  white-space: normal;
+  &:focus,
+  &:hover {
+    background: lighten(#0abd56, 5%);
+    color: #fff;
+  }
+  &:active {
+    background: lighten(#0abd56, 7%);
+  }
 }
 
 p.info {
@@ -19,7 +79,79 @@ table {
   width: 100%;
 }
 
+#masthead {
+  background: #222 url(../img/water_bg.jpg) bottom center no-repeat;
+  color: #fff;
+  padding: 8rem 0;
+  margin: 0 0 4rem;
+  h1 {
+    font-weight: 600;
+    text-transform: lowercase;
+    float: left;
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
+  }
+  #mastnav {
+    margin-top: 2rem;
+    float: right;
+    a {
+      text-transform: uppercase;
+      font-size: .8em;
+      font-weight: 600;
+      color: #fff;
+      background: rgba(255,255,255, 0.07);
+      padding: 1rem;
+      &:hover {
+        background: rgba(255,255,255,0.1);
+        text-decoration: none;
+      }
+    }
+  }
+}
+
+#content {
+  background: #fff;
+  margin: -8rem 0 0;
+  padding: 4rem;
+  box-shadow: 0 0 3px rgba(0,0,0,0.3), 0 0 0 18px rgba(255,255,255,0.07);
+  #inner-header {
+    margin: -4rem -4rem 2rem;
+    padding: 4rem 4rem 2rem;
+    background: @blue;
+    border-bottom: 1px solid lighten(@blue, 10%);
+    color: #fff;
+    input[type=text],
+    input[type=email],
+    input[type=password],
+    select,
+    select option,
+    textarea {
+      background: lighten(@blue, 10%);
+      border-radius: 0;
+      border: 0;
+      box-shadow: 0 0 0 0;
+    }
+  }
+  .results-container {
+    margin: 0 -4rem;
+  }
+}
+
+#auth_form {
+  margin: 2rem 0 0;
+  input {
+    height: auto;
+    padding: 2rem;
+    font-size: 1.2em;
+    width: 100%;
+    display: block;
+  }
+}
+
 table.results {
+  // margin: 0 -4rem;
   thead {
     td {
       font-weight: 600;
@@ -27,6 +159,7 @@ table.results {
     }
   }
   tbody {
+    &.active tr.clickable,
     tr.clickable:hover {
       box-shadow: 0 1px 3px rgba(0,0,0,0.15);
       position: relative;

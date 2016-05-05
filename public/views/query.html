@@ -1,6 +1,6 @@
-<div class="container">
-  <div class="twelve columns">
-    <header>
+<header id="inner-header" class="clearfix">
+  <div class="container">
+    <div class="twelve columns">
       <nav>
         <form>
           <input type="text" ng-model="search" placeholder="Search anything"/>
@@ -17,13 +17,12 @@
         </form>
       </nav>
       <p>Showing {{content.start}}-{{content.num}} out of {{content.total}} items.</p>
-    </header>
+    </div>
   </div>
-</div>
-<div class="container">
-  <div class="twelve columns">
-    <section class="results">
-      <h2>Results</h2>
+</header>
+<section class="results-container" class="clearfix">
+  <div class="container">
+    <div class="twelve columns">
       <table class="results" ng-controller="ArcGisCtrl">
         <thead>
           <tr>
@@ -68,9 +67,9 @@
         <p ng-show="item.snippet">{{item.snippet}}</p>
         <button ng-click="syncItem(item)">Synchronize</button>
       </article> -->
-    </section>
+    </div>
   </div>
-</div>
+</section>
 <!-- <div class="container">
   <div class="eight columns">
     <section id="synced" ng-show="synced.length">

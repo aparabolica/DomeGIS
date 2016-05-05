@@ -10,7 +10,7 @@ angular.module('domegis')
       },
       templateUrl: '/views/content/item.html',
       link: function(scope, element, attrs) {
-        
+
         var contentService = Server.service('contents');
         var layerService = Server.service('layers');
 

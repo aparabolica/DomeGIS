@@ -4,6 +4,8 @@
     <meta charset="utf-8" />
     <title>DomeGIS</title>
 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway:400,700,600italic,600,500italic,500,400italic,300italic,300,200italic,200,100italic,100,800" />
+
     <link rel="stylesheet" href="/assets/bootstrap/dist/css/bootstrap.min.css" />
 
     <link rel="stylesheet" href="/assets/fontawesome/css/font-awesome.min.css" />
@@ -25,9 +27,17 @@
       <div class="container">
         <div class="twelve columns">
           <h1><a ui-sref="home">DomeGIS</a></h1>
+          <nav id="mastnav">
+            <a ui-sref="login">Login</a>
+          </nav>
         </div>
       </div>
-    <div ui-view></div>
+    </header>
+    <div class="container">
+      <div class="twelve columns">
+        <div id="content" ui-view></div>
+      </div>
+    </div>
 
     <script type="text/javascript" src="/assets/ace-builds/src-min/ace.js"></script>
     <script type="text/javascript" src="/assets/ace-builds/src-min/mode-css.js"></script>

@@ -41,8 +41,13 @@ angular.module('domegis')
         ]
       }
     })
+    .state('login', {
+      url: '/login/',
+      controller: 'AuthCtrl',
+      templateUrl: '/views/login.html'
+    })
     .state('editContent', {
-      url: '/contents/edit?id',
+      url: '/contents/edit/?id',
       templateUrl: '/views/content/edit.html',
       controller: 'ContentEditCtrl',
       resolve: {
@@ -60,7 +65,7 @@ angular.module('domegis')
       }
     })
     .state('editView', {
-      url: '/views/edit?id&layerId',
+      url: '/views/edit/?id&layerId',
       templateUrl: '/views/view/edit.html',
       controller: 'ViewEditCtrl',
       resolve: {
