@@ -5,6 +5,7 @@ var Sequelize = require('sequelize');
 module.exports = function(sequelize) {
   var view = sequelize.define('views', {
     name: { type: Sequelize.STRING, required: true},
+    layergroupId: { type: Sequelize.STRING },
     style: { type: Sequelize.JSON, required: true},
     cartocss: { type: Sequelize.TEXT, required: true}
   }, {

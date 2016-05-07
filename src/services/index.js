@@ -32,6 +32,6 @@ module.exports = function() {
 
   // disable windshaft when testing
   if (process.env.NODE_ENV != 'test') {
-    app.configure(require('./tiles-new'));
+    app.configure(require('./tiles'));
   }
 };

@@ -5,6 +5,7 @@
  */
 
 var _ = require('underscore');
+var async = require('async');
 var step = require('step');
 var windshaft = require('windshaft');
 
@@ -29,25 +30,32 @@ function MapController(app, mapStore, mapBackend, tileBackend, attributesBackend
   self.tileBackend = tileBackend;
   self.attributesBackend = attributesBackend;
 
-  app.get(opts.baseUrl + '/sample/:z/:x/:y.:format', self.tile.bind(self));
+  app.get(opts.baseUrl + '/:viewId/:z/:x/:y.:format', self.tile.bind(self));
 
-  self.initSampleLayerGroup(app);
-}
-
-MapController.prototype.initSampleLayerGroup = function(app) {
-  var self = this;
-
+  var viewService = app.service('views');
   var opts = app.get('windshaftOpts');
 
+  viewService.find({}).then(function(views){
+    _.each(views.data, function(view){
+      self.initSampleLayerGroup(app, view, opts);
+    });
+  })
+}
+
+MapController.prototype.initSampleLayerGroup = function(app, view, opts) {
+  var self = this;
+
   var dbParams = opts.dbParams;
+
+  var defaultCartoCSS = "#style{ polygon-fill: blue;  line-color: red; marker-width:8; marker-fill: red; }";
 
   var sampleMapnikLayer1 = {
     type: 'mapnik',
     options: {
-      sql: 'select * from domegis',
-      geom_column: "the_geom",
+      sql: 'select id, geometry from "' + view.layerId + 's"',
+      geom_column: "geometry",
       cartocss_version: "2.0.0",
-      cartocss: "#style{ polygon-fill: blue; line-color: red;}"
+      cartocss: view.cartocss || defaultCartoCSS
     }
   }
 
@@ -56,14 +64,17 @@ MapController.prototype.initSampleLayerGroup = function(app) {
     layers: [ sampleMapnikLayer1 ]
   });
 
-
   self.mapBackend.createLayergroup(
     mapConfig, dbParams, new DummyMapConfigProvider(mapConfig, dbParams), function(err, res){
-      if (!err) app.set("layergroupId", res.layergroupid);
+
+      if (!err) {
+        view.layergroupId = res.layergroupid;
+        view.save()
+      } else {
+        console.log('error: ' + err);
+      }
     }
   );
-
-
 };
 
 // Gets a tile for a given token and set of tile ZXY coords. (OSM style)
@@ -81,30 +92,36 @@ MapController.prototype.layer = function(req, res, next) {
 
 MapController.prototype.tileOrLayer = function (req, res) {
   var self = this;
+  var views = self._app.service('views');
 
-  var opts = self._app.get('windshaftOpts');
+  views.get(parseInt(req.params.viewId)).then(function(view){
 
-  var params = _.extend(req.params, opts.dbParams);
+    var opts = self._app.get('windshaftOpts');
 
-  params.token = self._app.get('layergroupId');
+    var params = _.extend(req.params, opts.dbParams);
 
-  step(
-    function mapController$getTile(err) {
-      if ( err ) {
-        throw err;
+    params.token = view.layergroupId;
+
+    step(
+      function mapController$getTile(err) {
+        if ( err ) {
+          throw err;
+        }
+        self.tileBackend.getTile(new MapStoreMapConfigProvider(self.mapStore, params), params, this);
+      },
+      function mapController$finalize(err, tile, headers) {
+        self.finalizeGetTileOrGrid(err, req, res, tile, headers);
+        return null;
+      },
+      function finish(err) {
+        if ( err ) {
+          console.error("windshaft.tiles: " + err);
+        }
       }
-      self.tileBackend.getTile(new MapStoreMapConfigProvider(self.mapStore, params), params, this);
-    },
-    function mapController$finalize(err, tile, headers) {
-      self.finalizeGetTileOrGrid(err, req, res, tile, headers);
-      return null;
-    },
-    function finish(err) {
-      if ( err ) {
-        console.error("windshaft.tiles: " + err);
-      }
-    }
-  );
+    );
+  }).catch(function(err){
+    console.log('error'+err);
+  });
 };
 
 // This function is meant for being called as the very last

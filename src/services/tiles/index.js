@@ -30,10 +30,11 @@ module.exports = function() {
 
   // set mapnik version in runtime
   opts.grainstore = {
-    mapnik_version: mapnik.versions.mapnik
+    mapnik_version: mapnik.versions.mapnik,
+    datasource: { srid: 4326 }
   }
 
-  // set global needed by windshat
+  // set global needed by windshaft
   global = opts.global;
 
   /*
