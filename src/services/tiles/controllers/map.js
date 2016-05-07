@@ -33,17 +33,22 @@ function MapController(app, mapStore, mapBackend, tileBackend, attributesBackend
   app.get(opts.baseUrl + '/:viewId/:z/:x/:y.:format', self.tile.bind(self));
 
   var viewService = app.service('views');
-  var opts = app.get('windshaftOpts');
 
   viewService.find({}).then(function(views){
     _.each(views.data, function(view){
-      self.initSampleLayerGroup(app, view, opts);
+      self.getLayerGroupId(view, function(err, layergroupId){
+        if (err) return console.log(err);
+        view.layergroupId = layergroupId;
+        view.save();
+      })
     });
   })
 }
 
-MapController.prototype.initSampleLayerGroup = function(app, view, opts) {
+MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
   var self = this;
+
+  var opts = self._app.get('windshaftOpts');
 
   var dbParams = opts.dbParams;
 
@@ -64,18 +69,13 @@ MapController.prototype.initSampleLayerGroup = function(app, view, opts) {
     layers: [ sampleMapnikLayer1 ]
   });
 
-  self.mapBackend.createLayergroup(
-    mapConfig, dbParams, new DummyMapConfigProvider(mapConfig, dbParams), function(err, res){
-
-      if (!err) {
-        view.layergroupId = res.layergroupid;
-        view.save()
-      } else {
-        console.log('error: ' + err);
-      }
-    }
-  );
-};
+  self
+    .mapBackend
+    .createLayergroup(mapConfig, dbParams, new DummyMapConfigProvider(mapConfig, dbParams), function(err, res){
+      if (err) doneGetLayerGroupId(err)
+      else doneGetLayerGroupId(null, res.layergroupid);
+    });
+}
 
 // Gets a tile for a given token and set of tile ZXY coords. (OSM style)
 MapController.prototype.tile = function(req, res) {

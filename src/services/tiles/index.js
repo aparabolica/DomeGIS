@@ -79,4 +79,6 @@ module.exports = function() {
    */
   var mapController = new MapController(app, mapStore, mapBackend, tileBackend, attributesBackend);
 
+  app.set('mapController', mapController);
+
 };
