@@ -85,6 +85,19 @@ angular.module('domegis')
               }
             }
           }
+        ],
+        Layer: [
+          '$stateParams',
+          'Server',
+          'Edit',
+          function($stateParams, Server, Edit) {
+            var id = $stateParams.layerId || Edit.layerId;
+            if(id) {
+              return Server.get(Server.service('layers'), id);
+            } else {
+              return false;
+            }
+          }
         ]
       }
     })
@@ -124,27 +137,13 @@ angular.module('domegis')
       }
     })
     .state('map', {
-      url: '/map/',
+      url: '/map/:viewId',
       templateUrl: '/views/map.html',
       controller: [
+        '$stateParams',
         '$scope',
-        function($scope) {
-          $scope.url = '/tiles';
-          $scope.config = JSON.stringify({
-            "version": "1.2.0",
-            "layers": [
-              {
-                "type": "mapnik",
-                "options": {
-                  "sql": "select * from domegis",
-                  "geom_column": "the_geom",
-                  "cartocss": "#style{ polygon-fill: blue; line-color: red;}",
-                  "cartocss_version": "2.0.0",
-                  "interactivity": "subprefeit"
-                }
-              }
-            ]
-          }, null, 2);
+        function($stateParams, $scope) {
+          $scope.viewId = $stateParams.viewId;
         }
       ]
     })

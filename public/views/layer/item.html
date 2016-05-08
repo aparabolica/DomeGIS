@@ -1,8 +1,5 @@
-<h3>{{layer.name}}</h3>
-<a class="button" ui-sref="editLayer({id: layer.id})">Edit layer</a>
-<button ng-click="remove(layer)">Delete layer</button>
-<a class="button" ui-sref="editView({layerId: layer.id})">Create view</a>
-
-<section id="{{layer.id}}_views" ng-show="views.length">
-  <article ng-repeat="view in views" view-item="view" class="view-item clearfix"></article>
-</section>
+<td class="main">{{layer.name}}</td>
+<td>
+  <div ng-repeat="view in views" view-item="view"></div>
+  <a class="button" ui-sref="editView({layerId: layer.id})">Create view</a>
+</td>

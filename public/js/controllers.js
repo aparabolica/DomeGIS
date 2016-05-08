@@ -188,9 +188,13 @@ angular.module('domegis')
   '$scope',
   'Server',
   'Edit',
-  function($scope, Server, Edit) {
+  'Layer',
+  function($scope, Server, Edit, Layer) {
 
     var viewService = Server.service('views');
+
+    console.log(Layer);
+    $scope.layer = Layer;
 
     $scope.view = angular.copy(Edit);
 

@@ -1,5 +1,5 @@
 <div class="container">
-  <div class="twelve columns">
+  <div class="six columns">
     <h1>
       <span ng-show="view.id">Editing {{view.name}}</span>
       <span ng-hide="view.id">New view</span>
@@ -9,8 +9,11 @@
         <label for="name_input">Name</label>
         <input id="name_input" type="text" placeholder="View name" ng-model="view.name" />
       </p>
-      <domegis-styles ng-model="view.style" cartocss="view.cartocss"></domegis-styles>
+      <domegis-styles ng-model="view.style" layer="layer" cartocss="view.cartocss"></domegis-styles>
       <p><input type="submit" value="Save view" /></p>
     </form>
+  </div>
+  <div class="six columns">
+    <div dome-map="view.id"></div>
   </div>
 </div>

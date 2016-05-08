@@ -11,7 +11,7 @@ var mapCarto = {
     'line-width': 'stroke.width',
     'line-opacity': 'stroke.opacity'
   },
-  'marker': {
+  'point': {
     'marker-width': 'fill.width',
     'marker-fill': 'fill.color',
     'marker-fill-opacity': 'fill.opacity',
@@ -30,7 +30,7 @@ angular.module('domegis')
       restrict: 'E',
       templateUrl: '/views/styles.html',
       scope: {
-        content: '=',
+        layer: '=',
         styles: '=ngModel',
         cartocss: '='
       },
@@ -39,6 +39,27 @@ angular.module('domegis')
         '$scope',
         '$compile',
         function($scope, $compile) {
+
+          if($scope.layer)
+            $scope.types = $scope.layer.geometryType.toLowerCase();
+
+          $scope.columns = [
+            {
+              key: 'amount',
+              type: 'number',
+              values: [1,2,3,4,5,6,7,8,9,10,500,200,150,1000,300,250,123]
+            },
+            {
+              key: 'category',
+              type: 'string',
+              values: ['category 1', 'category 2', 'category 3']
+            },
+            {
+              key: 'something_else',
+              type: 'string',
+              values: ['something 1', 'something 2']
+            }
+          ];
 
           $scope.table = {
             title: 'table'
@@ -57,9 +78,8 @@ angular.module('domegis')
             'color-burn': 'Color burn'
           };
 
-          $scope.types = ['polygon', 'marker'];
-
           $scope.isType = function(type) {
+            console.log($scope.types.indexOf(type), type);
             return $scope.types.indexOf(type) !== -1;
           };
 
@@ -78,7 +98,7 @@ angular.module('domegis')
                 opacity: .8
               }
             },
-            marker: {
+            point: {
               composite: '',
               fill: {
                 width: 10,
@@ -156,23 +176,6 @@ angular.module('domegis')
               $scope.styles[type] = {};
           };
 
-          $scope.columns = [
-            {
-              key: 'amount',
-              type: 'number',
-              values: [1,2,3,4,5,6,7,8,9,10,500,200,150,1000,300,250,123]
-            },
-            {
-              key: 'category',
-              type: 'string',
-              values: ['category 1', 'category 2', 'category 3']
-            },
-            {
-              key: 'something_else',
-              type: 'string',
-              values: ['something 1', 'something 2']
-            }
-          ];
 
           var clearCategories = function(columnKey, categories) {
             if(columnKey && _.isArray(categories)) {

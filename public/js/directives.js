@@ -26,52 +26,32 @@ angular.module('domegis')
     return {
       restrict: 'A',
       scope: {
-        url: '=domeMap',
-        config: '=mapConfig'
+        viewId: '=domeMap'
       },
       replace: true,
       template: '<div id="map"></div>',
       link: function(scope, element, attrs) {
+
         var map = L.map('map', {
           center: [0,0],
           zoom: 2
         });
 
+        map.addLayer(L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png'));
+
         var layers = [];
 
-        scope.$watchGroup(['url', 'config'], function(val) {
-          var url = val[0];
-          var config = false;
-          if(val[1]) {
-            config = JSON.parse(val[1]);
+        scope.$watch('viewId', function(id) {
+          layers.forEach(function(layer) {
+            map.removeLayer(layer);
+          });
+          if(id) {
+            var tileLayer = L.tileLayer('/tiles/' + id + '/{z}/{x}/{y}.png');
+            layers = [];
+            map.addLayer(tileLayer);
+            layers.push(tileLayer);
           }
-
-          if(url && config) {
-            $http.post(url, config).then(function(res) {
-
-              var token = res.data.layergroupid;
-              var metadata = res.data.metadata;
-
-              layers.forEach(function(layer) {
-                map.removeLayer(layer);
-              });
-              layers = [];
-
-              var baseUrl = url + '/' + token;
-              var tileLayer = L.tileLayer(baseUrl + '/{z}/{x}/{y}.png');
-
-              map.addLayer(tileLayer);
-              layers.push(tileLayer);
-
-              // handle metadata layer (utf grid) here
-              //
-
-            }, function(err) {
-              console.log(err);
-            });
-          }
-
-        }, true);
+        });
 
       }
     }

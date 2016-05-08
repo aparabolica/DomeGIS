@@ -70,26 +70,26 @@
           <select ng-options="key as value for (key, value) in composites" ng-model="styles.polygon.composite"></select>
         </td>
       </tr>
-      <tr ng-show="isType('marker') && mapType == 'simple'">
+      <tr ng-show="isType('point') && mapType == 'simple'">
         <td>Marker fill</td>
         <td>
-          <input colorpicker ng-model="styles.marker.fill.color" type="text" />
-          <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.marker.fill.width" />
-          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.marker.fill.opacity" />
+          <input colorpicker ng-model="styles.point.fill.color" type="text" />
+          <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.point.fill.width" />
+          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.point.fill.opacity" />
         </td>
       </tr>
-      <tr ng-show="isType('marker')">
+      <tr ng-show="isType('point')">
         <td>Marker stroke</td>
         <td>
-          <input colorpicker ng-model="styles.marker.stroke.color" type="text" />
-          <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.marker.stroke.width" />
-          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.marker.stroke.opacity" />
+          <input colorpicker ng-model="styles.point.stroke.color" type="text" />
+          <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.point.stroke.width" />
+          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.point.stroke.opacity" />
         </td>
       </tr>
-      <tr ng-show="isType('marker')">
+      <tr ng-show="isType('point')">
         <td>Marker composite operation</td>
         <td>
-          <select ng-options="key as value for (key, value) in composites" ng-model="styles.marker.composite"></select>
+          <select ng-options="key as value for (key, value) in composites" ng-model="styles.point.composite"></select>
         </td>
       </tr>
     </tbody>
