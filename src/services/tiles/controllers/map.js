@@ -94,7 +94,7 @@ MapController.prototype.tileOrLayer = function (req, res) {
   var self = this;
   var views = self._app.service('views');
 
-  views.get(parseInt(req.params.viewId)).then(function(view){
+  views.get(req.params.viewId).then(function(view){
 
     var opts = self._app.get('windshaftOpts');
 
