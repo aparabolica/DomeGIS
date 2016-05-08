@@ -56,4 +56,20 @@ angular.module('domegis')
       }
     }
   }
+])
+
+.directive('fixToBottom', [
+  function() {
+    return {
+      restrict: 'AC',
+      link: function(scope, element, attrs) {
+        $(window).resize(function() {
+          var top = $(element).offset().top;
+          var height = $(window).height();
+          $(element).height(height-top);
+        });
+        $(window).resize();
+      }
+    }
+  }
 ]);

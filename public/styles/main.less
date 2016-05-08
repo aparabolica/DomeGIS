@@ -287,8 +287,11 @@ form {
   height: 600px;
   overflow: hidden;
   h1 {
-    font-size: 1em;
-    color: #999;
+    background: @blue;
+    margin: -2rem -2rem 1rem;
+    padding: 2rem;
+    font-size: .8em;
+    color: #fff;
     font-weight: 600;
     letter-spacing: .2rem;
     text-transform: uppercase;
@@ -297,7 +300,7 @@ form {
     position: absolute;
     bottom: 0;
     top: 0;
-    left: 33.3333%;
+    left: 40%;
     right: 0;
     width: auto;
     height: auto;
@@ -306,7 +309,7 @@ form {
     position: absolute;
     top: 0;
     left: 0;
-    right: 66.6666%;
+    right: 60%;
     bottom: 0;
     overflow: auto;
     background: #fff;
@@ -314,6 +317,40 @@ form {
     padding: 2rem;
     box-shadow: 0 0 15px rgba(0,0,0,0.3);
     z-index: 2;
+    p {
+      margin: 0;
+      input {
+        width: 100%;
+        margin: 0;
+      }
+    }
+    input[type=submit] {
+      display: block;
+      width: 100%;
+      margin: 0;
+    }
+    form {
+      margin: 0;
+    }
+    .primary-input {
+      margin: 0;
+      margin: 0 -2rem;
+      label {
+        padding: 0 2rem;
+        margin: 0 0 .5rem;
+        color: #999;
+      }
+      input {
+        margin: 0;
+        font-size: 2em;
+        height: auto;
+        width: 100%;
+        padding: 1.5rem 2rem;
+        border: 0;
+        border-top: 1px solid #ddd;
+        border-radius: 0;
+      }
+    }
   }
   .cartocss-wizard {
     ul.type-selector {
@@ -372,7 +409,7 @@ form {
   }
   td:first-child {
     font-weight: 600;
-    font-size: .7em;
+    font-size: .8em;
     width: 25%;
   }
   td:last-child {

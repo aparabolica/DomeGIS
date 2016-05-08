@@ -25,7 +25,7 @@
       <tr ng-show="categories && column.type != 'number'" ng-repeat="category in categories">
         <td>{{category}}</td>
         <td>
-          <input colorpicker ng-model="styles.category[column.key][category]" type="text" />
+          <input class="colorpicker-input" colorpicker ng-style="{'background-color': styles.category[column.key][category] || '#fff', 'color': getContrastYIQ(styles.category[column.key][category])}" ng-model="styles.category[column.key][category]" type="text" />
         </td>
       </tr>
     </tbody>
@@ -94,5 +94,5 @@
       </tr>
     </tbody>
   </table>
-  <pre carto-editor="styles" group="table.title" ng-model="cartocss">{{cartocss}}</pre>
+  <pre ng-show="1==0" carto-editor="styles" group="table.title" ng-model="cartocss">{{cartocss}}</pre>
 </div>
