@@ -210,6 +210,7 @@ angular.module('domegis')
       } else {
         Server.create(viewService, view).then(function(view) {
           $scope.view = view;
+          $state.go('editView', {id: view.id}, {reload: true});
         }, function(err) {
           console.log(err);
         });

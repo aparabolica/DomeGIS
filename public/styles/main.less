@@ -423,15 +423,34 @@ form {
     font-family: monospace;
   }
   .ui-spinner {
-    width: 55px;
+    width: 52px;
     input {
-      width: 49px;
+      width: 52px;
       float: none;
+      margin: 0;
+      &.opacity {
+        background: url('/img/alpha_bkg.png');
+      }
     }
     .ui-spinner-button {
       width: 13px;
       font-size: .7em;
       color: #ccc;
+      background: #fff;
+      text-align: center;
+      border-right: 1px solid #ccc;
+      border-left: 1px solid #eee;
+      &.ui-spinner-up {
+        border-top: 1px solid #ccc;
+        border-radius: 0 4px 0 0;
+      }
+      &.ui-spinner-down {
+        border-bottom: 1px solid #ccc;
+        border-radius: 0 0 4px 0;
+      }
+    }
+    .ui-icon {
+      left: 3px;
     }
   }
   input[type="email"],
