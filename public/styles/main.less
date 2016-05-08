@@ -82,7 +82,7 @@ table {
 #masthead {
   background: #222 url(../img/water_bg.jpg) bottom center no-repeat;
   color: #fff;
-  padding: 8rem 0;
+  padding: 4rem 0 8rem;
   margin: 0 0 4rem;
   h1 {
     font-weight: 600;
@@ -281,8 +281,90 @@ form {
   }
 }
 
+.edit-view {
+  margin: -4rem;
+  position: relative;
+  height: 600px;
+  overflow: hidden;
+  h1 {
+    font-size: 1em;
+    color: #999;
+    font-weight: 600;
+    letter-spacing: .2rem;
+    text-transform: uppercase;
+  }
+  #map {
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    left: 33.3333%;
+    right: 0;
+    width: auto;
+    height: auto;
+  }
+  .editor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 66.6666%;
+    bottom: 0;
+    overflow: auto;
+    background: #fff;
+    box-sizing: border-box;
+    padding: 2rem;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    z-index: 2;
+  }
+  .cartocss-wizard {
+    ul.type-selector {
+      margin-left: -2rem;
+      margin-right: -2rem;
+    }
+  }
+}
+
 .cartocss-wizard {
   width: 100%;
+  ul.type-selector {
+    margin-bottom: 2rem;
+    padding: 0;
+    list-style: none;
+    display: table;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    li {
+      width: 1%;
+      display: table-cell;
+      text-align: center;
+      a {
+        padding: 1rem 0;
+        display: block;
+        border-left: 1px solid #ccc;
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: .15rem;
+        font-size: .7em;
+        outline: 0;
+        font-weight: 500;
+        &:focus,
+        &:hover {
+          background: lighten(@blue, 10%);
+          color: #fff;
+        }
+      }
+      &.active {
+        a {
+          background: @blue;
+          color: #fff;
+        }
+      }
+      &:first-child {
+        a {
+          border-left: 0;
+        }
+      }
+    }
+  }
   .ace_editor {
     width: 100%;
     height: 600px;
@@ -290,15 +372,47 @@ form {
   }
   td:first-child {
     font-weight: 600;
-    font-size: 16px;
+    font-size: .7em;
+    width: 25%;
   }
   td:last-child {
     text-align: right;
   }
-  .input,
+  select,
+  input,
   .ui-spinner {
-    width: 80px;
-    display: inline-block;
+    float: right;
+    margin: 0 0 0 .5rem;
+    font-family: monospace;
+  }
+  .ui-spinner {
+    width: 55px;
+    input {
+      width: 49px;
+      float: none;
+    }
+    .ui-spinner-button {
+      width: 13px;
+      font-size: .7em;
+      color: #ccc;
+    }
+  }
+  input[type="email"],
+  input[type="number"],
+  input[type="search"],
+  input[type="text"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="password"],
+  textarea,
+  select {
+    height: auto;
+    padding: 3px 6px;
+  }
+  input.colorpicker-input {
+    width: 70px;
+    font-family: monospace;
+    text-transform: uppercase;
   }
 }
 

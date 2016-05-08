@@ -1,12 +1,12 @@
 <div class="cartocss-wizard">
   <ul class="type-selector">
-    <li>
+    <li ng-class="{active:mapType=='simple'}">
       <a href="javascript:void(0);" ng-click="setMapType('simple')">Simple</a>
     </li>
-    <li>
+    <li ng-class="{active:mapType=='choropleth'}">
       <a href="javascript:void(0);" ng-click="setMapType('choropleth')">Choropleth</a>
     </li>
-    <li>
+    <li ng-class="{active:mapType=='category'}">
       <a href="javascript:void(0);" ng-click="setMapType('category')">Category</a>
     </li>
   </ul>
@@ -52,14 +52,14 @@
       <tr ng-show="isType('polygon') && mapType == 'simple'">
         <td>Polygon fill</td>
         <td>
-          <input colorpicker ng-model="styles.polygon.fill.color" type="text" />
+          <input class="colorpicker-input" colorpicker ng-model="styles.polygon.fill.color" type="text" />
           <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.polygon.fill.opacity" />
         </td>
       </tr>
       <tr ng-show="isType('polygon')">
         <td>Polygon stroke</td>
         <td>
-          <input colorpicker ng-model="styles.polygon.stroke.color" type="text" />
+          <input class="colorpicker-input" colorpicker ng-model="styles.polygon.stroke.color" type="text" />
           <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.polygon.stroke.width" />
           <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.polygon.stroke.opacity" />
         </td>
@@ -73,7 +73,7 @@
       <tr ng-show="isType('point') && mapType == 'simple'">
         <td>Marker fill</td>
         <td>
-          <input colorpicker ng-model="styles.point.fill.color" type="text" />
+          <input class="colorpicker-input" colorpicker ng-model="styles.point.fill.color" type="text" ng-style="{'background-color': styles.point.fill.color || '#fff', 'color': getContrastYIQ(styles.point.fill.color)}" />
           <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.point.fill.width" />
           <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.point.fill.opacity" />
         </td>
@@ -81,7 +81,7 @@
       <tr ng-show="isType('point')">
         <td>Marker stroke</td>
         <td>
-          <input colorpicker ng-model="styles.point.stroke.color" type="text" />
+          <input class="colorpicker-input" colorpicker ng-model="styles.point.stroke.color" type="text" ng-style="{'background-color': styles.point.stroke.color || '#fff', 'color': getContrastYIQ(styles.point.stroke.color)}" />
           <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.point.stroke.width" />
           <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.point.stroke.opacity" />
         </td>
