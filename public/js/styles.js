@@ -16,6 +16,7 @@ var mapCarto = {
     'marker-fill': 'fill.color',
     'marker-fill-opacity': 'fill.opacity',
     'marker-comp-op': 'composite',
+    'marker-allow-overlap': 'allowOverlap',
     'marker-line-color': 'stroke.color',
     'marker-line-width': 'stroke.width',
     'marker-line-opacity': 'stroke.opacity'
@@ -108,6 +109,7 @@ angular.module('domegis')
             },
             point: {
               composite: '',
+              allowOverlap: true,
               fill: {
                 width: 10,
                 color: '#00f',
@@ -395,24 +397,24 @@ angular.module('domegis')
         });
 
         // Update styles object from raw CartoCSS
-        scope.$watch('css', function(cartocss) {
-          if(cartocss) {
-            var tableMatch = cartocss.match(tableRegex);
-            if(tableMatch != null && tableMatch[1]) {
-              for(var type in mapCarto) {
-                for(var prop in mapCarto[type]) {
-                  var propRegex = new RegExp('[ \t]' + regexEscape(prop) + ':(.*?);');
-                  var propMatch = cartocss.match(propRegex);
-                  if(propMatch != null) {
-                    eval('scope.cartoEditor.' + type + '.' + mapCarto[type][prop] + ' = propMatch[1].trim().toLowerCase()');
-                  } else {
-                    eval('scope.cartoEditor.' + type + '.' + mapCarto[type][prop] + ' = "";');
-                  }
-                }
-              }
-            }
-          }
-        });
+        // scope.$watch('css', function(cartocss) {
+        //   if(cartocss) {
+        //     var tableMatch = cartocss.match(tableRegex);
+        //     if(tableMatch != null && tableMatch[1]) {
+        //       for(var type in mapCarto) {
+        //         for(var prop in mapCarto[type]) {
+        //           var propRegex = new RegExp('[ \t]' + regexEscape(prop) + ':(.*?);');
+        //           var propMatch = cartocss.match(propRegex);
+        //           if(propMatch != null) {
+        //             eval('scope.cartoEditor.' + type + '.' + mapCarto[type][prop] + ' = propMatch[1].trim().toLowerCase()');
+        //           } else {
+        //             eval('scope.cartoEditor.' + type + '.' + mapCarto[type][prop] + ' = "";');
+        //           }
+        //         }
+        //       }
+        //     }
+        //   }
+        // });
       }
     }
   }

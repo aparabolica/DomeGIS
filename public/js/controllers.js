@@ -186,10 +186,11 @@ angular.module('domegis')
 
 .controller('ViewEditCtrl', [
   '$scope',
+  '$state',
   'Server',
   'Edit',
   'Layer',
-  function($scope, Server, Edit, Layer) {
+  function($scope, $state, Server, Edit, Layer) {
 
     var viewService = Server.service('views');
 
@@ -202,6 +203,7 @@ angular.module('domegis')
       if(Edit.id) {
         Server.update(viewService, Edit.id, view).then(function(view) {
           $scope.view = view;
+          $state.go('editView', {id: view.id}, {reload: true});
         }, function(err) {
           console.log(err);
         });

@@ -92,7 +92,15 @@
           <select ng-options="key as value for (key, value) in composites" ng-model="styles.point.composite"></select>
         </td>
       </tr>
+      <tr ng-show="isType('point')">
+        <td>
+          <label for="marker_allowoverlap_input">Allow marker overlap</label>
+        </td>
+        <td>
+          <input id="marker_allowoverlap_input" type="checkbox" ng-model="styles.point.allowOverlap">
+        </td>
+      </tr>
     </tbody>
   </table>
-  <pre ng-show="1==0" carto-editor="styles" group="table.title" ng-model="cartocss">{{cartocss}}</pre>
+  <pre ng-hide="1==1" carto-editor="styles" group="table.title" ng-model="cartocss">{{cartocss}}</pre>
 </div>
