@@ -59,7 +59,6 @@ angular.module('domegis')
         $scope.params
       ).then(function(data) {
         $scope.content = data;
-        console.log(data);
       });
     };
 
@@ -83,21 +82,11 @@ angular.module('domegis')
     }
 
     $scope.syncItem = function(item) {
-      var promise = Server.create(contentService, item);
-      promise.then(function(res) {
-        console.log('create', res);
-      }, function(err) {
-        console.log('create error', err);
-      });
-      return promise;
+      return Server.create(contentService, item);
     };
 
     $scope.unsyncItem = function(item) {
-      Server.remove(contentService, item.id).then(function(res) {
-        console.log('remove', res);
-      }, function(err) {
-        console.log('remove error', err);
-      });
+      Server.remove(contentService, item.id);
     };
 
 
@@ -127,7 +116,6 @@ angular.module('domegis')
     }
 
     Server.find(contentService).then(function(res) {
-      console.log('synced contents', res);
       $scope.synced = res.data;
     });
     Server.on(contentService, 'created', function(data) {

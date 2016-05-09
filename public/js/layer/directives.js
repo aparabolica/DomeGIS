@@ -19,7 +19,6 @@ angular.module('domegis')
             layerId: scope.layer.id
           }
         }).then(function(res) {
-          console.log('layer views', res);
           scope.views = res.data;
         });
 

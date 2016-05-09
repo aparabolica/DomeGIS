@@ -39,7 +39,6 @@ ArcGIS.prototype.getItem = function(id, cb) {
 };
 
 function buildSearchQuery(orgId, search, query, params) {
-  console.log(arguments);
   search = search || '';
   query = query || {
     type: 'Feature Service'

@@ -14,14 +14,15 @@ angular.module('domegis')
         var contentService = Server.service('contents');
         var layerService = Server.service('layers');
 
-        Server.find(layerService, {
-          query: {
-            contentId: scope.content.id
-          }
-        }).then(function(res) {
-          console.log('content layers', res);
-          scope.layers = res.data;
-        });
+        if(scope.content) {
+          Server.find(layerService, {
+            query: {
+              contentId: scope.content.id
+            }
+          }).then(function(res) {
+            scope.layers = res.data;
+          });
+        }
 
         Server.on(layerService, 'created', function(data) {
           if(data.contentId == scope.content.id)
@@ -34,11 +35,7 @@ angular.module('domegis')
         });
 
         scope.unsyncItem = function(content) {
-          Server.remove(contentService, content.id).then(function(res) {
-            console.log('remove', res);
-          }, function(err) {
-            console.log('remove error', err);
-          });
+          Server.remove(contentService, content.id);
         };
       }
     }
