@@ -17,7 +17,7 @@
           <label for="category_column">Select column</label>
         </td>
         <td>
-          <select ng-options="column.key for column in (columns | mapType:mapType) track by column.key" ng-model="column" ng-change="selectColumn(column.key, '{{column.key}}')">
+          <select ng-options="column.name for column in (layer.fields | mapType:mapType) track by column.name" ng-model="column" ng-change="selectColumn(column.name, '{{column.name}}')">
             <option value=''>Select a column</option>
           </select>
         </td>

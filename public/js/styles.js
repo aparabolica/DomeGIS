@@ -448,11 +448,11 @@ angular.module('domegis')
       if(_.isArray(input)) {
         if(type == 'category') {
           input = _.filter(input, function(column) {
-            return column.type == 'string';
+            return column.type == 'esriFieldTypeString';
           });
         } else if(type == 'choropleth') {
           input = _.filter(input, function(column) {
-            return column.type == 'number';
+            return column.type == 'esriFieldTypeInteger';
           });
         }
       }
