@@ -103,11 +103,11 @@ angular.module('domegis')
             polygon: {
               composite: '',
               fill: {
-                color: '#f00',
+                color: '#ff0000',
                 opacity: .8,
               },
               stroke: {
-                color: '#0f0',
+                color: '#00ff00',
                 width: 1,
                 opacity: .8
               }
@@ -117,12 +117,19 @@ angular.module('domegis')
               allowOverlap: true,
               fill: {
                 width: 10,
-                color: '#00f',
+                color: '#0000ff',
                 opacity: 1
               },
               stroke: {
-                color: '#0f0',
+                color: '#00ff00',
                 width: .5,
+                opacity: .8
+              }
+            },
+            polyline: {
+              fill: {
+                width: 1.5,
+                color: '#0000ff',
                 opacity: .8
               }
             }

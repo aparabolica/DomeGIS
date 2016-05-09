@@ -115,7 +115,11 @@ angular.module('domegis')
       }
     }
 
-    Server.find(contentService).then(function(res) {
+    Server.find(contentService, {
+      query: {
+        $limit: 100
+      }
+    }).then(function(res) {
       $scope.synced = res.data;
     });
     Server.on(contentService, 'created', function(data) {

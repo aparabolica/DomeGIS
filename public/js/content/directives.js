@@ -25,7 +25,7 @@ angular.module('domegis')
         }
 
         Server.on(layerService, 'created', function(data) {
-          if(data.contentId == scope.content.id)
+          if(scope.content && data.contentId == scope.content.id)
             scope.layers.push(data);
         });
         Server.on(layerService, 'removed', function(data) {
