@@ -70,10 +70,10 @@
           <select ng-options="key as value for (key, value) in composites" ng-model="styles.polygon.composite"></select>
         </td>
       </tr>
-      <tr ng-show="isType('point') && mapType == 'simple'">
+      <tr ng-show="isType('point')">
         <td>Marker fill</td>
         <td>
-          <input class="colorpicker-input" colorpicker ng-model="styles.point.fill.color" type="text" ng-style="{'background-color': styles.point.fill.color || '#fff', 'color': getContrastYIQ(styles.point.fill.color)}" />
+          <input ng-show="mapType == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.point.fill.color" type="text" ng-style="{'background-color': styles.point.fill.color || '#fff', 'color': getContrastYIQ(styles.point.fill.color)}" />
           <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.point.fill.opacity" />
           <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.point.fill.width" />
         </td>
@@ -98,6 +98,14 @@
         </td>
         <td>
           <input id="marker_allowoverlap_input" type="checkbox" ng-model="styles.point.allowOverlap">
+        </td>
+      </tr>
+      <tr ng-show="isType('polyline')">
+        <td>Line fill</td>
+        <td>
+          <input ng-show="mapType == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.polyline.fill.color" type="text" ng-style="{'background-color': styles.polyline.fill.color || '#fff', 'color': getContrastYIQ(styles.polyline.fill.color)}" />
+          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.polyline.fill.opacity" />
+          <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.polyline.fill.width" />
         </td>
       </tr>
     </tbody>

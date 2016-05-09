@@ -20,6 +20,11 @@ var mapCarto = {
     'marker-line-color': 'stroke.color',
     'marker-line-width': 'stroke.width',
     'marker-line-opacity': 'stroke.opacity'
+  },
+  'polyline': {
+    'line-color': 'stroke.color',
+    'line-width': 'stroke.width',
+    'line-opacity': 'stroke.opacity'
   }
 };
 

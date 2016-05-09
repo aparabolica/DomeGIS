@@ -43,7 +43,7 @@ angular.module('domegis')
 
     $scope.search = '';
     $scope.query = {
-      type: ''
+      type: 'Feature Service'
     };
     $scope.params = {};
 

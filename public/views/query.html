@@ -4,9 +4,9 @@
       <nav>
         <form>
           <input type="text" ng-model="search" placeholder="Search anything"/>
-          <select ng-model="query.type" ng-options="type as type for type in availableTypes" ng-change="doQuery()">
+          <!-- <select ng-model="query.type" ng-options="type as type for type in availableTypes" ng-change="doQuery()">
             <option value="">Select content type</option>
-          </select>
+          </select> -->
           <select ng-model="sort" ng-change="doQuery()">
             <option value="numviews">Sort by most viewed</option>
             <option value="modified">Sort by most recent</option>
@@ -29,7 +29,7 @@
             <td></td>
             <td>Name</td>
             <td>Date</td>
-            <td>Type</td>
+            <!-- <td>Type</td> -->
             <td>Source</td>
             <td>Add to collection</td>
           </tr>
@@ -44,7 +44,7 @@
               {{item.created | formatDate}}
               <span class="modified">Modified: {{item.modified | formatDate}}</span>
             </td>
-            <td><span class="tag">{{item.type}}</span></td>
+            <!-- <td><span class="tag">{{item.type}}</span></td> -->
             <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link"></a></td>
             <td><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
           </tr>
