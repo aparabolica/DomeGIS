@@ -1,11 +1,54 @@
 'use strict';
 
+var _ = require('underscore');
 var globalHooks = require('../../../hooks');
 var hooks = require('feathers-hooks');
 var request = require('request');
 var Sequelize = require('sequelize');
 var async = require('async');
 
+function esriToSequelizeType(esriType) {
+  switch (esriType) {
+    case 'esriFieldTypeSmallInteger':
+      return Sequelize.INTEGER;
+      break;
+    case 'esriFieldTypeInteger':
+      return Sequelize.BIGINT;
+      break;
+    case 'esriFieldTypeSingle':
+      return Sequelize.FLOAT;
+      break;
+    case 'esriFieldTypeDouble':
+      return Sequelize.DOUBLE;
+      break;
+    case 'esriFieldTypeString':
+      return Sequelize.STRING;
+      break;
+    case 'esriFieldTypeDate':
+      return Sequelize.DATE;
+      break;
+    case 'esriFieldTypeOID':
+      return Sequelize.BIGINT;
+      break;
+    case 'esriFieldTypeGeometry':
+      return Sequelize.GEOMETRY;
+      break;
+    case 'esriFieldTypeBlob':
+      return Sequelize.BLOB;
+      break;
+    case 'esriFieldTypeGUID':
+      return Sequelize.STRING;
+      break;
+    case 'esriFieldTypeGlobalID':
+      return Sequelize.DATE;
+      break;
+    case 'esriFieldTypeXML':
+      return Sequelize.TEXT;
+      break;
+    default:
+      return null;
+  }
+}
 
 exports.before = {
   all: [],
@@ -70,18 +113,30 @@ exports.after = {
         if (err) return reject(err);
         var data = JSON.parse(body);
 
-        // create feature table
-        var Features = sequelize.define(hook.data.id, {
+        var schema = {
           geometry: { type: Sequelize.GEOMETRY }
+        }
+
+        _.each(hook.data.fields, function(field){
+          var fieldType = esriToSequelizeType(field.type);
+          if (fieldType) schema[field.name] = { type: fieldType }
         });
+
+        // create feature table
+        var Features = sequelize.define(hook.data.id, schema);
         sequelize.sync().then(function(){
 
           // insert features
-          async.eachSeries(data.features, function(feature, doneEach){
-            feature.geometry.crs = data.crs;
-            Features.create({
-              geometry: feature.geometry
-            }).then(function(result){
+          async.eachSeries(data.features, function(esriFeature, doneEach){
+            esriFeature.geometry.crs = data.crs;
+            var feature = {
+              geometry: esriFeature.geometry
+            }
+            _.each(_.keys(esriFeature.properties), function(property){
+              feature[property] = esriFeature.properties[property];
+            });
+
+            Features.create(feature).then(function(result){
               doneEach()
             }).catch(reject);
           }, resolve);
