@@ -1,5 +1,11 @@
 angular.module('domegis')
 
+.filter('join', function() {
+  return function(input, splitChar) {
+    return input.join(splitChar);
+  }
+})
+
 .filter('formatDate', [
   function() {
     return function(input, format) {

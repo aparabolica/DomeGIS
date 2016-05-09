@@ -26,7 +26,8 @@ angular.module('domegis')
     return {
       restrict: 'A',
       scope: {
-        viewId: '=domeMap'
+        views: '=domeMap',
+        base: '='
       },
       replace: true,
       template: '<div id="map"></div>',
@@ -41,17 +42,19 @@ angular.module('domegis')
 
         var layers = [];
 
-        scope.$watch('viewId', function(id) {
+        scope.$watch('views', function(views) {
           layers.forEach(function(layer) {
             map.removeLayer(layer);
           });
-          if(id) {
-            var tileLayer = L.tileLayer('/tiles/' + id + '/{z}/{x}/{y}.png');
-            layers = [];
-            map.addLayer(tileLayer);
-            layers.push(tileLayer);
+          layers = [];
+          if(views && views.length) {
+            views.forEach(function(id) {
+              var tileLayer = L.tileLayer('/tiles/' + id + '/{z}/{x}/{y}.png');
+              map.addLayer(tileLayer);
+              layers.push(tileLayer);
+            });
           }
-        });
+        }, true);
 
       }
     }

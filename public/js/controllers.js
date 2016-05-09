@@ -1,5 +1,28 @@
 angular.module('domegis')
 
+.controller('SiteCtrl', [
+  '$state',
+  '$scope',
+  function($state, $scope) {
+
+    $scope.bodyClass = [];
+
+    $scope.$on('$stateChangeStart', function(ev, toState, toParams) {
+      $scope.bodyClass = [];
+      if(self != top) {
+        $scope.bodyClass.push('iframe');
+      }
+      if(toState.name == 'map') {
+        $scope.bodyClass.push('map');
+      }
+    });
+
+    $scope.$on('$stateChangeSuccess', function(ev, toState, toParams) {
+    });
+
+  }
+])
+
 .controller('AuthCtrl', [
   '$scope',
   function($scope) {

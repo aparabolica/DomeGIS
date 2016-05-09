@@ -5,6 +5,31 @@ body {
   overflow-x: hidden;
 }
 
+body.iframe.map {
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  .container {
+    width: 100%;
+  }
+  #masthead {
+    display: none;
+  }
+  #content {
+    margin: 0;
+    padding: 0;
+  }
+  .map-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+  }
+}
+
 ::-webkit-scrollbar{
   width: 15px;
   background-color: #fff;
@@ -473,7 +498,7 @@ form {
     box-sizing: border-box;
   }
   input.colorpicker-input {
-    width: 70px;
+    width: 62px;
     font-family: monospace;
     text-transform: uppercase;
     border: 0;
@@ -490,9 +515,13 @@ form {
   textarea {
     height: 200px;
   }
+  .map-container {
+    width: 100%;
+    height: 400px;
+  }
 }
 
 #map {
   width: 100%;
-  height: 400px;
+  height: 100%;
 }

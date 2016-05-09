@@ -137,13 +137,14 @@ angular.module('domegis')
       }
     })
     .state('map', {
-      url: '/map/:viewId',
+      url: '/map/?views&base',
       templateUrl: '/views/map.html',
       controller: [
         '$stateParams',
         '$scope',
         function($stateParams, $scope) {
-          $scope.viewId = $stateParams.viewId;
+          $scope.views = $stateParams.views.split(',');
+          $scope.base = $stateParams.base;
         }
       ]
     })
