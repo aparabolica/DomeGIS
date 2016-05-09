@@ -292,7 +292,12 @@ angular.module('domegis')
 
                 var catMatch = $scope.cartocss.match(catRegex);
 
-                cartocss = '\t' + 'polygon-fill' + ': ' + ramp[i] + ';\n';
+                if($scope.isType('polygon')) {
+                  cartocss += '\t' + 'polygon-fill' + ': ' + ramp[i] + ';\n';
+                }
+                if($scope.isType('point')) {
+                  cartocss += '\t' + 'marker-fill' + ': ' + ramp[i] + ';\n';
+                }
 
                 var result = '#' + $scope.table.title + ' [ ' + $scope.column.key + ' <= ' + category + ' ] {\n' + cartocss + '}';
 
@@ -381,20 +386,37 @@ angular.module('domegis')
       replace: true,
       link: function(scope, element, attrs, controller) {
 
+        var aceLoaded = function(editor) {
+          scope.$watch('css', function() {
+            // after data update
+            // var cell = $("div.ace_gutter-layer").find(".ace_gutter-cell:first");
+            // var h = cell.height();
+            // var totalH = h * (editor.getSession().getValue().split('\n').length + 1);
+            // $('.carto-editor')
+            //   .height(totalH);
+            // $('.carto-editor')
+            //   .find(":first-child")
+            //   .height($('.carto-editor').height());
+            // editor.renderer.onResize(true);
+          });
+        };
+
         scope.aceOption = {
           mode: 'css',
           useWrapMode: false,
           showGutter: false,
-          theme: 'github'
+          theme: 'github',
+          maxLines: Infinity,
+          onLoad: aceLoaded
         };
 
         element.html($compile('<div ui-ace="aceOption" ng-model="css">{{css}}</div>')(scope));
 
         var tableRegex = '';
 
-        scope.$watch('group', function(g) {
-          tableRegex = new RegExp(regexEscape('#' + g + ' {') + '([\\s\\S]*?)}');
-        });
+        // scope.$watch('group', function(g) {
+        //   tableRegex = new RegExp(regexEscape('#' + g + ' {') + '([\\s\\S]*?)}');
+        // });
 
         // Update styles object from raw CartoCSS
         // scope.$watch('css', function(cartocss) {
