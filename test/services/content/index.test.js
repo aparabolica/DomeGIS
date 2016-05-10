@@ -195,7 +195,7 @@ describe('content service', function()  {
       .catch(doneIt);
   });
 
-  it('search "world cup", which appers on content', function (doneIt) {
+  it('search term that appears on content', function (doneIt) {
     Search
       .find({
         term: 'world cup'
@@ -203,6 +203,23 @@ describe('content service', function()  {
       .then(function(response) {
         response.should.have.property('contents');
         response.contents.should.have.length(1);
+        doneIt();
+      })
+      .catch(doneIt);
+  });
+
+  it('search term that appeaps on layer', function (doneIt) {
+    Search
+      .find({
+        term: 'ecore'
+      })
+      .then(function(response) {
+        response.should.have.property('layers');
+        response.layers.should.have.length(1);
+
+        var layer = response.layers[0];
+        layer.should.have.property('id', 'ef1b62313b1a4f598c5a36eab36cd81c_1');
+
         doneIt();
       })
       .catch(doneIt);

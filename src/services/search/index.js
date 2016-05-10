@@ -1,5 +1,8 @@
 'use strict';
 
+var _ = require('underscore');
+var async = require('async');
+
 module.exports = function(){
   var app = this;
 
@@ -17,14 +20,44 @@ module.exports = function(){
       }).catch(doneSearchContents);
   }
 
+  function searchLayers(term, doneSearchLayers) {
+    var results = { layers: [] };
+    var query = "SELECT * FROM layers WHERE (name ILIKE '%"+term+"%') ";
+    sequelize.query(query)
+      .then(function(queryResult){
+        queryResult[0].forEach(function(item){
+          results.layers.push(item);
+        });
+        doneSearchLayers(null, results);
+      }).catch(doneSearchLayers);
+  }
+
   // Initialize service
   app.use('/search', {
     find: function(params) {
       return new Promise(function(resolve, reject){
-        searchContents(params.term, function(err, results){
+        var results = {};
+
+        async.series([
+          function(doneEach) {
+            searchContents(params.term, function(err, contentResults){
+              if (err) return reject(err);
+              results = _.extend(results, contentResults);
+              doneEach();
+            });
+          },
+          function(doneEach) {
+            searchLayers(params.term, function(err, layerResults){
+              if (err) return reject(err);
+              results = _.extend(results, layerResults);
+              doneEach();
+            });
+        }],
+        function(err) {
           if (err) return reject(err);
           resolve(results);
-        })
+        });
+
       });
     }
   });
