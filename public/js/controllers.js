@@ -47,7 +47,7 @@ angular.module('domegis')
     };
     $scope.params = {};
 
-    $scope.sort = 'numviews';
+    $scope.sort = 'modified';
 
     $scope.availableTypes = Esri.getContentTypes();
 

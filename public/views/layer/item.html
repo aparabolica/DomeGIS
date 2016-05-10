@@ -1,5 +1,5 @@
 <td class="main">{{layer.name}}</td>
 <td>
-  <div ng-repeat="view in views" view-item="view"></div>
-  <a class="button" ui-sref="editView({layerId: layer.id})">Create view</a>
+  <div ng-repeat="view in views" view-item="view" class="view-item"></div>
+  <a class="button" ui-sref="editView({layerId: layer.id})">Create new view</a>
 </td>

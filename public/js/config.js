@@ -36,7 +36,15 @@ angular.module('domegis')
         Content: [
           'esriService',
           function(Esri) {
-            return Esri.getContent();
+            return Esri.getContent(
+              {
+                type: 'Feature Service',
+              },
+              {
+                sortField: 'modified',
+                sortOrder: 'desc'
+              }
+            );
           }
         ]
       }
