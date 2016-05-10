@@ -7,6 +7,7 @@ var app = require('../../../src/app');
 var replay = require('replay');
 var Contents;
 var Layers;
+var Search;
 
 describe('content service', function()  {
   this.timeout(600000)
@@ -97,6 +98,7 @@ describe('content service', function()  {
 
       Contents = app.service('contents');
       Layers = app.service('layers');
+      Search = app.service('search');
 
 
       // wait for server to sync db
@@ -189,6 +191,19 @@ describe('content service', function()  {
             doneIt();
           })
           .catch(doneIt);
+      })
+      .catch(doneIt);
+  });
+
+  it('search "world cup", which appers on content', function (doneIt) {
+    Search
+      .find({
+        term: 'world cup'
+      })
+      .then(function(response) {
+        response.should.have.property('contents');
+        response.contents.should.have.length(1);
+        doneIt();
       })
       .catch(doneIt);
   });

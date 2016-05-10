@@ -4,6 +4,7 @@ var user = require('./user');
 var content = require('./content');
 var layer = require('./layer');
 var view = require('./view');
+var search = require('./search');
 var authentication = require('./authentication');
 
 module.exports = function() {
@@ -20,6 +21,7 @@ module.exports = function() {
   app.configure(content);
   app.configure(layer);
   app.configure(view);
+  app.configure(search);
 
   // Setup relationships
   var models = sequelize.models;
@@ -28,7 +30,7 @@ module.exports = function() {
    .filter(function(model) { return model.associate })
    .forEach(function(model) { return  model.associate(models) } );
 
-  sequelize.sync();
+  sequelize.sync({force: true});
 
   // disable windshaft when testing
   if (process.env.NODE_ENV != 'test') {
