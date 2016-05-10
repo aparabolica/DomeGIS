@@ -101,8 +101,12 @@ describe('content service', function()  {
 
       // wait for server to sync db
       setTimeout(function(){
-        doneBefore()
-      }, 3000);
+        var sequelize = app.get('sequelize');
+        sequelize.query('DELETE FROM contents; DELETE FROM layers; DELETE FROM views;')
+          .then(function(results){
+            doneBefore();
+          }).catch(doneBefore);
+      }, 1000);
     });
   });
 

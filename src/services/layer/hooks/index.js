@@ -1,11 +1,11 @@
 'use strict';
 
 var _ = require('underscore');
+var async = require('async');
 var globalHooks = require('../../../hooks');
 var hooks = require('feathers-hooks');
 var request = require('request');
 var Sequelize = require('sequelize');
-var async = require('async');
 
 function esriToSequelizeType(esriType) {
   switch (esriType) {
@@ -50,43 +50,71 @@ function esriToSequelizeType(esriType) {
   }
 }
 
+function dropLayer(sequelize, layerId, doneResetLayer) {
+  sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'s\"')
+    .then(function(results){
+      doneResetLayer();
+    }).catch(doneResetLayer);
+}
+
+function getLayerProperties(url, doneGetLayerProperties) {
+  request({
+    url: url,
+    qs: {
+      f: 'json'
+    }
+  }, function(err, res, body){
+    if (err) return done(err);
+
+    var properties = JSON.parse(body);
+
+    switch (properties.geometryType) {
+      case "esriGeometryPoint":
+        properties.geometryType = 'POINT'
+        break;
+      case "esriGeometryMultipoint":
+        properties.geometryType = 'MULTIPOINT'
+        break;
+      case "esriGeometryLine":
+        properties.geometryType = 'LINE'
+        break;
+      case "esriGeometryMultiLineString":
+        properties.geometryType = 'MULTILINESTRING'
+        break;
+      case "esriGeometryPolygon":
+        properties.geometryType = 'POLYGON'
+        break;
+    }
+
+    doneGetLayerProperties(null, properties);
+  });
+}
+
 exports.before = {
   all: [],
   find: [],
   get: [],
   create: [function(hook){
     return new Promise(function(resolve, reject){
-      request({
-        url: hook.data.url,
-        qs: {
-          f: 'json'
+
+      var sequelize = hook.app.get('sequelize');
+
+      async.series([
+        function(doneStep){
+          dropLayer(sequelize, hook.data.id, function(err){
+            if (err) return reject(err);
+            else doneStep();
+          })
+        },
+        function(doneStep){
+          getLayerProperties(hook.data.url, function(err, properties){
+            if (err) return reject(err);
+            hook.data.geometryType = properties.geometryType;
+            hook.data.fields = properties.fields;
+            resolve();
+          })
         }
-      }, function(err, res, body){
-        if (err) return reject(err);
-
-        var metadata = JSON.parse(body);
-
-        switch (metadata.geometryType) {
-          case "esriGeometryPoint":
-            hook.data.geometryType = 'POINT'
-            break;
-          case "esriGeometryMultipoint":
-            hook.data.geometryType = 'MULTIPOINT'
-            break;
-          case "esriGeometryLine":
-            hook.data.geometryType = 'LINE'
-            break;
-          case "esriGeometryMultiLineString":
-            hook.data.geometryType = 'MULTILINESTRING'
-            break;
-          case "esriGeometryPolygon":
-            hook.data.geometryType = 'POLYGON'
-            break;
-        }
-
-        hook.data.fields = metadata.fields;
-        resolve();
-      });
+      ]);
     });
   }],
   update: [],
@@ -132,6 +160,7 @@ exports.after = {
             var feature = {
               geometry: esriFeature.geometry
             }
+
             _.each(_.keys(esriFeature.properties), function(property){
               feature[property] = esriFeature.properties[property];
             });
