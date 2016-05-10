@@ -210,7 +210,7 @@ describe('content service', function()  {
       .catch(doneIt);
   });
 
-  it('search term that appeaps on layer', function (doneIt) {
+  it('search term that appears on layer', function (doneIt) {
     Search
       .find({
         query: {
@@ -224,6 +224,21 @@ describe('content service', function()  {
         var layer = response.layers[0];
         layer.should.have.property('id', 'ef1b62313b1a4f598c5a36eab36cd81c_1');
 
+        doneIt();
+      })
+      .catch(doneIt);
+  });
+
+  it('search term that appears on features', function (doneIt) {
+    Search
+      .find({
+        query: {
+          term: 'bras'
+        }
+      })
+      .then(function(response) {
+        response.should.have.property('features');
+        response.features.should.have.length(1);
         doneIt();
       })
       .catch(doneIt);
