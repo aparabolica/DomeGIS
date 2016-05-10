@@ -37,17 +37,19 @@ module.exports = function(){
     find: function(params) {
       return new Promise(function(resolve, reject){
         var results = {};
+        var term = params.query.term;
+        if (!term) return resolve(results);
 
         async.series([
           function(doneEach) {
-            searchContents(params.term, function(err, contentResults){
+            searchContents(term, function(err, contentResults){
               if (err) return reject(err);
               results = _.extend(results, contentResults);
               doneEach();
             });
           },
           function(doneEach) {
-            searchLayers(params.term, function(err, layerResults){
+            searchLayers(term, function(err, layerResults){
               if (err) return reject(err);
               results = _.extend(results, layerResults);
               doneEach();

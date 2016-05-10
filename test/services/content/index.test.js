@@ -198,7 +198,9 @@ describe('content service', function()  {
   it('search term that appears on content', function (doneIt) {
     Search
       .find({
-        term: 'world cup'
+        query: {
+          term: 'world cup'
+        }
       })
       .then(function(response) {
         response.should.have.property('contents');
@@ -211,7 +213,9 @@ describe('content service', function()  {
   it('search term that appeaps on layer', function (doneIt) {
     Search
       .find({
-        term: 'ecore'
+        query: {
+          term: 'ecore'
+        }
       })
       .then(function(response) {
         response.should.have.property('layers');
