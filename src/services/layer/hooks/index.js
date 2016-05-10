@@ -78,13 +78,15 @@ function getLayerProperties(url, doneGetLayerProperties) {
       case "esriGeometryLine":
         properties.geometryType = 'LINE'
         break;
-      case "esriGeometryMultiLineString":
-        properties.geometryType = 'MULTILINESTRING'
+      case "esriGeometryPolyline":
+        properties.geometryType = 'LINESTRING'
         break;
       case "esriGeometryPolygon":
-        properties.geometryType = 'POLYGON'
+        properties.geometryType = 'MULTIPOLYGON'
         break;
     }
+
+    properties.srid = properties.extent.spatialReference.latestWkid || properties.extent.spatialReference.wkid;
 
     doneGetLayerProperties(null, properties);
   });
@@ -111,6 +113,7 @@ exports.before = {
             if (err) return reject(err);
             hook.data.geometryType = properties.geometryType;
             hook.data.fields = properties.fields;
+            hook.data.srid = properties.srid;
             resolve();
           })
         }
@@ -142,7 +145,7 @@ exports.after = {
         var data = JSON.parse(body);
 
         var schema = {
-          geometry: { type: Sequelize.GEOMETRY }
+          geometry: { type: Sequelize.GEOMETRY(hook.data.geometryType, hook.data.srid) }
         }
 
         _.each(hook.data.fields, function(field){
@@ -156,6 +159,7 @@ exports.after = {
 
           // insert features
           async.eachSeries(data.features, function(esriFeature, doneEach){
+
             esriFeature.geometry.crs = data.crs;
             var feature = {
               geometry: esriFeature.geometry
