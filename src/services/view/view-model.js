@@ -7,6 +7,7 @@ module.exports = function(sequelize) {
     id: { type: Sequelize.UUID, defaultValue: Sequelize.UUIDV1, primaryKey: true},
     name: { type: Sequelize.STRING, required: true},
     layergroupId: { type: Sequelize.STRING },
+    legend: { type: Sequelize.JSON},
     style: { type: Sequelize.JSON, required: true},
     cartocss: { type: Sequelize.TEXT, required: true}
   }, {
