@@ -134,6 +134,8 @@ exports.after = {
     var sequelize = hook.app.get('sequelize');
     var layerId = hook.data.id;
 
+    Layers.emit('created', hook.data);
+
     function emitSyncFinishEvent(err, data) {
       if (!data) data = {};
       if (err) data = {error: err};
@@ -181,7 +183,7 @@ exports.after = {
             doneEach();
           }).catch(emitSyncFinishEvent);
         }, function(err){
-          emitSyncFinishEvent(null, { layerId: layerId });
+          emitSyncFinishEvent(null, { id: layerId });
         });
 
       }).catch(emitSyncFinishEvent);

@@ -24,33 +24,41 @@ exports.after = {
   find: [],
   get: [],
   create: [function(hook){
-    return new Promise(function(resolve, reject){
-      var Layers = hook.app.service('layers');
-      request({
-        url: hook.data.url,
-        qs: {
-          f: 'json'
+    var Layers = hook.app.service('layers');
+    var Contents = hook.app.service('contents');
+
+    Contents.emit('created', hook.data);
+
+    request({
+      url: hook.data.url,
+      qs: {
+        f: 'json'
+      }
+    }, function(err, res, body){
+      if (err) return reject(err);
+
+      var results = JSON.parse(body);
+      var layers = results.layers;
+
+      async.eachSeries(layers, function(layer, doneLayer){
+        // set content id
+        layer.contentId = hook.data.id;
+        layer.index = layer.id;
+        layer.url = hook.data.url + '/' + + layer.id;
+        layer.id = hook.data.id + '_' + layer.id;
+        Layers
+          .create(layer)
+          .then( function(result) {
+            doneLayer();
+          })
+          .catch(doneLayer);
+      }, function(err){
+        if (err) {
+          console.log('error creating layer');
+          console.log(err);
         }
-      }, function(err, res, body){
-        if (err) return reject(err);
-
-        var results = JSON.parse(body);
-        var layers = results.layers;
-
-        async.eachSeries(layers, function(layer, doneLayer){
-          // set content id
-          layer.contentId = hook.data.id;
-          layer.index = layer.id;
-          layer.url = hook.data.url + '/' + + layer.id;
-          layer.id = hook.data.id + '_' + layer.id;
-          Layers
-            .create(layer)
-            .then(function(result){
-              doneLayer();
-            })
-            .catch(reject);
-        }, resolve);
       });
+
     });
   }],
   update: [],
