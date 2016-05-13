@@ -118,16 +118,29 @@ describe('content service', function()  {
 
 
   it('allow content creation', function (doneIt) {
-    Contents
-      .create(payloadContent1)
-      .then(function(content) {
-        content.should.have.property('id', payloadContent1.id);
-        return content.getLayers().then(function(result){
-          result.should.be.an.Array().and.have.length(3);
-          doneIt();
-        });
-      })
-      .catch(doneIt);
+
+    // create content and check layer creation messages in parallel
+    async.parallel([function(doneEach){
+      Contents
+        .create(payloadContent1)
+        .then(function(content) {
+          content.should.have.property('id', payloadContent1.id);
+          return content.getLayers().then(function(result){
+            result.should.be.an.Array().and.have.length(3);
+            doneEach();
+          });
+        })
+        .catch(doneEach);
+    }, function(doneEach){
+      var layerCount = 0;
+      Layers.on('syncFinish', function(message){
+        message.should.have.property('layerId');        
+        layerCount += 1;
+        if (layerCount == 3) doneEach();
+      });
+    }], function(err){
+      doneIt(err)
+    });
   });
 
   it('content is inserted properly', function(doneIt){

@@ -130,53 +130,62 @@ exports.after = {
   find: [],
   get: [],
   create: [function(hook){
+    var Layers = hook.app.service('layers');
     var sequelize = hook.app.get('sequelize');
-    return new Promise(function(resolve, reject){
-      request({
-        url: hook.data.url + '/query',
-        qs: {
-          returnGeometry: true,
-          where: '1=1',
-          outFields: '*',
-          f: 'geojson'
-        }
-      }, function(err, res, body){
-        if (err) return reject(err);
-        var data = JSON.parse(body);
+    var layerId = hook.data.id;
 
-        var schema = {
-          geometry: { type: Sequelize.GEOMETRY(hook.data.geometryType, hook.data.srid) }
-        }
+    function emitSyncFinishEvent(err, data) {
+      if (!data) data = {};
+      if (err) data = {error: err};
+      Layers.emit('syncFinish', data);
+    }
 
-        _.each(hook.data.fields, function(field){
-          var fieldType = esriToSequelizeType(field.type);
-          if (fieldType) schema[field.name] = { type: fieldType }
+    request({
+      url: hook.data.url + '/query',
+      qs: {
+        returnGeometry: true,
+        where: '1=1',
+        outFields: '*',
+        f: 'geojson'
+      }
+    }, function(err, res, body){
+      if (err) return emitSyncFinishEvent(err);
+      var data = JSON.parse(body);
+
+      var schema = {
+        geometry: { type: Sequelize.GEOMETRY(hook.data.geometryType, hook.data.srid) }
+      }
+
+      _.each(hook.data.fields, function(field){
+        var fieldType = esriToSequelizeType(field.type);
+        if (fieldType) schema[field.name] = { type: fieldType }
+      });
+
+      // create feature table
+      var Features = sequelize.define(layerId, schema);
+      sequelize.sync().then(function(){
+
+        // insert features
+        async.eachSeries(data.features, function(esriFeature, doneEach){
+
+          esriFeature.geometry.crs = data.crs;
+          var feature = {
+            geometry: esriFeature.geometry
+          }
+
+          _.each(_.keys(esriFeature.properties), function(property){
+            feature[property] = esriFeature.properties[property];
+          });
+
+          Features.create(feature).then(function(result){
+            doneEach();
+          }).catch(emitSyncFinishEvent);
+        }, function(err){
+          emitSyncFinishEvent(null, { layerId: layerId });
         });
 
-        // create feature table
-        var Features = sequelize.define(hook.data.id, schema);
-        sequelize.sync().then(function(){
+      }).catch(emitSyncFinishEvent);
 
-          // insert features
-          async.eachSeries(data.features, function(esriFeature, doneEach){
-
-            esriFeature.geometry.crs = data.crs;
-            var feature = {
-              geometry: esriFeature.geometry
-            }
-
-            _.each(_.keys(esriFeature.properties), function(property){
-              feature[property] = esriFeature.properties[property];
-            });
-
-            Features.create(feature).then(function(result){
-              doneEach()
-            }).catch(reject);
-          }, resolve);
-
-        }).catch(reject);
-
-      });
     });
   }],
   update: [],
