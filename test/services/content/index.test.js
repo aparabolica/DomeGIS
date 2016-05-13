@@ -237,8 +237,7 @@ describe('content service', function()  {
         }
       })
       .then(function(response) {
-        response.should.have.property('features');
-        response.features.should.have.length(1);
+        response.should.not.have.property('features');
         doneIt();
       })
       .catch(doneIt);

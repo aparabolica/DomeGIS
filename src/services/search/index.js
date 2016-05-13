@@ -34,38 +34,6 @@ module.exports = function(){
       }).catch(doneSearchLayers);
   }
 
-  function searchFeatures(term, doneSearchFeatures) {
-    var results = { features: [] };
-
-    Layers.find({}).then(function(layers){
-
-      // get searchable fields for layer
-      async.eachSeries(layers.data, function(layer, doneEach){
-        var where = [];
-        _.each(layer.fields, function(field){
-          if (field.type == 'esriFieldTypeString') {
-            where.push("(t.\"" + field.name + "\" ILIKE '%" + term + "%')")
-          };
-        });
-
-        if (where.length > 0) {
-          var query = 'SELECT * FROM \"' + layer.id + 's\" as t WHERE ' + where.join(' OR ');
-          sequelize.query(query)
-            .then(function(queryResult){
-              queryResult[0].forEach(function(item){
-                item.layerId = layer.id;
-                results.features.push(item);
-              });
-              doneEach();
-            }).catch(doneEach);
-        } else doneEach();
-      }, function(err){
-        doneSearchFeatures(err, results);
-      })
-    });
-
-  }
-
   // Initialize service
   app.use('/search', {
     find: function(params) {
@@ -88,14 +56,8 @@ module.exports = function(){
               results = _.extend(results, layerResults);
               doneEach();
             });
-          },
-          function(doneEach) {
-            searchFeatures(term, function(err, featuresResults){
-              if (err) return reject(err);
-              results = _.extend(results, featuresResults);
-              doneEach();
-            });
-        }],
+          }
+        ],
         function(err) {
           if (err) return reject(err);
           resolve(results);
