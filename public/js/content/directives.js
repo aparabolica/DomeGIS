@@ -14,6 +14,8 @@ angular.module('domegis')
         var contentService = Server.service('contents');
         var layerService = Server.service('layers');
 
+        scope.layers = [];
+
         if(scope.content) {
           Server.find(layerService, {
             query: {
@@ -25,7 +27,7 @@ angular.module('domegis')
         }
 
         Server.on(layerService, 'created', function(data) {
-          if(scope.content && data.contentId == scope.content.id)
+          if(scope.content && data.contentId == scope.content.id && !_.find(scope.layers, function(l) { return l.id == data.id; }))
             scope.layers.push(data);
         });
         Server.on(layerService, 'removed', function(data) {

@@ -1,5 +1,5 @@
 <div class="meta">
-  <p class="info">Last sync: {{content.updatedAt | formatDate}}</p>
+  <p class="info" ng-show="content.updatedAt">Last sync: {{content.updatedAt | formatDate}}</p>
 </div>
 <p ng-show="content.snippet">{{content.snippet}}</p>
 <!-- <button ng-click="unsyncItem(content)">Remove</button>
