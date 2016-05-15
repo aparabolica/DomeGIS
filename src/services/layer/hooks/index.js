@@ -40,7 +40,7 @@ function esriToSequelizeType(esriType) {
       return Sequelize.STRING;
       break;
     case 'esriFieldTypeGlobalID':
-      return Sequelize.DATE;
+      return Sequelize.STRING;
       break;
     case 'esriFieldTypeXML':
       return Sequelize.TEXT;
@@ -147,6 +147,7 @@ exports.after = {
       qs: {
         returnGeometry: true,
         where: '1=1',
+        outSR: 4326,
         outFields: '*',
         f: 'geojson'
       }
@@ -154,40 +155,64 @@ exports.after = {
       if (err) return emitSyncFinishEvent(err);
       var data = JSON.parse(body);
 
-      var schema = {
-        geometry: { type: Sequelize.GEOMETRY(hook.data.geometryType, hook.data.srid) }
-      }
 
-      _.each(hook.data.fields, function(field){
-        var fieldType = esriToSequelizeType(field.type);
-        if (fieldType) schema[field.name] = { type: fieldType }
-      });
-
-      // create feature table
-      var Features = sequelize.define(layerId, schema);
-      sequelize.sync().then(function(){
-
-        // insert features
-        async.eachSeries(data.features, function(esriFeature, doneEach){
-
-          esriFeature.geometry.crs = data.crs;
-          var feature = {
-            geometry: esriFeature.geometry
-          }
-
-          _.each(_.keys(esriFeature.properties), function(property){
-            feature[property] = esriFeature.properties[property];
-          });
-
-          Features.create(feature).then(function(result){
-            doneEach();
-          }).catch(emitSyncFinishEvent);
-        }, function(err){
-          emitSyncFinishEvent(null, { id: layerId });
+      // if layers is empty, don't create feature table
+      if (data.features == 0) {
+        Layers.update({_id: layerId}, {$set:{
+          featureCount: 0
+        }}).then(function(result){
+          emitSyncFinishEvent(null, {
+            id: layerId,
+            featureCount: 0
+          })
         });
 
-      }).catch(emitSyncFinishEvent);
+      // layer is not empty, sync
+      } else {
 
+        var postgisType = data.features[0]['geometry']['type'];
+
+        var schema = {
+          geometry: { type: Sequelize.GEOMETRY(postgisType, 4326) }
+        }
+
+        _.each(hook.data.fields, function(field){
+          var fieldType = esriToSequelizeType(field.type);
+          if (fieldType) schema[field.name] = { type: fieldType }
+        });
+
+        // create feature table
+        var Features = sequelize.define(layerId, schema);
+        sequelize.sync().then(function(){
+
+          // insert features
+          async.eachSeries(data.features, function(esriFeature, doneEach){
+
+            // set srid on feature (because of PostGIS)
+            esriFeature.geometry.crs = data.crs;
+
+            // create fake MultiPolygon if needed
+            if (postgisType == 'MultiPolygon' && esriFeature.geometry.type == 'Polygon') {
+              esriFeature.geometry.type = 'MultiPolygon';
+              esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
+            }
+
+            _.each(_.keys(esriFeature.properties), function(property){
+              esriFeature[property] = esriFeature.properties[property];
+            });
+
+            Features.create(esriFeature).then(function(result){
+              doneEach();
+            }).catch(emitSyncFinishEvent);
+          }, function(err){
+            if (err) return emitSyncFinishEvent(err);
+            var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"s\"), \"featureCount\" = " + data.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
+            sequelize.query(query).then(function(result){
+              emitSyncFinishEvent(null, { id: layerId });
+            }).catch(emitSyncFinishEvent);
+          });
+        }).catch(emitSyncFinishEvent);
+      }
     });
   }],
   update: [],
