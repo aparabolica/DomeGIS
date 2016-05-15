@@ -1,8 +1,35 @@
 <div class="container">
   <div class="twelve columns">
+    <h2 ng-show="layer.id">Editing layer {{layer.name}}</h2>
     <form id="edit_layer" class="main-form" ng-submit="save(layer)">
-      <p><input type="text" placeholder="Name" ng-model="layer.name" /></p>
-      <p><input type="submit" value="Save layer" /></p>
+      <p>
+        <label for="name_input">Layer name</label>
+        <input id="name_input" type="text" placeholder="Name" ng-model="layer.name" />
+      </p>
+      <h3>Columns</h3>
+      <p>Edit the display name for the layer fields</p>
+      <table class="field-editor">
+        <thead>
+          <tr>
+            <td>Field</td>
+            <td>Label</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="field in layer.fields">
+            <td>
+              <p class="field-name">{{field.name}}</p>
+              <p class="field-type">Type: {{field.type}}</p>
+            </td>
+            <td>
+              <input type="text" ng-model="layer.label[field.name]" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p>
+        <input type="submit" value="Save layer" />
+      </p>
     </form>
   </div>
 </div>

@@ -1,4 +1,9 @@
-<td class="main">{{layer.name}}</td>
+<td class="main">
+  <h3>{{layer.name}}</h3>
+  <p class="actions">
+    <a class="button" ui-sref="editLayer({id:layer.id})">Edit layer</a>
+  </p>
+</td>
 <td>
   <div ng-repeat="view in views" view-item="view" class="view-item"></div>
   <a class="button" ui-sref="editView({layerId: layer.id})">Create new view</a>
