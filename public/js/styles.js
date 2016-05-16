@@ -19,7 +19,8 @@ var mapCarto = {
     'marker-allow-overlap': 'allowOverlap',
     'marker-line-color': 'stroke.color',
     'marker-line-width': 'stroke.width',
-    'marker-line-opacity': 'stroke.opacity'
+    'marker-line-opacity': 'stroke.opacity',
+    'marker-type': 'type'
   },
   'polyline': {
     'line-color': 'stroke.color',
@@ -99,7 +100,7 @@ angular.module('domegis')
 
           $scope.cartocss = $scope.cartocss || '';
 
-          $scope.styles = $scope.styles || {
+          var defaultStyles = {
             polygon: {
               composite: '',
               fill: {
@@ -134,6 +135,8 @@ angular.module('domegis')
               }
             }
           };
+
+          $scope.styles = $scope.styles || defaultStyles;
 
           var getProp = function(type, name) {
             var val = '';

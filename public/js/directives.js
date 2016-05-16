@@ -21,8 +21,10 @@ angular.module('domegis')
 ])
 
 .directive('domeMap', [
-  '$http',
-  function($http) {
+  '$q',
+  '$state',
+  'Server',
+  function($q, $state, Server) {
     return {
       restrict: 'A',
       scope: {
@@ -33,28 +35,100 @@ angular.module('domegis')
       template: '<div id="map"></div>',
       link: function(scope, element, attrs) {
 
+        var layerService = Server.service('layers');
+        var viewService = Server.service('views');
+
+        var loc = getStateLoc();
+
+        var center = [0,0];
+        var zoom = 2;
+
+        if(loc.length) {
+          center = [loc[0], loc[1]];
+          zoom = loc[2];
+        }
+
         var map = L.map('map', {
-          center: [0,0],
-          zoom: 2
+          center: center,
+          zoom: zoom,
+          fullscreenControl: true
         });
 
-        map.addLayer(L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png'));
+        var legendControl = L.control.legend();
+        map.addControl(legendControl);
+
+        map.on('move', function() {
+          $state.go($state.current.name, {loc: getLocStr()}, {notify: false})
+        });
+
+        map.addLayer(L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'));
 
         var layers = [];
 
         scope.$watch('views', function(views) {
           layers.forEach(function(layer) {
-            map.removeLayer(layer);
+            map.removeLayer(layer.tile);
+            legendControl.removeLegend(layer.legend);
           });
           layers = [];
           if(views && views.length) {
+            var promises = [];
             views.forEach(function(id) {
-              var tileLayer = L.tileLayer('/tiles/' + id + '/{z}/{x}/{y}.png');
-              map.addLayer(tileLayer);
-              layers.push(tileLayer);
+              promises.push(Server.get(viewService, id));
+            });
+            $q.all(promises).then(function(data) {
+              data.forEach(addView);
             });
           }
         }, true);
+
+        function addView(view) {
+          var layer = {};
+          layer.tile = L.tileLayer('/tiles/' + view.id + '/{z}/{x}/{y}.png');
+          map.addLayer(layer.tile);
+          layers.push(layer);
+          Server.get(layerService, view.layerId).then(function(l) {
+            layer.legend = getViewLegend(view, l);
+            legendControl.addLegend(layer.legend);
+          });
+        }
+
+        function getViewLegend(view, layer) {
+
+          var style = _.find(view.style, function(style, type) {
+            return layer.geometryType.toLowerCase().indexOf(type) !== -1;
+          });
+
+          var bgColor = style.fill.color;
+          var bgOpacity = style.fill.opacity;
+          var stroke = style.stroke.width;
+          var strokeColor = style.stroke.color;
+
+          var html = '<div id="legend-' + view.id + '">';
+          html += '<p class="item">';
+          html += '<span class="sqr" style="background:' + bgColor + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + 'px;"></span>';
+          html += layer.name;
+          html += '</p>';
+          html += '</div>';
+          return html;
+        }
+
+        function getLocStr() {
+          var center = map.getCenter();
+          var zoom = map.getZoom();
+          var loc = [];
+          loc.push(center.lat);
+          loc.push(center.lng);
+          loc.push(zoom);
+          return loc.join(',');
+        }
+
+        function getStateLoc() {
+          if($state.params.loc)
+            return $state.params.loc.split(',');
+          else
+            return [];
+        }
 
       }
     }

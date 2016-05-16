@@ -73,7 +73,7 @@ angular.module('domegis')
       }
     })
     .state('editView', {
-      url: '/views/edit/?id&layerId',
+      url: '/views/edit/?id&layerId&loc',
       templateUrl: '/views/view/edit.html',
       controller: 'ViewEditCtrl',
       resolve: {
@@ -145,7 +145,7 @@ angular.module('domegis')
       }
     })
     .state('map', {
-      url: '/map/?views&base',
+      url: '/map/?views&base&loc',
       templateUrl: '/views/map.html',
       controller: [
         '$stateParams',
@@ -155,10 +155,6 @@ angular.module('domegis')
           $scope.base = $stateParams.base;
         }
       ]
-    })
-    .state('styles', {
-      url: '/styles/',
-      template: '<domegis-styles></domegis-styles>'
     });
 
     /*
