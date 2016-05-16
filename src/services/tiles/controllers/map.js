@@ -36,9 +36,9 @@ function MapController(app, mapStore, mapBackend, tileBackend, attributesBackend
 
   viewService.find({}).then(function(views){
     _.each(views.data, function(view){
-      self.getLayerGroupId(view, function(err, layergroupId){
+      self.getLayerGroupId(view, function(err, layergroupIds){
         if (err) return console.log(err);
-        view.layergroupId = layergroupId;
+        view = _.extend(view, layergroupIds);
         view.save();
       })
     });
@@ -54,27 +54,62 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
 
   var defaultCartoCSS = "#style{ polygon-fill: blue;  line-color: red; marker-width:8; marker-fill: red; }";
 
-  var sampleMapnikLayer1 = {
-    type: 'mapnik',
-    options: {
-      sql: 'select id, geometry from "' + view.layerId + 's"',
-      geom_column: "geometry",
-      cartocss_version: "2.0.0",
-      cartocss: view.cartocss || defaultCartoCSS
-    }
-  }
+  async.series([ function(doneEach){
 
-  var mapConfig = MapConfig.create({
-    version: '1.2.0',
-    layers: [ sampleMapnikLayer1 ]
+    // preview
+    var mapnikLayer = {
+      type: 'mapnik',
+      options: {
+        sql: 'select id, geometry from "' + view.layerId + 's"',
+        geom_column: "geometry",
+        cartocss_version: "2.0.0",
+        cartocss: view.previewCartoCss || view.cartocss || defaultCartoCSS
+      }
+    }
+
+    var mapConfig = MapConfig.create({
+      version: '1.2.0',
+      layers: [ mapnikLayer ]
+    });
+
+    self
+      .mapBackend
+      .createLayergroup(mapConfig, dbParams, new DummyMapConfigProvider(mapConfig, dbParams), function(err, res){
+        if (err) doneEach(err)
+        else doneEach(null, res.layergroupid);
+      });
+  }, function(doneEach){
+
+    // view
+    var mapnikLayer = {
+      type: 'mapnik',
+      options: {
+        sql: 'select id, geometry from "' + view.layerId + 's"',
+        geom_column: "geometry",
+        cartocss_version: "2.0.0",
+        cartocss: view.cartocss || defaultCartoCSS
+      }
+    }
+
+    var mapConfig = MapConfig.create({
+      version: '1.2.0',
+      layers: [ mapnikLayer ]
+    });
+
+    self
+      .mapBackend
+      .createLayergroup(mapConfig, dbParams, new DummyMapConfigProvider(mapConfig, dbParams), function(err, res){
+        if (err) doneEach(err)
+        else doneEach(null, res.layergroupid);
+      });
+  }], function(err, results){
+    if (err) return doneGetLayerGroupId(err);
+    doneGetLayerGroupId(null, {
+      previewLayergroupId: results[0],
+      layergroupId: results[1]
+    });
   });
 
-  self
-    .mapBackend
-    .createLayergroup(mapConfig, dbParams, new DummyMapConfigProvider(mapConfig, dbParams), function(err, res){
-      if (err) doneGetLayerGroupId(err)
-      else doneGetLayerGroupId(null, res.layergroupid);
-    });
 }
 
 // Gets a tile for a given token and set of tile ZXY coords. (OSM style)
@@ -100,7 +135,11 @@ MapController.prototype.tileOrLayer = function (req, res) {
 
     var params = _.extend(req.params, opts.dbParams);
 
-    params.token = view.layergroupId;
+    if (req.query.preview) {
+      params.token = view.previewLayergroupId;
+    } else {
+      params.token = view.layergroupId;
+    }
 
     step(
       function mapController$getTile(err) {

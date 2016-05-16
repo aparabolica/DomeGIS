@@ -69,7 +69,6 @@ module.exports = function() {
    */
 
   var attributesBackend = new windshaft.backend.Attributes();
-  var previewBackend = new windshaft.backend.Preview(rendererCache);
   var tileBackend = new windshaft.backend.Tile(rendererCache);
   var mapValidatorBackend = new windshaft.backend.MapValidator(tileBackend, attributesBackend);
   var mapBackend = new windshaft.backend.Map(rendererCache, mapStore, mapValidatorBackend);

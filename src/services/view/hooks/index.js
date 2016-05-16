@@ -1,14 +1,15 @@
 'use strict';
 
+var _ = require('underscore');
 var globalHooks = require('../../../hooks');
 var hooks = require('feathers-hooks');
 
 var setLayergroup = function(hook) {
   return new Promise(function(resolve, reject){
     var MapController = hook.app.get('mapController');
-    MapController.getLayerGroupId(hook.data, function(err, layergroupId){
+    MapController.getLayerGroupId(hook.data, function(err, layergroupIds){
       if (err) return reject(err);
-      hook.data.layergroupId = layergroupId;
+      hook.data = _.extend(hook.data, layergroupIds);
       resolve();
     });
   });
