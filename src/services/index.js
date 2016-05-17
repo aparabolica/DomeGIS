@@ -30,7 +30,7 @@ module.exports = function() {
    .filter(function(model) { return model.associate })
    .forEach(function(model) { return  model.associate(models) } );
 
-  sequelize.sync();
+  sequelize.sync({force:true});
 
   // disable windshaft when testing
   if (process.env.NODE_ENV != 'test') {

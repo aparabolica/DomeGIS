@@ -29,7 +29,8 @@ angular.module('domegis')
       restrict: 'A',
       scope: {
         views: '=domeMap',
-        base: '='
+        base: '=',
+        preview: '='
       },
       replace: true,
       template: '<div id="map"></div>',
@@ -65,7 +66,13 @@ angular.module('domegis')
 
         var layers = [];
 
-        scope.$watch('views', function(views) {
+        scope.$watch('views', updateLayers, true);
+
+        scope.$on('updateLayers', function() {
+          updateLayers(scope.views);
+        });
+
+        function updateLayers(views) {
           layers.forEach(function(layer) {
             map.removeLayer(layer.tile);
             legendControl.removeLegend(layer.legend);
@@ -80,11 +87,15 @@ angular.module('domegis')
               data.forEach(addView);
             });
           }
-        }, true);
+        }
 
         function addView(view) {
           var layer = {};
-          layer.tile = L.tileLayer('/tiles/' + view.id + '/{z}/{x}/{y}.png');
+          var url = '/tiles/' + view.id + '/{z}/{x}/{y}.png';
+          if(scope.preview) {
+            url += '?preview=true&time=' + Date.now();
+          }
+          layer.tile = L.tileLayer(url);
           map.addLayer(layer.tile);
           layers.push(layer);
           Server.get(layerService, view.layerId).then(function(l) {

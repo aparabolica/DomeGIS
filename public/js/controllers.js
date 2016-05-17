@@ -216,6 +216,17 @@ angular.module('domegis')
 
     $scope.view = angular.copy(Edit);
 
+    $scope.$watch('view.style', _.debounce(function() {
+      var preview = angular.copy(Edit);
+      if(Edit.id) {
+        Server.update(viewService, Edit.id, _.extend(preview, {
+          previewCartoCss: $scope.view.cartocss
+        })).then(function(data) {
+          $scope.$broadcast('updateLayers');
+        });
+      }
+    }, true), 300);
+
     $scope.save = function(view) {
       if(Edit.id) {
         Server.update(viewService, Edit.id, view).then(function(view) {
