@@ -30,7 +30,7 @@ function MapController(app, mapStore, mapBackend, tileBackend, attributesBackend
   self.tileBackend = tileBackend;
   self.attributesBackend = attributesBackend;
 
-  app.get(opts.baseUrl + '/:viewId/:z/:x/:y.:format', self.tile.bind(self));
+  app.get(opts.baseUrl + '/:viewId/:z/:x/:y.(:format)', self.tile.bind(self));
 
   var viewService = app.service('views');
 
@@ -54,15 +54,22 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
 
   var defaultCartoCSS = "#style{ polygon-fill: blue;  line-color: red; marker-width:8; marker-fill: red; }";
 
-  async.series([ function(doneEach){
+  var fields = view.fields || [];
 
+  var fieldsStr = '';
+  if (fields.length > 0) {
+    fieldsStr = ',' + _.map(fields, function(f){ return '"'+f+'"' }).join(',');
+  }
+
+  async.series([ function(doneEach){
     // preview
     var mapnikLayer = {
       type: 'mapnik',
       options: {
-        sql: 'select id, geometry from "' + view.layerId + 's"',
+        sql: 'select id, geometry '+ fieldsStr +' from "' + view.layerId + 's"',
         geom_column: "geometry",
         cartocss_version: "2.0.0",
+        interactivity: fields,
         cartocss: view.previewCartoCss || view.cartocss || defaultCartoCSS
       }
     }
@@ -84,9 +91,10 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
     var mapnikLayer = {
       type: 'mapnik',
       options: {
-        sql: 'select id, geometry from "' + view.layerId + 's"',
+        sql: 'select id, geometry '+ fieldsStr +' from "' + view.layerId + 's"',
         geom_column: "geometry",
         cartocss_version: "2.0.0",
+        interactivity: fields,
         cartocss: view.cartocss || defaultCartoCSS
       }
     }
@@ -167,6 +175,8 @@ MapController.prototype.tileOrLayer = function (req, res) {
 // step by all endpoints serving tiles or grids
 MapController.prototype.finalizeGetTileOrGrid = function(err, req, res, tile, headers) {
   if (err){
+    console.log(err);
+
 
     // See https://github.com/Vizzuality/Windshaft-cartodb/issues/68
     var errMsg = err.message ? ( '' + err.message ) : ( '' + err );

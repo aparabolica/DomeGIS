@@ -138,7 +138,11 @@ exports.after = {
 
     function emitSyncFinishEvent(err, data) {
       if (!data) data = {};
-      if (err) data = {error: err};
+      if (err) {
+        console.log('error in sync');
+        console.log(err);
+        data = {error: err}
+      };
       Layers.emit('syncFinish', data);
     }
 
