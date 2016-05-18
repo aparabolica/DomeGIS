@@ -106,18 +106,40 @@ angular.module('domegis')
 
         function getViewLegend(view, layer) {
 
+          var layerType;
+
           var style = _.find(view.style, function(style, type) {
-            return layer.geometryType.toLowerCase().indexOf(type) !== -1;
+            var isStyle = layer.geometryType.toLowerCase().indexOf(type) !== -1;
+            if(isStyle) {
+              layerType = type;
+              return true;
+            } else {
+              return false;
+            }
           });
+
+          var clss = '';
+          if(layerType == 'polygon') {
+            clss = 'sqr';
+          } else if(layerType == 'point') {
+            clss = 'pnt';
+          } else if(layerType == 'linestring') {
+            clss = 'ln';
+          }
 
           var bgColor = style.fill.color;
           var bgOpacity = style.fill.opacity;
-          var stroke = style.stroke.width;
-          var strokeColor = style.stroke.color;
+
+          var stroke = '0';
+          var strokeColor = 'transparent';
+          if(style.stroke) {
+            stroke = style.stroke.width + 'px';
+            strokeColor = style.stroke.color;
+          }
 
           var html = '<div id="legend-' + view.id + '">';
           html += '<p class="item">';
-          html += '<span class="sqr" style="background:' + bgColor + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + 'px;"></span>';
+          html += '<span class="' + clss + ' feat-ref" style="background:' + bgColor + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
           html += layer.name;
           html += '</p>';
           html += '</div>';

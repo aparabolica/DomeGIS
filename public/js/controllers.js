@@ -225,7 +225,7 @@ angular.module('domegis')
           $scope.$broadcast('updateLayers');
         });
       }
-    }, true), 300);
+    }, 300), true);
 
     $scope.save = function(view) {
       if(Edit.id) {

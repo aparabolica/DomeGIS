@@ -22,10 +22,11 @@ var mapCarto = {
     'marker-line-opacity': 'stroke.opacity',
     'marker-type': 'type'
   },
-  'polyline': {
-    'line-color': 'stroke.color',
-    'line-width': 'stroke.width',
-    'line-opacity': 'stroke.opacity'
+  'linestring': {
+    'line-color': 'fill.color',
+    'line-width': 'fill.width',
+    'line-opacity': 'fill.opacity',
+    'line-comp-op': 'composite'
   }
 };
 
@@ -128,7 +129,8 @@ angular.module('domegis')
                 opacity: .8
               }
             },
-            polyline: {
+            linestring: {
+              composite: '',
               fill: {
                 width: 1.5,
                 color: '#0000ff',

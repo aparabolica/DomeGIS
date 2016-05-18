@@ -100,12 +100,18 @@
           <input id="marker_allowoverlap_input" type="checkbox" ng-model="styles.point.allowOverlap">
         </td>
       </tr>
-      <tr ng-show="isType('polyline')">
+      <tr ng-show="isType('linestring')">
         <td>Line fill</td>
         <td>
-          <input ng-show="mapType == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.polyline.fill.color" type="text" ng-style="{'background-color': styles.polyline.fill.color || '#fff', 'color': getContrastYIQ(styles.polyline.fill.color)}" />
-          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.polyline.fill.opacity" />
-          <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.polyline.fill.width" />
+          <input ng-show="mapType == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.linestring.fill.color" type="text" ng-style="{'background-color': styles.linestring.fill.color || '#fff', 'color': getContrastYIQ(styles.linestring.fill.color)}" />
+          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.linestring.fill.opacity" />
+          <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.linestring.fill.width" />
+        </td>
+      </tr>
+      <tr ng-show="isType('linestring')">
+        <td>Composite operation</td>
+        <td>
+          <select ng-options="key as value for (key, value) in composites" ng-model="styles.linestring.composite"></select>
         </td>
       </tr>
     </tbody>
