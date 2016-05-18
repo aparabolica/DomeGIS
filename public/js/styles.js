@@ -115,6 +115,7 @@ angular.module('domegis')
             },
             point: {
               composite: '',
+              type: 'ellipse',
               allowOverlap: true,
               fill: {
                 width: 10,
