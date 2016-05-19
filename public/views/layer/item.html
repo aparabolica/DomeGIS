@@ -5,6 +5,15 @@
   </p>
 </td>
 <td>
+  <p class="tag">{{layer.geometryType}}</p>
+</td>
+<td>
+  <p>{{layer.featureCount}} features</p>
+</td>
+<td>
+  <p>{{(layer.fields | parseLayerField | map:'alias').join(', ')}}</p>
+</td>
+<td>
   <div ng-repeat="view in views" view-item="view" class="view-item"></div>
   <a class="button" ui-sref="editView({layerId: layer.id})">Create new view</a>
 </td>

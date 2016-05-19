@@ -204,6 +204,15 @@ table {
       border: 0;
       box-shadow: 0 0 0 0;
     }
+    h1,
+    h2 {
+      letter-spacing: 0;
+    }
+    &.form-header {
+      h2 {
+        font-size: 1.5em;
+      }
+    }
   }
   .results-container {
     margin: 0 -4rem;
@@ -263,9 +272,10 @@ table.results {
         font-size: .8em;
       }
       .tag {
-        font-size: .7em;
-        color: #999;
-        border: 1px solid #eee;
+        text-align: center;
+        font-size: .8em;
+        color: #777;
+        border: 1px solid #ddd;
         border-radius: 14px;
         padding: 2px 8px;
         white-space: nowrap;
@@ -321,7 +331,8 @@ table.results {
     background: #fff;
     margin: 0 0 1rem;
     h3 {
-      font-size: 1.6em;
+      font-size: 1.4em;
+      line-height: 1;
       display: inline-block;
       padding-right: 10px;
       color: #333;
@@ -333,7 +344,7 @@ table.results {
       }
     }
     .view-actions {
-      margin: 0;
+      margin: 1px 0;
       display: inline-block;
       float: right;
       button,
@@ -341,11 +352,25 @@ table.results {
         background: transparent;
         font-size: 1.4em;
         padding: 0;
-        color: #666;
+        color: #777;
         display: inline-block;
         margin: 0 0 0 .5rem;
+        &:hover {
+          color: #333;
+        }
       }
     }
+  }
+}
+
+.layers-table {
+  tr {
+    td {
+      vertical-align: baseline;
+    }
+  }
+  .views-column {
+    width: 25%;
   }
 }
 
@@ -359,6 +384,36 @@ form {
   width: 100%;
   table {
     width: 100%;
+  }
+}
+
+.main-form {
+  input[type=text],
+  input[type=email],
+  input[type=password],
+  input[type=submit] {
+    width: 100%;
+    display: block;
+  }
+  h2,
+  h3 {
+    font-size: 1em;
+    padding-bottom: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .15rem;
+    color: #999;
+    border-bottom: 1px solid #ccc;
+  }
+  table {
+    thead {
+      td {
+        font-size: .8em;
+        color: #999;
+        padding-top: 0px;
+        padding-bottom: 5px;
+      }
+    }
   }
 }
 

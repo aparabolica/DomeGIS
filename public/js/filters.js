@@ -27,3 +27,25 @@ angular.module('domegis')
     }
   }
 ])
+
+.filter('parseLayerField', [
+  function() {
+    return function(input) {
+      return _.filter(input, function(field) {
+        return field.alias !== 'FID' &&
+          field.alias !== 'OBJECTID' &&
+          field.alias !== 'OBJECTID_1';
+      });
+    }
+  }
+])
+
+.filter('map', [
+  function() {
+    return function(input, prop) {
+      return _.map(input, function(item) {
+        return item[prop];
+      });
+    }
+  }
+])

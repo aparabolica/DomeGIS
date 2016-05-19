@@ -72,6 +72,8 @@ angular.module('domegis')
           updateLayers(scope.views);
         });
 
+        var mapBounds;
+
         function updateLayers(views) {
           layers.forEach(function(layer) {
             map.removeLayer(layer.tile);
@@ -99,9 +101,23 @@ angular.module('domegis')
           map.addLayer(layer.tile);
           layers.push(layer);
           Server.get(layerService, view.layerId).then(function(l) {
+            if(!loc.length && l.extents) {
+              var bounds = parseBounds(l.extents);
+              if(mapBounds)
+                mapBounds.extend(bounds);
+              else
+                mapBounds = bounds;
+              map.fitBounds(mapBounds);
+            }
             layer.legend = getViewLegend(view, l);
             legendControl.addLegend(layer.legend);
           });
+        }
+
+        function parseBounds(pgBounds) {
+          var bounds = pgBounds.replace('BOX(', '').replace(')', '').split(',');
+
+          return L.latLngBounds(bounds[1].split(' ').reverse(), bounds[0].split(' ').reverse());
         }
 
         function getViewLegend(view, layer) {

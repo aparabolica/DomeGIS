@@ -5,11 +5,14 @@
 <!-- <button ng-click="unsyncItem(content)">Remove</button>
 <a class="button" ui-sref="editContent({id: content.id})">Edit</a> -->
 <section id="{{content.id}}_layers" ng-show="layers.length">
-  <table class="sub-table">
+  <table class="sub-table layers-table">
     <thead>
       <tr>
         <td>Name</td>
-        <td>Views</td>
+        <td>Geometry type</td>
+        <td>Feature count</td>
+        <td>Fields</td>
+        <td class="views-column">Views</td>
       </tr>
       </tr>
     </thead>
