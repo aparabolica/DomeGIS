@@ -64,7 +64,7 @@ function getLayerProperties(url, doneGetLayerProperties) {
       f: 'json'
     }
   }, function(err, res, body){
-    if (err) return done(err);
+    if (err) return doneGetLayerProperties(err);
 
     var properties = JSON.parse(body);
 
