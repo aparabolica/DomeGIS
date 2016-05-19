@@ -23,6 +23,43 @@ angular.module('domegis')
   }
 ])
 
+.controller('GenerateCtrl', [
+  '$scope',
+  'Server',
+  function($scope, Server) {
+    $scope.search = '';
+    var searchService = Server.service('search');
+
+    $scope.$watch('search', _.debounce(function(search) {
+      if(search) {
+        searchService.find({
+          query: {
+            'term': search
+          }
+        }).then(function(res) {
+          if(res.layers && res.layers.length) {
+            $scope.results = res.layers;
+          } else {
+            $scope.results = [];
+          }
+        });
+      } else {
+        $scope.results = [];
+      }
+    }, 200));
+
+    $scope.map = {};
+    $scope._layers = [];
+
+    $scope.addLayer = function(layer) {
+      if(!$scope.map[layer.id]) {
+        $scope.map[layer.id] = true;
+        $scope._layers.push(layer);
+      }
+    };
+  }
+])
+
 .controller('AuthCtrl', [
   '$scope',
   function($scope) {

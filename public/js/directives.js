@@ -101,7 +101,7 @@ angular.module('domegis')
           map.addLayer(layer.tile);
           layers.push(layer);
           Server.get(layerService, view.layerId).then(function(l) {
-            if(!loc.length && l.extents) {
+            if(!getStateLoc().length && l.extents) {
               var bounds = parseBounds(l.extents);
               if(mapBounds)
                 mapBounds.extend(bounds);

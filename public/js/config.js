@@ -1,18 +1,3 @@
-var demo = {
-  contents: [
-    {
-      id: 1,
-      title: 'Test'
-    }
-  ],
-  layers: [
-    {
-      id: 1,
-      title: 'Test'
-    }
-  ]
-};
-
 angular.module('domegis')
 .config([
   '$stateProvider',
@@ -53,6 +38,11 @@ angular.module('domegis')
       url: '/login/',
       controller: 'AuthCtrl',
       templateUrl: '/views/login.html'
+    })
+    .state('generateMap', {
+      url: '/generate/',
+      controller: 'GenerateCtrl',
+      templateUrl: '/views/generate.html'
     })
     .state('editContent', {
       url: '/contents/edit/?id',
@@ -105,17 +95,6 @@ angular.module('domegis')
             } else {
               return false;
             }
-          }
-        ]
-      }
-    })
-    .state('layers', {
-      url: '/layers/',
-      controller: 'LayerCtrl',
-      resolve: {
-        Contents: [
-          function() {
-            return demo.layers
           }
         ]
       }

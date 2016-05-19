@@ -1,0 +1,42 @@
+<header id="inner-header" class="form-header">
+  <div class="container">
+    <div class="six columns offset-by-three">
+      <h2>Generate map</h2>
+      <p>Generate a map embed code based on your collection of layers and views</p>
+    </div>
+  </div>
+</header>
+<div class="container row">
+  <div class="six columns offset-by-three">
+    <form id="generate_map" class="main-form">
+      <p>
+        <label for="search_input">Search for layers</label>
+        <input id="search_input" type="text" placeholder="Type your search..." ng-model="search" />
+      </p>
+      <div class="search-results">
+        <p ng-show="!results.length && search">No results were found.</p>
+        <ul class="layer-list" ng-show="results.length && search">
+          <li ng-repeat="layer in results" class="layer-item" ng-click="addLayer(layer)">
+            <h3>{{layer.name}}</h3>
+          </li>
+        </ul>
+      </div>
+      <div class="selected-layers" ng-show="_layers.length">
+        <h2>Selected layers</h2>
+        <ul class="layer-list">
+          <li ng-repeat="layer in _layers" class="layer-item">
+            <h3>{{layer.name}}</h3>
+          </li>
+        </ul>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="container">
+  <div class="four columns offset-by-two">
+    <h3>HTML Embed</h2>
+  </div>
+  <div class="four columns">
+    <h3>WordPress Plugin</h2>
+  </div>
+</div>
