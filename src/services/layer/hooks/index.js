@@ -112,8 +112,14 @@ exports.before = {
           getLayerProperties(hook.data.url, function(err, properties){
             if (err) return reject(err);
             hook.data.geometryType = properties.geometryType;
-            hook.data.fields = properties.fields;
-            hook.data.srid = properties.srid;
+            hook.data.fields = _.map(properties.fields, function(field) {
+              field.title = {
+                "en": field.name,
+                "es": field.name,
+                "pt": field.name
+              }
+              return field;
+            });
             resolve();
           })
         }
