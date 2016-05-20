@@ -652,6 +652,9 @@ form {
 }
 
 #generate_map {
+  .main-form {
+    margin: 4rem 0;
+  }
   .layer-list {
     list-style: none;
     .layer-item {
@@ -660,5 +663,87 @@ form {
         color: #444;
       }
     }
+  }
+  .selected-layers {
+    margin: 0 -4rem;
+    padding: 6rem 0;
+    background: @blue;
+    color: #fff;
+    .layer-item {
+      background: darken(@blue, 5%);
+      padding: 2rem 2rem 2rem 50px;
+      margin: 0 0 1px;
+      position: relative;
+      cursor: default;
+      .sort {
+        position: absolute;
+        top: 1px;
+        left: 1px;
+        bottom: 1px;
+        width: 30px;
+        background: darken(@blue, 7%);
+        font-size: 1.2em;
+        padding-top: 2rem;
+        text-align: center;
+        cursor: move;
+      }
+      h3,
+      a {
+        color: #fff;
+      }
+      .actions {
+        float: right;
+      }
+      h3 {
+        font-size: 1.5em;
+        letter-spacing: 0;
+      }
+      .views {
+        margin: 0;
+        span {
+          float: left;
+          font-weight: 600;
+          color: rgba(255,255,255,0.4);
+          margin-right: 2.5rem;
+        }
+        label {
+          float: left;
+          margin-right: 2rem;
+          font-weight: 400;
+        }
+      }
+    }
+  }
+  .output {
+    margin: 0 -4rem -4rem;
+    padding: 6rem 0;
+    background: #333;
+    color: #fff;
+    .fa-hand-o-down {
+      font-size: 3em;
+      display: block;
+      text-align: center;
+      margin-top: -7rem;
+      margin-bottom: 6rem;
+    }
+    h3 {
+      font-size: 2em;
+      span {
+        float: left;
+        margin: -1.5rem 2rem 2rem 0;
+        font-size: 2.4em;
+      }
+    }
+    textarea {
+      background: #111;
+      border-color: #555;
+      width: 100%;
+      height: 100px;
+    }
+  }
+  .output-map {
+    margin-top: 2rem;
+    width: 100%;
+    height: 400px;
   }
 }

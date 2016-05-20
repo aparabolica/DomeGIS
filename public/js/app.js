@@ -1,5 +1,6 @@
 angular.module('domegis', [
   'ui.router',
+  'ui.sortable',
   'ui.ace',
   'colorpicker.module'
 ]);

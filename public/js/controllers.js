@@ -25,38 +25,97 @@ angular.module('domegis')
 
 .controller('GenerateCtrl', [
   '$scope',
+  '$state',
   'Server',
-  function($scope, Server) {
-    $scope.search = '';
+  function($scope, $state, Server) {
     var searchService = Server.service('search');
+    var viewService = Server.service('views');
 
-    $scope.$watch('search', _.debounce(function(search) {
+    $scope.search = '';
+    $scope.results = [];
+
+    $scope.$watch('search', function(search) {
       if(search) {
         searchService.find({
           query: {
             'term': search
           }
         }).then(function(res) {
-          if(res.layers && res.layers.length) {
-            $scope.results = res.layers;
-          } else {
-            $scope.results = [];
-          }
+          $scope.$apply(function() {
+            if(res.layers && res.layers.length) {
+              $scope.results = res.layers;
+            } else {
+              $scope.results = [];
+            }
+          });
         });
       } else {
         $scope.results = [];
       }
-    }, 200));
+    });
 
     $scope.map = {};
     $scope._layers = [];
+
+    $scope.$watch('map', function(map) {
+      $scope.str = JSON.stringify(map, null, '  ');
+    }, true);
 
     $scope.addLayer = function(layer) {
       if(!$scope.map[layer.id]) {
         $scope.map[layer.id] = true;
         $scope._layers.push(layer);
+        viewService.find({
+          query: {
+            layerId: layer.id
+          }
+        }).then(function(res) {
+          $scope.$apply(function() {
+            layer.views = res.data;
+            $scope.map[layer.id] = res.data[0].id;
+          });
+        });
       }
     };
+
+    $scope.removeLayer = function(layerId) {
+      if($scope.map[layerId]) {
+        delete $scope.map[layerId];
+        $scope._layers = _.filter($scope._layers, function(l) {
+          return l.id !== layerId;
+        });
+      }
+    };
+
+    $scope.getHTMLEmbed = function() {
+      var url = $state.href('map', {views: getCSViews()}, {absolute: true});
+      return '<iframe src="' + url + '" width="100%" height="400" frameborder="0"></iframe>';
+    };
+
+    $scope.getWPShortcode = function() {
+      return '[domegis views="' + getCSViews() + '"]';
+    };
+
+
+
+    $scope.views = [];
+
+    $scope.$watch('map', function() {
+      $scope.views = [];
+      $scope._layers.forEach(function(l) {
+        if($scope.map[l.id] && $scope.map[l.id] != true)
+          $scope.views.push($scope.map[l.id]);
+      });
+    }, true);
+
+    function getCSViews() {
+      var views = [];
+      $scope._layers.forEach(function(l) {
+        if($scope.map[l.id] && $scope.map[l.id] != true)
+          views.push($scope.map[l.id]);
+      });
+      return views.join(',');
+    }
   }
 ])
 

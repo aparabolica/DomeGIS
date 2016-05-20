@@ -6,37 +6,69 @@
     </div>
   </div>
 </header>
-<div class="container row">
-  <div class="six columns offset-by-three">
-    <form id="generate_map" class="main-form">
-      <p>
-        <label for="search_input">Search for layers</label>
-        <input id="search_input" type="text" placeholder="Type your search..." ng-model="search" />
-      </p>
-      <div class="search-results">
-        <p ng-show="!results.length && search">No results were found.</p>
-        <ul class="layer-list" ng-show="results.length && search">
-          <li ng-repeat="layer in results" class="layer-item" ng-click="addLayer(layer)">
-            <h3>{{layer.name}}</h3>
-          </li>
-        </ul>
-      </div>
-      <div class="selected-layers" ng-show="_layers.length">
+<div id="generate_map">
+  <div class="container row">
+    <div class="six columns offset-by-three">
+      <form class="main-form">
+        <p>
+          <label for="search_input">Search for layers</label>
+          <input id="search_input" type="text" placeholder="Type your search..." ng-model="search" />
+        </p>
+        <div class="search-results">
+          <p ng-show="!results.length && search">No results were found.</p>
+          <ul class="layer-list" ng-show="results.length && search">
+            <li ng-repeat="layer in results" class="layer-item" ng-click="addLayer(layer)">
+              <h3>{{layer.name}}</h3>
+            </li>
+          </ul>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="selected-layers" ng-show="_layers.length">
+    <div class="container">
+      <div class="eight columns offset-by-two">
         <h2>Selected layers</h2>
-        <ul class="layer-list">
-          <li ng-repeat="layer in _layers" class="layer-item">
+        <ul class="layer-list" ui-sortable ng-model="_layers">
+          <li ng-repeat="layer in _layers" class="layer-item clearfix">
+            <div class="sort"><span class="fa fa-sort"></span></div>
+            <p class="actions">
+              <a class="fa fa-close" href="javascript:void(0);" ng-click="removeLayer(layer.id)"></a>
+            </p>
             <h3>{{layer.name}}</h3>
+            <p class="views" ng-show="layer.views.length">
+              <span>Select a view:</span>
+              <label ng-repeat="view in layer.views" for="view_{{view.id}}" class="view-item"><input type="radio" id="view_{{view.id}}" name="layer_{{view.id}}_views" ng-model="map[layer.id]" ng-value="view.id" /> {{view.name}}</label>
+            </p>
           </li>
         </ul>
       </div>
-    </form>
+    </div>
   </div>
-</div>
-<div class="container">
-  <div class="four columns offset-by-two">
-    <h3>HTML Embed</h2>
-  </div>
-  <div class="four columns">
-    <h3>WordPress Plugin</h2>
+  <div class="output" ng-show="_layers.length">
+    <span class="fa fa-hand-o-down"></span>
+    <div class="container">
+      <div class="four columns offset-by-two">
+        <div class="clearfix">
+          <h3><span class="fa fa-code"></span> HTML Embed</h3>
+        </div>
+        <p>Copy and paste and following in a HTML page.</p>
+        <textarea>{{getHTMLEmbed()}}</textarea>
+      </div>
+      <div class="four columns">
+        <div class="clearfix">
+          <h3><span class="fa fa-wordpress"></span> WordPress Plugin</h3>
+        </div>
+        <p>Copy and paste and following in a WordPress post.</p>
+        <textarea>{{getWPShortcode()}}</textarea>
+      </div>
+    </div>
+    <div class="container">
+      <div class="eight columns offset-by-two">
+        <div class="output-map">
+          <div dome-map="views"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
