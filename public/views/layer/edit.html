@@ -12,27 +12,33 @@
         <label for="name_input">Layer name</label>
         <input id="name_input" type="text" placeholder="Name" ng-model="layer.name" />
       </p>
-      <h3>Columns</h3>
-      <p>Edit the display name for the layer fields</p>
-      <table class="field-editor">
-        <thead>
-          <tr>
-            <td>Field</td>
-            <td>Label</td>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="field in layer.fields | parseLayerField">
-            <td>
-              <p class="field-name">{{field.name}}</p>
-              <p class="field-type">Type: {{field.type}}</p>
-            </td>
-            <td>
-              <input type="text" ng-model="layer.label[field.name]" />
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="form-section">
+        <div class="lang-selector">
+          Language: 
+          <a ng-repeat="l in langs" href="javascript:void(0);" ng-click="formLang(l)" ng-class="{active: lang == l}">{{l}}</a>
+        </div>
+        <h3>Columns</h3>
+        <p>Edit the display name for the layer fields</p>
+        <table class="field-editor">
+          <thead>
+            <tr>
+              <td>Field</td>
+              <td>Label</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="field in layer.fields | parseLayerField">
+              <td>
+                <p class="field-name">{{field.name}}</p>
+                <p class="field-type">Type: {{field.type}}</p>
+              </td>
+              <td>
+                <input type="text" ng-model="field.title[lang]" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       <p>
         <input type="submit" value="Save layer" />
       </p>

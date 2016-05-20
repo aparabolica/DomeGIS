@@ -415,6 +415,28 @@ form {
       }
     }
   }
+  .form-section {
+  }
+  .lang-selector {
+    float: right;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    color: #999;
+    font-size: .8em;
+    a {
+      padding: 2px 5px;
+      color: @blue;
+      text-decoration: none;
+      outline: none;
+      &.active {
+        background: @blue !important;
+        color: #fff;
+      }
+      &:hover {
+        background: lighten(@blue, 50%);
+      }
+    }
+  }
 }
 
 .edit-view {

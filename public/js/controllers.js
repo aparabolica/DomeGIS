@@ -57,10 +57,6 @@ angular.module('domegis')
     $scope.map = {};
     $scope._layers = [];
 
-    $scope.$watch('map', function(map) {
-      $scope.str = JSON.stringify(map, null, '  ');
-    }, true);
-
     $scope.addLayer = function(layer) {
       if(!$scope.map[layer.id]) {
         $scope.map[layer.id] = true;
@@ -96,11 +92,16 @@ angular.module('domegis')
       return '[domegis views="' + getCSViews() + '"]';
     };
 
-
-
     $scope.views = [];
 
     $scope.$watch('map', function() {
+      $scope.views = [];
+      $scope._layers.forEach(function(l) {
+        if($scope.map[l.id] && $scope.map[l.id] != true)
+          $scope.views.push($scope.map[l.id]);
+      });
+    }, true);
+    $scope.$watch('_layers', function() {
       $scope.views = [];
       $scope._layers.forEach(function(l) {
         if($scope.map[l.id] && $scope.map[l.id] != true)
@@ -247,6 +248,18 @@ angular.module('domegis')
     var layerService = Server.service('layers');
 
     $scope.layer = angular.copy(Edit);
+
+    $scope.langs = [
+      'en',
+      'pt',
+      'es'
+    ];
+
+    $scope.lang = $scope.langs[0];
+
+    $scope.formLang = function(lang) {
+      $scope.lang = lang;
+    };
 
     $scope.save = function(layer) {
       if(Edit.id) {
