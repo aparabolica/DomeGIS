@@ -182,6 +182,8 @@ exports.after = {
 
         var postgisType = data.features[0]['geometry']['type'];
 
+        if (postgisType == 'Polygon') postgisType = 'MultiPolygon';
+
         var schema = {
           geometry: { type: Sequelize.GEOMETRY(postgisType, 4326) }
         }
@@ -191,36 +193,40 @@ exports.after = {
           if (fieldType) schema[field.name] = { type: fieldType }
         });
 
-        // create feature table
-        var Features = sequelize.define(layerId, schema);
-        sequelize.sync().then(function(){
+        // drop table if exists
+        console.log('DROP TABLE IF EXISTS \"'+layerId+'s\";');
+        sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'s\";').then(function(){
+          // create feature table
+          var Features = sequelize.define(layerId, schema);
+          sequelize.sync().then(function(){
 
-          // insert features
-          async.eachSeries(data.features, function(esriFeature, doneEach){
+            // insert features
+            async.eachSeries(data.features, function(esriFeature, doneEach){
 
-            // set srid on feature (because of PostGIS)
-            esriFeature.geometry.crs = data.crs;
+              // set srid on feature (because of PostGIS)
+              esriFeature.geometry.crs = data.crs;
 
-            // create fake MultiPolygon if needed
-            if (postgisType == 'MultiPolygon' && esriFeature.geometry.type == 'Polygon') {
-              esriFeature.geometry.type = 'MultiPolygon';
-              esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
-            }
+              // create fake MultiPolygon if needed
+              if (postgisType == 'MultiPolygon' && esriFeature.geometry.type == 'Polygon') {
+                esriFeature.geometry.type = 'MultiPolygon';
+                esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
+              }
 
-            _.each(_.keys(esriFeature.properties), function(property){
-              esriFeature[property] = esriFeature.properties[property];
+              _.each(_.keys(esriFeature.properties), function(property){
+                esriFeature[property] = esriFeature.properties[property];
+              });
+
+              Features.create(esriFeature).then(function(result){
+                doneEach();
+              }).catch(emitSyncFinishEvent);
+            }, function(err){
+              if (err) return emitSyncFinishEvent(err);
+              var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"s\"), \"featureCount\" = " + data.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
+              sequelize.query(query).then(function(result){
+                emitSyncFinishEvent(null, { id: layerId });
+              }).catch(emitSyncFinishEvent);
             });
-
-            Features.create(esriFeature).then(function(result){
-              doneEach();
-            }).catch(emitSyncFinishEvent);
-          }, function(err){
-            if (err) return emitSyncFinishEvent(err);
-            var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"s\"), \"featureCount\" = " + data.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
-            sequelize.query(query).then(function(result){
-              emitSyncFinishEvent(null, { id: layerId });
-            }).catch(emitSyncFinishEvent);
-          });
+          }).catch(emitSyncFinishEvent);
         }).catch(emitSyncFinishEvent);
       }
     });
