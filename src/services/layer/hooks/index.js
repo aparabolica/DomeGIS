@@ -6,6 +6,7 @@ var globalHooks = require('../../../hooks');
 var hooks = require('feathers-hooks');
 var request = require('request');
 var Sequelize = require('sequelize');
+var auth = require('feathers-authentication').hooks;
 
 function esriToSequelizeType(esriType) {
   switch (esriType) {
@@ -96,39 +97,60 @@ exports.before = {
   all: [],
   find: [],
   get: [],
-  create: [function(hook){
-    return new Promise(function(resolve, reject){
+  create: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin', 'editor'] }),
+    function(hook){
+      return new Promise(function(resolve, reject){
 
-      var sequelize = hook.app.get('sequelize');
+        var sequelize = hook.app.get('sequelize');
 
-      async.series([
-        function(doneStep){
-          dropLayer(sequelize, hook.data.id, function(err){
-            if (err) return reject(err);
-            else doneStep();
-          })
-        },
-        function(doneStep){
-          getLayerProperties(hook.data.url, function(err, properties){
-            if (err) return reject(err);
-            hook.data.geometryType = properties.geometryType;
-            hook.data.fields = _.map(properties.fields, function(field) {
-              field.title = {
-                "en": field.name,
-                "es": field.name,
-                "pt": field.name
-              }
-              return field;
-            });
-            resolve();
-          })
-        }
-      ]);
-    });
-  }],
-  update: [],
-  patch: [],
-  remove: []
+        async.series([
+          function(doneStep){
+            dropLayer(sequelize, hook.data.id, function(err){
+              if (err) return reject(err);
+              else doneStep();
+            })
+          },
+          function(doneStep){
+            getLayerProperties(hook.data.url, function(err, properties){
+              if (err) return reject(err);
+              hook.data.geometryType = properties.geometryType;
+              hook.data.fields = _.map(properties.fields, function(field) {
+                field.title = {
+                  "en": field.name,
+                  "es": field.name,
+                  "pt": field.name
+                }
+                return field;
+              });
+              resolve();
+            })
+          }
+        ]);
+      });
+    }
+  ],
+  update: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin', 'editor'] })
+  ],
+  patch: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin', 'editor'] })
+  ],
+  remove: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin'] })
+  ]
 };
 
 exports.after = {

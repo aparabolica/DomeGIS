@@ -17,9 +17,8 @@ module.exports = function(sequelize) {
       type: Sequelize.STRING,
       allowNull: false
     },
-    role: {
-      type: Sequelize.ENUM('admin', 'editor'),
-      defaultValue: 'editor'
+    roles: {
+      type: Sequelize.ARRAY(Sequelize.STRING)
     }
   }, {
     freezeTableName: true

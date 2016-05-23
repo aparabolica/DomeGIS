@@ -4,19 +4,42 @@ var async = require('async');
 var request = require('request');
 var globalHooks = require('../../../hooks');
 var hooks = require('feathers-hooks');
+var auth = require('feathers-authentication').hooks;
 
 exports.before = {
-  all: [],
+  all: [
+  ],
   find: [],
   get: [],
-  create: [function(hook){
-    hook.data.createdAt = hook.data.created;
-    hook.data.modifiedAt = hook.data.modified;
-    return hook;
-  }],
-  update: [],
-  patch: [],
-  remove: []
+  create: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin', 'editor'] }),
+    function(hook){
+      hook.data.createdAt = hook.data.created;
+      hook.data.modifiedAt = hook.data.modified;
+      return hook;
+    }
+  ],
+  update: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin', 'editor'] })
+  ],
+  patch: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin', 'editor'] })
+  ],
+  remove: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin'] })
+  ]
 };
 
 exports.after = {

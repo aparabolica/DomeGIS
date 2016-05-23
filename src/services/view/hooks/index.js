@@ -3,6 +3,7 @@
 var _ = require('underscore');
 var globalHooks = require('../../../hooks');
 var hooks = require('feathers-hooks');
+var auth = require('feathers-authentication').hooks;
 
 var setLayergroup = function(hook) {
   return new Promise(function(resolve, reject){
@@ -19,10 +20,32 @@ exports.before = {
   all: [],
   find: [],
   get: [],
-  create: [setLayergroup],
-  update: [setLayergroup],
-  patch: [],
-  remove: []
+  create: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin', 'editor'] }),
+    setLayergroup
+  ],
+  update: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin', 'editor'] }),
+    setLayergroup
+  ],
+  patch: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin', 'editor'] })
+  ],
+  remove: [
+    auth.verifyToken(),
+    auth.populateUser(),
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin'] })
+  ]
 };
 
 exports.after = {

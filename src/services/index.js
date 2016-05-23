@@ -41,7 +41,7 @@ module.exports = function() {
         name: "First Admin",
         email: "admin@domegis",
         password: "domegis",
-        role: "admin"
+        roles: ["admin", "editor"]
       }).then(function(){
         console.log('First admin user created sucessfully, please change its password.');
       })

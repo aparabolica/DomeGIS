@@ -5,34 +5,23 @@ var hooks = require('feathers-hooks');
 var auth = require('feathers-authentication').hooks;
 
 exports.before = {
-  all: [],
-  find: [
+  all: [
     auth.verifyToken(),
     auth.populateUser(),
-    auth.requireAuth()
+    auth.restrictToAuthenticated(),
+    auth.restrictToRoles({ roles: ['admin'] })
+  ],
+  find: [
   ],
   get: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.requireAuth()
   ],
   create: [
-    auth.hashPassword()
   ],
   update: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.requireAuth()
   ],
   patch: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.requireAuth()
   ],
   remove: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.requireAuth()
   ]
 };
 
