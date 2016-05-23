@@ -108,6 +108,30 @@ table {
 }
 
 .leaflet-container {
+  font: inherit;
+  .leaflet-popup-content-wrapper {
+    border-radius: 0;
+    .leaflet-popup-content {
+      margin: 2rem;
+    }
+  }
+  .tooltip-content {
+    h2 {
+      font-size: .9em;
+      color: #999;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin: 0 0 .5rem;
+    }
+    p {
+      font-size: 1.1em;
+      margin-top: 0;
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: #333;
+      border-bottom: 1px solid #ddd;
+    }
+  }
   .map-legend {
     background: #fff;
     background: #fff;
@@ -520,6 +544,9 @@ form {
 
 .cartocss-wizard {
   width: 100%;
+  table {
+    margin: 0;
+  }
   ul.type-selector {
     margin-bottom: 2rem;
     padding: 0;
@@ -636,6 +663,14 @@ form {
     text-transform: uppercase;
     border: 0;
     padding: 4px 6px;
+  }
+  .field-list {
+    label {
+      width: 50%;
+      float: left;
+      font-weight: 400;
+      font-size: .8em;
+    }
   }
 }
 

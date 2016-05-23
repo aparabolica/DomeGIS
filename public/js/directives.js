@@ -76,6 +76,8 @@ angular.module('domegis')
 
         function updateLayers(views) {
           layers.forEach(function(layer) {
+            if(layer.grid)
+              map.removeLayer(layer.grid);
             map.removeLayer(layer.tile);
             legendControl.removeLegend(layer.legend);
           });
@@ -94,11 +96,27 @@ angular.module('domegis')
         function addView(view) {
           var layer = {};
           var url = '/tiles/' + view.id + '/{z}/{x}/{y}.png';
+          var gridUrl = '/tiles/' + view.id + '/{z}/{x}/{y}.grid.json';
           if(scope.preview) {
             url += '?preview=true&time=' + Date.now();
+            gridUrl += '?preview=true&time=' + Date.now();
           }
           layer.tile = L.tileLayer(url);
           map.addLayer(layer.tile);
+          if(view.fields && view.fields.length) {
+            layer.grid = new L.UtfGrid(gridUrl, {
+              useJsonP: false
+            });
+            layer.grid.on('click', function(e) {
+              if(e.data) {
+                var popup = L.popup()
+                  .setLatLng(e.latlng)
+                  .setContent(getTooltipHtml(e.data))
+                  .openOn(map);
+              }
+            });
+            map.addLayer(layer.grid);
+          }
           layers.push(layer);
           Server.get(layerService, view.layerId).then(function(l) {
             if(!getStateLoc().length && l.extents) {
@@ -114,9 +132,18 @@ angular.module('domegis')
           });
         }
 
+        function getTooltipHtml(data) {
+          var html = '<div class="tooltip-content">';
+          for(var key in data) {
+            html += '<h2>' + key + '</h2>';
+            html += '<p>' + data[key] + '</p>';
+          }
+          html += '</div>';
+          return html;
+        }
+
         function parseBounds(pgBounds) {
           var bounds = pgBounds.replace('BOX(', '').replace(')', '').split(',');
-
           return L.latLngBounds(bounds[1].split(' ').reverse(), bounds[0].split(' ').reverse());
         }
 

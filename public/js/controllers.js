@@ -320,10 +320,22 @@ angular.module('domegis')
 
     var viewService = Server.service('views');
 
-    console.log(Layer);
+    // console.log(Layer);
     $scope.layer = Layer;
 
     $scope.view = angular.copy(Edit);
+
+    $scope.toggleField = function(field) {
+      var idx = $scope.view.fields.indexOf(field.name);
+      // is currently selected
+      if (idx > -1) {
+        $scope.view.fields.splice(idx, 1);
+      }
+      // is newly selected
+      else {
+        $scope.view.fields.push(field.name);
+      }
+    };
 
     $scope.$watch('view.style', _.debounce(function() {
       var preview = angular.copy(Edit);

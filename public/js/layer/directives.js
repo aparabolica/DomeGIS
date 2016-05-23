@@ -21,7 +21,13 @@ angular.module('domegis')
         }).then(function(res) {
           scope.views = res.data;
         });
-
+        /* NOT FIRING */
+        Server.on(layerService, 'syncFinish', function(data) {
+          console.log(data);
+          if(scope.layer.id == data.id) {
+            scope.layer = data;
+          }
+        });
         Server.on(viewService, 'created', function(data) {
           if(data.layerId == scope.layer.id)
             scope.views.push(data);

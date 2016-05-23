@@ -10,6 +10,20 @@
         <input id="name_input" type="text" placeholder="View name" ng-model="view.name" />
       </p>
       <domegis-styles ng-model="view.style" layer="layer" cartocss="view.cartocss"></domegis-styles>
+      <div class="cartocss-wizard">
+        <table>
+          <tr>
+            <td>Interactivity</td>
+            <td>
+              <div class="field-list">
+                <label for="field-{{field.name}}" ng-repeat="field in layer.fields | parseLayerField">
+                  <input id="field-{{field.name}}" type="checkbox" name="viewFields[]" ng-checked="view.fields.indexOf(field.name) > -1" ng-click="toggleField(field)" />
+                  {{field.name}}
+                </label>
+              </div>
+          </tr>
+        </table>
+      </div>
       <p><input type="submit" value="Save view" /></p>
     </form>
   </div>
