@@ -1,14 +1,13 @@
 'use strict';
 
-// user-model.js - A sequelize model
-//
-// See http://docs.sequelizejs.com/en/latest/docs/models-definition/
-// for more of what you can do here.
-
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize) {
   var user = sequelize.define('users', {
+    name: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
     email: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -17,6 +16,10 @@ module.exports = function(sequelize) {
     password: {
       type: Sequelize.STRING,
       allowNull: false
+    },
+    role: {
+      type: Sequelize.ENUM('admin', 'editor'),
+      defaultValue: 'editor'
     }
   }, {
     freezeTableName: true

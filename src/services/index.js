@@ -32,6 +32,25 @@ module.exports = function() {
 
   sequelize.sync({force:true});
 
+
+  // init admin user
+  var Users = app.service('users');
+  Users.find({$limit: 1}).then(function(users){
+    if (users.total == 0) {
+      Users.create({
+        name: "First Admin",
+        email: "admin@domegis",
+        password: "domegis",
+        role: "admin"
+      }).then(function(){
+        console.log('First admin user created sucessfully, please change its password.');
+      })
+    }
+  }).catch(function(err){
+    console.log('Error creating first admin user:');
+    console.log(err);
+  });
+
   // disable windshaft when testing
   if (process.env.NODE_ENV != 'test') {
     app.configure(require('./tiles'));
