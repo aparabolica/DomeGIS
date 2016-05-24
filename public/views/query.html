@@ -31,7 +31,7 @@
             <td>Date</td>
             <!-- <td>Type</td> -->
             <td>Source</td>
-            <td>Add to collection</td>
+            <td ng-show="token">Add to collection</td>
           </tr>
         </thead>
         <tbody ng-repeat="item in content.results" ng-class="{active: item.$viewLayers}">
@@ -46,7 +46,7 @@
             </td>
             <!-- <td><span class="tag">{{item.type}}</span></td> -->
             <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link"></a></td>
-            <td><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
+            <td ng-show="token"><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
           </tr>
           <tr ng-show="isSynced(item)">
             <td class="sub" colspan="6">

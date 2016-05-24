@@ -9,7 +9,8 @@ angular.module('domegis')
 
     var app = feathers()
       .configure(feathers.hooks())
-      .configure(feathers.socketio(socket));
+      .configure(feathers.socketio(socket))
+      .configure(feathers.authentication({storage: window.localStorage}));
 
     var req = function(req) {
       var deferred = $q.defer();
@@ -23,6 +24,9 @@ angular.module('domegis')
 
     return {
       app: app,
+      auth: function(credentials) {
+        return req(app.authenticate(credentials));
+      },
       service: function(serviceName) {
         return app.service(serviceName);
       },

@@ -8,5 +8,7 @@ module.exports = function() {
 
   var config = app.get('auth');
 
+  config.idField = 'id';
+
   app.configure(authentication(config));
 };

@@ -36,7 +36,6 @@ angular.module('domegis')
     })
     .state('login', {
       url: '/login/',
-      controller: 'AuthCtrl',
       templateUrl: '/views/login.html'
     })
     .state('generateMap', {

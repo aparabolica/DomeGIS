@@ -26,7 +26,7 @@
     "jquery-ui": "~1.11.4",
     "skeleton-css": "~2.0.4",
     "angular-ui-ace": "bower",
-    "feathers-client": "~1.0.0",
+    "feathers-client": "~1.2.1",
     "angular-bootstrap-colorpicker": "~3.0.25",
     "socket.io-client": "~1.4.5",
     "fontawesome": "~4.6.1",

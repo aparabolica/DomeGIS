@@ -2,8 +2,29 @@ angular.module('domegis')
 
 .controller('SiteCtrl', [
   '$state',
+  'Server',
   '$scope',
-  function($state, $scope) {
+  function($state, Server, $scope) {
+
+    Server.auth().then(function() {
+      $scope.token = Server.app.get('token');
+      $scope.user = Server.app.get('user');
+    });
+
+    $scope.auth = function(credentials) {
+      Server.auth(_.extend({
+        type: 'local'
+      }, credentials)).then(function() {
+        $scope.token = Server.app.get('token');
+        $scope.user = Server.app.get('user');
+      });
+    };
+
+    $scope.logout = function() {
+      $scope.token = undefined;
+      $scope.user = undefined;
+      Server.app.logout();
+    };
 
     $scope.bodyClass = [];
 
@@ -120,13 +141,6 @@ angular.module('domegis')
   }
 ])
 
-.controller('AuthCtrl', [
-  '$scope',
-  function($scope) {
-
-  }
-])
-
 .controller('QueryCtrl', [
   '$scope',
   'Content',
@@ -179,7 +193,11 @@ angular.module('domegis')
     }
 
     $scope.syncItem = function(item) {
-      return Server.create(contentService, item);
+      return Server.create(contentService, item).then(function() {
+
+      }, function(err) {
+        console.log(err);
+      });
     };
 
     $scope.unsyncItem = function(item) {
