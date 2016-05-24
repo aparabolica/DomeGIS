@@ -11,7 +11,7 @@
   <p>{{layer.featureCount}} features</p>
 </td>
 <td>
-  <p>{{(layer.fields | parseLayerField | map:'alias').join(', ')}}</p>
+  <p>{{(layer.fields | parseLayerField | map:'name').join(', ')}}</p>
 </td>
 <td>
   <div ng-repeat="view in views" view-item="view" class="view-item"></div>

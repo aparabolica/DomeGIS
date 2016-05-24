@@ -24,7 +24,8 @@ angular.module('domegis')
   '$q',
   '$state',
   'Server',
-  function($q, $state, Server) {
+  'Lang',
+  function($q, $state, Server, Lang) {
     return {
       restrict: 'A',
       scope: {
@@ -111,7 +112,7 @@ angular.module('domegis')
               if(e.data) {
                 var popup = L.popup()
                   .setLatLng(e.latlng)
-                  .setContent(getTooltipHtml(e.data))
+                  .setContent(getTooltipHtml(e.data, e.target._dm_fields))
                   .openOn(map);
               }
             });
@@ -128,18 +129,27 @@ angular.module('domegis')
               map.fitBounds(mapBounds);
             }
             layer.legend = getViewLegend(view, l);
+            layer.grid._dm_fields = l.fields;
             legendControl.addLegend(layer.legend);
           });
         }
 
-        function getTooltipHtml(data) {
+        function getTooltipHtml(data, fields) {
           var html = '<div class="tooltip-content">';
           for(var key in data) {
-            html += '<h2>' + key + '</h2>';
+            html += '<h2>' + getLabel(key, fields) + '</h2>';
             html += '<p>' + data[key] + '</p>';
           }
           html += '</div>';
           return html;
+        }
+
+        function getLabel(key, fields) {
+          var lang = Lang.get();
+          var field = _.find(fields, function(f) {
+            return f.name == key;
+          });
+          return field.title[lang];
         }
 
         function parseBounds(pgBounds) {

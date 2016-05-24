@@ -30,6 +30,7 @@
     "angular-bootstrap-colorpicker": "~3.0.25",
     "socket.io-client": "~1.4.5",
     "fontawesome": "~4.6.1",
-    "angular-ui-sortable": "~0.14.0"
+    "angular-ui-sortable": "~0.14.0",
+    "angular-cookies": "~1.5.5"
   }
 }
