@@ -9,6 +9,7 @@ angular.module('domegis')
     Server.auth().then(function() {
       $scope.token = Server.app.get('token');
       $scope.user = Server.app.get('user');
+      console.log($scope.user);
     });
 
     $scope.auth = function(credentials) {
@@ -17,6 +18,8 @@ angular.module('domegis')
       }, credentials)).then(function() {
         $scope.token = Server.app.get('token');
         $scope.user = Server.app.get('user');
+        if($state.current.name == 'login')
+          $state.go('home');
       });
     };
 
@@ -39,6 +42,8 @@ angular.module('domegis')
     });
 
     $scope.$on('$stateChangeSuccess', function(ev, toState, toParams) {
+      if(toState.name == 'login' && $scope.token)
+        $state.go('home');
     });
 
   }
@@ -220,7 +225,7 @@ angular.module('domegis')
       if(item.$viewLayers) {
         item.$viewLayers = false;
       } else {
-        if(!$scope.isSynced(item)) {
+        if(!$scope.isSynced(item) && Server.app.get('token')) {
           if(confirm('Would you like to add this content to collection?')) {
             $scope.toggleSync(item);
           }

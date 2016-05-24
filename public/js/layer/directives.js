@@ -14,6 +14,8 @@ angular.module('domegis')
         var layerService = Server.service('layers');
         var viewService = Server.service('views');
 
+        scope.token = Server.app.get('token');
+
         Server.find(viewService, {
           query: {
             layerId: scope.layer.id

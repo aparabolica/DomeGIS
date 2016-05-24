@@ -1,6 +1,6 @@
 <td class="main">
   <h3>{{layer.name}}</h3>
-  <p class="actions">
+  <p class="actions" ng-show="token">
     <a class="button" ui-sref="editLayer({id:layer.id})">Edit layer</a>
   </p>
 </td>
@@ -15,5 +15,5 @@
 </td>
 <td>
   <div ng-repeat="view in views" view-item="view" class="view-item"></div>
-  <a class="button" ui-sref="editView({layerId: layer.id})">Create new view</a>
+  <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="token">Create new view</a>
 </td>

@@ -46,7 +46,8 @@ angular.module('domegis')
         });
 
         scope.unsyncItem = function(content) {
-          Server.remove(contentService, content.id);
+          if(Server.app.get('token'))
+            Server.remove(contentService, content.id);
         };
       }
     }
