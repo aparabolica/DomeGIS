@@ -12,9 +12,9 @@
         <label for="name_input">Layer name</label>
         <input id="name_input" type="text" placeholder="Name" ng-model="layer.name" />
       </p>
-      <div class="form-section">
+      <div class="form-section" ng-show="(layer.fields | parseLayerField).length">
         <div class="lang-selector">
-          Language: 
+          Language:
           <a ng-repeat="l in langs" href="javascript:void(0);" ng-click="formLang(l)" ng-class="{active: lang == l}">{{l}}</a>
         </div>
         <h3>Columns</h3>

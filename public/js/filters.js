@@ -34,6 +34,7 @@ angular.module('domegis')
       return _.filter(input, function(field) {
         return field.alias !== 'FID' &&
           field.alias !== 'OBJECTID' &&
+          field.alias !== 'Id' &&
           field.alias !== 'OBJECTID_1';
       });
     }
