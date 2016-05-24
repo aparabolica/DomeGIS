@@ -16,6 +16,7 @@ exports.before = {
   get: [
   ],
   create: [
+    auth.hashPassword()
   ],
   update: [
   ],

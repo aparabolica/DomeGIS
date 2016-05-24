@@ -30,26 +30,29 @@ module.exports = function() {
    .filter(function(model) { return model.associate })
    .forEach(function(model) { return  model.associate(models) } );
 
-  sequelize.sync({force:true});
+  sequelize.sync({force:true}).then(function(){
+  // sequelize.sync().then(function(){
 
-
-  // init admin user
-  var Users = app.service('users');
-  Users.find({$limit: 1}).then(function(users){
-    if (users.total == 0) {
-      Users.create({
-        name: "First Admin",
-        email: "admin@domegis",
-        password: "domegis",
-        roles: ["admin", "editor"]
-      }).then(function(){
-        console.log('First admin user created sucessfully, please change its password.');
-      })
-    }
-  }).catch(function(err){
-    console.log('Error creating first admin user:');
-    console.log(err);
+    // init admin user
+    var Users = app.service('users');
+    Users.find({$limit: 1}).then(function(users){
+      if (users.total == 0) {
+        Users.create({
+          name: "First Admin",
+          email: "admin@domegis",
+          password: "domegis",
+          roles: ["admin", "editor"]
+        }).then(function(){
+          console.log('First admin user created sucessfully, please change its password.');
+        })
+      }
+    }).catch(function(err){
+      console.log('Error creating first admin user:');
+      console.log(err);
+    });
   });
+
+
 
   // disable windshaft when testing
   if (process.env.NODE_ENV != 'test') {
