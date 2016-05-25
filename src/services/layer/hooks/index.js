@@ -165,13 +165,21 @@ exports.after = {
     Layers.emit('created', hook.data);
 
     function emitSyncFinishEvent(err, data) {
-      if (!data) data = {};
+      var status = 'synced';
       if (err) {
-        console.log('error in sync');
+        console.log(hook.data.id + ': sync error');
         console.log(err);
-        data = {error: err}
+        status = 'sync error';
       };
-      Layers.emit('syncFinish', data);
+
+      Layers.patch(layerId, {
+        status: status
+      }).then(function(){
+        Layers.emit('syncFinish', {id: layerId});
+      }).catch(function(err){
+        console.log(hook.data.id + ': error setting status');
+        console.log(err);
+      });
     }
 
     request({
@@ -184,19 +192,30 @@ exports.after = {
         f: 'geojson'
       }
     }, function(err, res, body){
-      if (err) return emitSyncFinishEvent(err);
-      var data = JSON.parse(body);
+      if (err) {
+        console.log(hook.data.id + ': error');
+        console.log(err);
+        return emitSyncFinishEvent(err)
+      }
 
+      var data = {};
+      try {
+        data = JSON.parse(body);
+      } catch (e) {
+        return emitSyncFinishEvent({message: 'could not parse json'})
+      }
 
       // if layers is empty, don't create feature table
-      if (data.features == 0) {
-        Layers.update({_id: layerId}, {$set:{
+      if (!data.features || (data.features.length == 0)) {
+        console.log(hook.data.id + ': no features');
+
+        Layers.patch(layerId, {
           featureCount: 0
-        }}).then(function(result){
-          emitSyncFinishEvent(null, {
-            id: layerId,
-            featureCount: 0
-          })
+        }).then(function(result){
+          emitSyncFinishEvent()
+        }).catch(function(err){
+          console.log(hook.data.id + ': error update layer count to 0');
+          console.log(err);
         });
 
       // layer is not empty, sync
@@ -223,7 +242,6 @@ exports.after = {
         });
 
         // drop table if exists
-        console.log('DROP TABLE IF EXISTS \"'+layerId+'s\";');
         sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'s\";').then(function(){
           // create feature table
           var Features = sequelize.define(layerId, schema);
@@ -255,7 +273,7 @@ exports.after = {
               if (err) return emitSyncFinishEvent(err);
               var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"s\"), \"featureCount\" = " + data.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
               sequelize.query(query).then(function(result){
-                emitSyncFinishEvent(null, { id: layerId });
+                emitSyncFinishEvent();
               }).catch(emitSyncFinishEvent);
             });
           }).catch(emitSyncFinishEvent);

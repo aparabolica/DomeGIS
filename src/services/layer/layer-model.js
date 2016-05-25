@@ -12,7 +12,8 @@ module.exports = function(sequelize) {
     name: { type: Sequelize.STRING, required: true},
     fields: { type: Sequelize.ARRAY(Sequelize.JSON) },
     extents: { type: Sequelize.STRING },
-    url: { type: Sequelize.STRING, required: true }
+    url: { type: Sequelize.STRING, required: true },
+    status: { type: Sequelize.STRING, defaultValue: 'syncing' }
   }, {
     freezeTableName: true,
     classMethods: {
