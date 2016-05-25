@@ -5,14 +5,11 @@ var langConfig = {
 };
 
 String.prototype.langsplit = function(_regEx){
-	// Most browsers can do this properly, so let them work, they'll do it faster
 	if ('a~b'.split(/(~)/).length === 3){ return this.split(_regEx); }
 
 	if (!_regEx.global)
 	{ _regEx = new RegExp(_regEx.source, 'g' + (_regEx.ignoreCase ? 'i' : '')); }
 
-	// IE (and any other browser that can't capture the delimiter)
-	// will, unfortunately, have to be slowed down
 	var start = 0, arr=[];
 	var result;
 	while((result = _regEx.exec(this)) != null){
@@ -21,12 +18,12 @@ String.prototype.langsplit = function(_regEx){
 		start = _regEx.lastIndex;
 	}
 	if(start < this.length) arr.push(this.slice(start));
-	if(start == this.length) arr.push(''); //delim at the end
+	if(start == this.length) arr.push('');
 	return arr;
 };
 
 langGetSplitBlocks = function(text) {
-	var split_regex = /(<!--:[a-z]{2}-->|<!--:-->|\[:[a-z]{2}\]|\[:\]|\{:[a-z]{2}\}|\{:\})/gi; // @since 3.3.6 swirly brackets
+	var split_regex = /(<!--:[a-z]{2}-->|<!--:-->|\[:[a-z]{2}\]|\[:\]|\{:[a-z]{2}\}|\{:\})/gi;
 	return text.langsplit(split_regex);
 };
 
