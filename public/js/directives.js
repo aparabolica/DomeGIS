@@ -23,9 +23,10 @@ angular.module('domegis')
 .directive('domeMap', [
   '$q',
   '$state',
+  '$filter',
   'Server',
   'Lang',
-  function($q, $state, Server, Lang) {
+  function($q, $state, $filter, Server, Lang) {
     return {
       restrict: 'A',
       scope: {
@@ -163,6 +164,8 @@ angular.module('domegis')
 
           var layerType;
 
+          var name = $filter('translate')(layer.name);
+
           var style = _.find(view.style, function(style, type) {
             var isStyle = layer.geometryType.toLowerCase().indexOf(type) !== -1;
             if(isStyle) {
@@ -200,9 +203,9 @@ angular.module('domegis')
           html += '<p class="item">';
           if(view.style.type == 'simple') {
             html += '<span class="' + clss + ' feat-ref" style="background:' + bgColor + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
-            html += layer.name;
+            html += name;
           } else if(view.style.type == 'category') {
-            html += '<span class="layer-title">' + layer.name + '</span>';
+            html += '<span class="layer-title">' + name + '</span>';
             for(var name in catStyle) {
               html += '<span class="category-item clearfix">';
               html += '<span class="' + clss + ' feat-ref" style="background:' + catStyle[name] + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';

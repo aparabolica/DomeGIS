@@ -1,17 +1,24 @@
 <header id="inner-header" class="form-header">
   <div class="container">
     <div class="six columns offset-by-three">
-      <h2 ng-show="layer.id">Editing layer {{layer.name}}</h2>
+      <h2 ng-show="layer.id">Editing layer {{layer.name | translate}}</h2>
     </div>
   </div>
 </header>
 <div class="container">
   <div class="six columns offset-by-three">
     <form id="edit_layer" class="main-form" ng-submit="save(layer)">
-      <p>
-        <label for="name_input">Layer name</label>
-        <input id="name_input" type="text" placeholder="Name" ng-model="layer.name" />
-      </p>
+      <div class="form-section">
+        <div class="lang-selector">
+          Language:
+          <a ng-repeat="l in langs" href="javascript:void(0);" ng-click="formLang(l)" ng-class="{active: lang == l}">{{l}}</a>
+        </div>
+        <h3>Main settings</h3>
+        <p>
+          <label for="name_input">Layer name</label>
+          <input id="name_input" type="text" placeholder="Name" ng-model="layer.name[lang]" />
+        </p>
+      </div>
       <div class="form-section" ng-show="(layer.fields | parseLayerField).length">
         <div class="lang-selector">
           Language:

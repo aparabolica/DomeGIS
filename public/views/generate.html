@@ -18,7 +18,7 @@
           <p ng-show="!results.length && search">No results were found.</p>
           <ul class="layer-list" ng-show="results.length && search">
             <li ng-repeat="layer in results" class="layer-item" ng-click="addLayer(layer)">
-              <h3>{{layer.name}}</h3>
+              <h3>{{layer.name | translate}}</h3>
             </li>
           </ul>
         </div>
@@ -35,7 +35,7 @@
             <p class="actions">
               <a class="fa fa-close" href="javascript:void(0);" ng-click="removeLayer(layer.id)"></a>
             </p>
-            <h3>{{layer.name}}</h3>
+            <h3>{{layer.name | translate}}</h3>
             <p class="views" ng-show="layer.views.length">
               <span>Select a view:</span>
               <label ng-repeat="view in layer.views" for="view_{{view.id}}" class="view-item"><input type="radio" id="view_{{view.id}}" name="layer_{{view.id}}_views" ng-model="map[layer.id]" ng-value="view.id" /> {{view.name}}</label>

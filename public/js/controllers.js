@@ -271,6 +271,8 @@ angular.module('domegis')
 
     $scope.layer = angular.copy(Edit);
 
+    $scope.layer.name = langSplit($scope.layer.name);
+
     $scope.langs = [
       'en',
       'pt',
@@ -284,15 +286,18 @@ angular.module('domegis')
     };
 
     $scope.save = function(layer) {
+      layer.name = langJoin(layer.name);
       if(Edit.id) {
         Server.update(layerService, Edit.id, layer).then(function(layer) {
           $scope.layer = layer;
+          $scope.layer.name = langSplit($scope.layer.name);
         }, function(err) {
           console.log(err);
         });
       } else {
         Server.create(layerService, layer).then(function(layer) {
           $scope.layer = layer;
+          $scope.layer.name = langSplit($scope.layer.name);
         }, function(err) {
           console.log(err);
         });
