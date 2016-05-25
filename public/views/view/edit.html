@@ -1,0 +1,31 @@
+<div class="edit-view" fix-to-bottom>
+  <div class="editor">
+    <h1>
+      <span ng-show="view.id">Editing {{view.name}}</span>
+      <span ng-hide="view.id">New view</span>
+    </h1>
+    <form id="edit_content" class="main-form" ng-submit="save(view)">
+      <p class="primary-input">
+        <label for="name_input">Name</label>
+        <input id="name_input" type="text" placeholder="View name" ng-model="view.name" />
+      </p>
+      <domegis-styles ng-model="view.style" layer="layer" cartocss="view.cartocss" columns="distinct.fields"></domegis-styles>
+      <div class="cartocss-wizard">
+        <table>
+          <tr>
+            <td>Interactivity</td>
+            <td>
+              <div class="field-list">
+                <label for="field-{{field.name}}" ng-repeat="field in layer.fields | parseLayerField">
+                  <input id="field-{{field.name}}" type="checkbox" name="viewFields[]" ng-checked="view.fields.indexOf(field.name) > -1" ng-click="toggleField(field)" />
+                  {{field.title.en}}
+                </label>
+              </div>
+          </tr>
+        </table>
+      </div>
+      <p><input type="submit" value="Save view" /></p>
+    </form>
+  </div>
+  <div dome-map="[view.id]" preview="1"></div>
+</div>

@@ -1,0 +1,13 @@
+GET /RTK5Unh1Z71JKIiR/arcgis/rest/services/WM_spielorte/FeatureServer?f=json
+host: services1.arcgis.com
+
+HTTP/1.1 200 undefined
+content-type: text/plain; charset=utf-8
+etag: 1411968486
+server: Microsoft-IIS/8.5
+x-powered-by: ASP.NET
+access-control-allow-origin: *
+date: Mon, 02 May 2016 17:00:17 GMT
+content-length: 1525
+
+{"currentVersion":10.3,"serviceItemId":"ef1b62313b1a4f598c5a36eab36cd81c","serviceDescription":"shows the places of the Football world cup 2014 in Brazil","hasVersionedData":false,"supportsDisconnectedEditing":false,"hasStaticData":false,"maxRecordCount":1000,"supportedQueryFormats":"JSON","capabilities":"Create,Delete,Query,Update,Editing","description":"This service shows the places of the football world cup 2014 in Brazil","copyrightText":"WWF Germany","spatialReference":{"wkid":102100,"latestWkid":3857},"initialExtent":{"xmin":-9226833.60907109,"ymin":-2153926.5287386542,"xmax":-2311477.1680773664,"ymax":1269797.404813885,"spatialReference":{"wkid":102100,"latestWkid":3857}},"fullExtent":{"xmin":-8842807.8592,"ymin":-3508692.756000001,"xmax":-3886719.5167,"ymax":961373.30619999906,"spatialReference":{"wkid":102100,"latestWkid":3857}},"allowGeometryUpdates":true,"units":"esriMeters","size":1122304,"syncEnabled":false,"supportsApplyEditsWithGlobalIds":false,"editorTrackingInfo":{"enableEditorTracking":false,"enableOwnershipAccessControl":false,"allowOthersToQuery":true,"allowOthersToUpdate":true,"allowOthersToDelete":true},"xssPreventionInfo":{"xssPreventionEnabled":true,"xssPreventionRule":"InputOnly","xssInputRule":"rejectInvalid"},"layers":[{"id":0,"name":"WM-Spielorte","parentLayerId":-1,"defaultVisibility":true,"subLayerIds":null,"minScale":0,"maxScale":0},{"id":1,"name":"Amazonia Ecoregion","parentLayerId":-1,"defaultVisibility":true,"subLayerIds":null,"minScale":0,"maxScale":0}],"tables":[]}

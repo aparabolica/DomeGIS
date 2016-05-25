@@ -1,0 +1,13 @@
+GET /RTK5Unh1Z71JKIiR/arcgis/rest/services/BASE_DE_DADOS/FeatureServer?f=json
+host: services1.arcgis.com
+
+HTTP/1.1 200 undefined
+content-type: text/plain; charset=utf-8
+etag: -1902457650
+server: Microsoft-IIS/8.5
+x-powered-by: ASP.NET
+access-control-allow-origin: *
+date: Mon, 02 May 2016 17:03:16 GMT
+content-length: 1529
+
+{"currentVersion":10.3,"serviceItemId":"4831c454070f4571a14230d3c3b1253f","serviceDescription":"xxx","hasVersionedData":false,"supportsDisconnectedEditing":false,"hasStaticData":false,"maxRecordCount":1000,"supportedQueryFormats":"JSON","capabilities":"Query","description":"","copyrightText":"","spatialReference":{"wkid":4674,"latestWkid":4674},"initialExtent":{"xmin":-53.178943533503954,"ymin":-24.45387100863416,"xmax":-31.002366959165741,"ymax":-3.4194357170944407,"spatialReference":{"wkid":4674,"latestWkid":4674}},"fullExtent":{"xmin":-47.6417808970707,"ymin":-20.933324689083065,"xmax":-36.300101593913382,"ymax":-7.2666466190461838,"spatialReference":{"wkid":4674,"latestWkid":4674}},"allowGeometryUpdates":true,"units":"esriDecimalDegrees","size":466944,"syncEnabled":false,"supportsApplyEditsWithGlobalIds":false,"editorTrackingInfo":{"enableEditorTracking":false,"enableOwnershipAccessControl":false,"allowOthersToQuery":true,"allowOthersToUpdate":true,"allowOthersToDelete":false},"xssPreventionInfo":{"xssPreventionEnabled":true,"xssPreventionRule":"InputOnly","xssInputRule":"rejectInvalid"},"layers":[{"id":0,"name":"Bacias_JEquiti_800_Dissolve","parentLayerId":-1,"defaultVisibility":true,"subLayerIds":null,"minScale":0,"maxScale":0},{"id":1,"name":"Bacias_800_M100_Dissolve1","parentLayerId":-1,"defaultVisibility":true,"subLayerIds":null,"minScale":0,"maxScale":0},{"id":2,"name":"SAOFRANCISCO_Dissolve","parentLayerId":-1,"defaultVisibility":true,"subLayerIds":null,"minScale":0,"maxScale":0}],"tables":[]}

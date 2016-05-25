@@ -1,0 +1,47 @@
+<header id="inner-header" class="form-header">
+  <div class="container">
+    <div class="six columns offset-by-three">
+      <h2 ng-show="layer.id">Editing layer {{layer.name}}</h2>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="six columns offset-by-three">
+    <form id="edit_layer" class="main-form" ng-submit="save(layer)">
+      <p>
+        <label for="name_input">Layer name</label>
+        <input id="name_input" type="text" placeholder="Name" ng-model="layer.name" />
+      </p>
+      <div class="form-section" ng-show="(layer.fields | parseLayerField).length">
+        <div class="lang-selector">
+          Language:
+          <a ng-repeat="l in langs" href="javascript:void(0);" ng-click="formLang(l)" ng-class="{active: lang == l}">{{l}}</a>
+        </div>
+        <h3>Columns</h3>
+        <p>Edit the display name for the layer fields</p>
+        <table class="field-editor">
+          <thead>
+            <tr>
+              <td>Field</td>
+              <td>Label</td>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="field in layer.fields | parseLayerField">
+              <td>
+                <p class="field-name">{{field.name}}</p>
+                <p class="field-type">Type: {{field.type}}</p>
+              </td>
+              <td>
+                <input type="text" ng-model="field.title[lang]" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        <input type="submit" value="Save layer" />
+      </p>
+    </form>
+  </div>
+</div>

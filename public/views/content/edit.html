@@ -1,0 +1,15 @@
+<div class="container">
+  <div class="twelve columns">
+    <h1>
+      <span ng-show="content.id">Editing {{content.title}}</span>
+      <span ng-hide="content.id">New content</span>
+    </h1>
+    <form id="edit_content" class="main-form" ng-submit="save(content)">
+      <p>
+        <label for="title_input">Title</label>
+        <input id="title_input" type="text" placeholder="Title" ng-model="content.title" />
+      </p>
+      <p><input type="submit" value="Save content" /></p>
+    </form>
+  </div>
+</div>

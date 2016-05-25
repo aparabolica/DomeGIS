@@ -1,0 +1,24 @@
+<header id="inner-header">
+  <div class="container">
+    <div class="twelve columns">
+      <h1>Login</h1>
+    </div>
+  </div>
+</header>
+<section id="auth">
+  <div class="container">
+    <div class="six columns offset-by-three">
+      <form id="auth_form" ng-submit="auth(credentials)">
+        <p>
+          <label for="email">Email</label>
+          <input id="email" type="email" ng-model="credentials.email" />
+        </p>
+        <p>
+          <label for="pwd">Password</label>
+          <input id="pwd" type="password" ng-model="credentials.password" />
+        </p>
+        <p><input type="submit" value="Login" /></p>
+      </form>
+    </div>
+  </div>
+</section>
