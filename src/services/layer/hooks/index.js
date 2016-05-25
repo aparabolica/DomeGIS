@@ -204,7 +204,14 @@ exports.after = {
 
         var postgisType = data.features[0]['geometry']['type'];
 
-        if (postgisType == 'Polygon') postgisType = 'MultiPolygon';
+        switch (postgisType) {
+          case 'Polygon':
+            postgisType = 'MultiPolygon';
+            break;
+          case 'LineString':
+            postgisType = 'MultiLineString';
+            break;
+        }
 
         var schema = {
           geometry: { type: Sequelize.GEOMETRY(postgisType, 4326) }
@@ -231,6 +238,9 @@ exports.after = {
               // create fake MultiPolygon if needed
               if (postgisType == 'MultiPolygon' && esriFeature.geometry.type == 'Polygon') {
                 esriFeature.geometry.type = 'MultiPolygon';
+                esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
+              } else if (postgisType == 'MultiLineString' && esriFeature.geometry.type == 'LineString') {
+                esriFeature.geometry.type = 'MultiLineString';
                 esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
               }
 

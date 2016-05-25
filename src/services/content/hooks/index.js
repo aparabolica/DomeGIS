@@ -58,7 +58,10 @@ exports.after = {
         f: 'json'
       }
     }, function(err, res, body){
-      if (err) return reject(err);
+      if (err) {
+        console.log(err);
+        return res.status(500).json(err);
+      }
 
       var results = JSON.parse(body);
       var layers = results.layers;
