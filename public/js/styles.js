@@ -473,7 +473,7 @@ angular.module('domegis')
           });
         } else if(type == 'choropleth') {
           input = _.filter(input, function(column) {
-            return column.type == 'esriFieldTypeInteger';
+            return column.type == 'esriFieldTypeInteger' || column.type == 'esriFieldTypeDouble';
           });
         }
       }
