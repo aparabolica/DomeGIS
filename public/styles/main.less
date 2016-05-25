@@ -171,6 +171,11 @@ table {
           border-radius: 100%;
         }
       }
+      .layer-title {
+        font-weight: 600;
+        display: block;
+        margin-bottom: 1rem;
+      }
     }
   }
 }
@@ -612,6 +617,21 @@ form {
     float: right;
     margin: 0 0 0 .5rem;
     font-family: monospace;
+  }
+  .input-ctn {
+    float: right;
+    margin-left: 1rem;
+    .input-lbl {
+      text-transform: uppercase;
+      font-size: .8em;
+      color: #999;
+    }
+    input,
+    select,
+    .ui-spinner {
+      float: none;
+      display: inline-block;
+    }
   }
   .ui-spinner {
     width: 47px;

@@ -9,7 +9,6 @@ angular.module('domegis')
     Server.auth().then(function() {
       $scope.token = Server.app.get('token');
       $scope.user = Server.app.get('user');
-      console.log($scope.user);
     });
 
     $scope.auth = function(credentials) {
@@ -339,7 +338,10 @@ angular.module('domegis')
   'Server',
   'Edit',
   'Layer',
-  function($scope, $state, Server, Edit, Layer) {
+  'Distinct',
+  function($scope, $state, Server, Edit, Layer, Distinct) {
+
+    $scope.distinct = Distinct.data;
 
     var viewService = Server.service('views');
 

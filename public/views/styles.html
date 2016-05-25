@@ -1,55 +1,63 @@
 <div class="cartocss-wizard">
-  <ul class="type-selector">
-    <li ng-class="{active:mapType=='simple'}">
+  <ul class="type-selector" ng-show="columns.length">
+    <li ng-class="{active:styles.type=='simple'}">
       <a href="javascript:void(0);" ng-click="setMapType('simple')">Simple</a>
     </li>
-    <li ng-class="{active:mapType=='choropleth'}">
+    <li ng-class="{active:styles.type=='choropleth'}" ng-show="columns.length">
       <a href="javascript:void(0);" ng-click="setMapType('choropleth')">Choropleth</a>
     </li>
-    <li ng-class="{active:mapType=='category'}">
+    <li ng-class="{active:styles.type=='category'}" ng-show="columns.length">
       <a href="javascript:void(0);" ng-click="setMapType('category')">Category</a>
     </li>
   </ul>
-  <table ng-show="mapType == 'choropleth' || mapType == 'category'">
+  <table ng-show="styles.type == 'choropleth' || styles.type == 'category'">
     <tbody>
       <tr>
         <td>
           <label for="category_column">Select column</label>
         </td>
         <td>
-          <select ng-options="column.name for column in (layer.fields | mapType:mapType) track by column.name" ng-model="column" ng-change="selectColumn(column.name, '{{column.name}}')">
+          <select ng-options="column.name for column in (columns | mapType:styles.type) track by column.name" ng-model="styles.column" ng-change="selectColumn(column.name, '{{column.name}}')">
             <option value=''>Select a column</option>
           </select>
         </td>
       </tr>
-      <tr ng-show="categories && column.type != 'number'" ng-repeat="category in categories">
+      <tr ng-show="categories && styles.type != 'choropleth'" ng-repeat="category in categories">
         <td>{{category}}</td>
         <td>
-          <input class="colorpicker-input" colorpicker ng-style="{'background-color': styles.category[column.key][category] || '#fff', 'color': getContrastYIQ(styles.category[column.key][category])}" ng-model="styles.category[column.key][category]" type="text" />
+          <input class="colorpicker-input" colorpicker ng-style="{'background-color': styles.category[styles.column.name][category] || '#ffffff', 'color': getContrastYIQ(styles.category[styles.column.name][category] || '#ffffff')}" ng-model="styles.category[styles.column.name][category]" type="text" />
         </td>
       </tr>
     </tbody>
   </table>
-  <table class="choropleth_settings" ng-show="mapType == 'choropleth' && column">
+  <table class="choropleth_settings" ng-show="styles.type == 'choropleth' && styles.column">
     <tbody>
       <tr>
         <td>Bucket size</td>
         <td>
-          <select ng-model="styles.choropleth[column.key].bucket_size" ng-options="size as size for size in [3,5,7] track by size"></select>
+          <select ng-model="styles.choropleth[styles.column.name].bucket_size" ng-options="size as size for size in [3,5,7] track by size"></select>
         </td>
       </tr>
       <tr>
         <td>Color ramp</td>
         <td>
-          <select ng-model="styles.choropleth[column.key].color_ramp">
-          </select>
+          <span class="input-ctn">
+            <span class="input-lbl">To:</span>
+            <input class="colorpicker-input" colorpicker ng-model="styles.choropleth[styles.column.name].scale[1]" type="text" ng-style="{'background-color': styles.choropleth[styles.column.name].scale[1] || '#000000', 'color': getContrastYIQ(styles.choropleth[styles.column.name].scale[1] || '#000000')}" />
+          </span>
+          <span class="input-ctn">
+            <span class="input-lbl">From:</span>
+            <input class="colorpicker-input" colorpicker ng-model="styles.choropleth[styles.column.name].scale[0]" type="text" ng-style="{'background-color': styles.choropleth[styles.column.name].scale[0] || '#ffffff', 'color': getContrastYIQ(styles.choropleth[styles.column.name].scale[0] || '#ffffff')}" />
+          </span>
+          <!-- <select ng-model="styles.choropleth[column.name].color_ramp">
+          </select> -->
         </td>
       </tr>
     </tbody>
   </table>
   <table class="default_styles">
     <tbody>
-      <tr ng-show="isType('polygon') && mapType == 'simple'">
+      <tr ng-show="isType('polygon') && styles.type == 'simple'">
         <td>Polygon fill</td>
         <td>
           <input class="colorpicker-input" colorpicker ng-model="styles.polygon.fill.color" type="text" ng-style="{'background-color': styles.polygon.fill.color || '#fff', 'color': getContrastYIQ(styles.polygon.fill.color)}" />
@@ -73,7 +81,7 @@
       <tr ng-show="isType('point')">
         <td>Marker fill</td>
         <td>
-          <input ng-show="mapType == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.point.fill.color" type="text" ng-style="{'background-color': styles.point.fill.color || '#fff', 'color': getContrastYIQ(styles.point.fill.color)}" />
+          <input ng-show="styles.type == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.point.fill.color" type="text" ng-style="{'background-color': styles.point.fill.color || '#fff', 'color': getContrastYIQ(styles.point.fill.color)}" />
           <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.point.fill.opacity" />
           <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.point.fill.width" />
         </td>
@@ -103,7 +111,7 @@
       <tr ng-show="isType('linestring')">
         <td>Line fill</td>
         <td>
-          <input ng-show="mapType == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.linestring.fill.color" type="text" ng-style="{'background-color': styles.linestring.fill.color || '#fff', 'color': getContrastYIQ(styles.linestring.fill.color)}" />
+          <input ng-show="styles.type == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.linestring.fill.color" type="text" ng-style="{'background-color': styles.linestring.fill.color || '#fff', 'color': getContrastYIQ(styles.linestring.fill.color)}" />
           <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.linestring.fill.opacity" />
           <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.linestring.fill.width" />
         </td>

@@ -40,6 +40,7 @@ angular.module('domegis')
       scope: {
         layer: '=',
         styles: '=ngModel',
+        columns: '=',
         cartocss: '='
       },
       require: 'ngModel',
@@ -51,29 +52,9 @@ angular.module('domegis')
           if($scope.layer)
             $scope.types = $scope.layer.geometryType.toLowerCase();
 
-          $scope.columns = [
-            {
-              key: 'amount',
-              type: 'number',
-              values: [1,2,3,4,5,6,7,8,9,10,500,200,150,1000,300,250,123]
-            },
-            {
-              key: 'category',
-              type: 'string',
-              values: ['category 1', 'category 2', 'category 3']
-            },
-            {
-              key: 'something_else',
-              type: 'string',
-              values: ['something 1', 'something 2']
-            }
-          ];
-
           $scope.table = {
             title: 'table'
           };
-
-          $scope.mapType = 'simple';
 
           $scope.composites = {
             '': 'None',
@@ -102,6 +83,8 @@ angular.module('domegis')
           $scope.cartocss = $scope.cartocss || '';
 
           var defaultStyles = {
+            type: 'simple',
+            column: '',
             polygon: {
               composite: '',
               fill: {
@@ -199,7 +182,7 @@ angular.module('domegis')
           }, true);
 
           $scope.setMapType = function(type) {
-            $scope.mapType = type;
+            $scope.styles.type = type;
             if(!$scope.styles[type])
               $scope.styles[type] = {};
           };
@@ -227,21 +210,21 @@ angular.module('domegis')
 
           var updateCategories = function(styles) {
 
-            if($scope.column && styles) {
-              if(styles[$scope.column.key]) {
-                styles = styles[$scope.column.key];
+            if($scope.styles.column && styles) {
+              if(styles[$scope.styles.column.name]) {
+                styles = styles[$scope.styles.column.name];
               } else {
                 styles = false;
               }
             }
 
-            if(styles && $scope.column) {
+            if(styles && $scope.styles.column) {
 
               for(var category in styles) {
 
                 var cartocss = '';
 
-                var catRegex = new RegExp(regexEscape('#' + $scope.table.title + ' [ ' + $scope.column.key + ' = "' + category + '" ] {\n') + '([\\s\\S]*?)}');
+                var catRegex = new RegExp(regexEscape('#' + $scope.table.title + ' [ ' + $scope.styles.column.name + ' = "' + category + '" ] {\n') + '([\\s\\S]*?)}');
 
                 var catMatch = $scope.cartocss.match(catRegex);
 
@@ -249,7 +232,12 @@ angular.module('domegis')
                   cartocss = catMatch[1];
                 }
 
-                var propRegex = new RegExp('\t' + 'polygon-fill' + ':(.*?);\n');
+                var propRegex;
+
+                if($scope.isType('polygon'))
+                  propRegex = new RegExp('\t' + 'polygon-fill' + ':(.*?);\n');
+                else if($scope.isType('point'))
+                  propRegex = new RegExp('\t' + 'marker-fill' + ':(.*?);\n');
 
                 var propMatch = cartocss.match(propRegex);
 
@@ -258,16 +246,22 @@ angular.module('domegis')
                 if(propMatch != null) {
                   var rep = '';
                   if(val !== '')
-                    rep = '\t' + 'polygon-fill' + ': ' + val + ';\n';
+                    if($scope.isType('polygon'))
+                      rep = '\t' + 'polygon-fill' + ': ' + val + ';\n';
+                    else if ($scope.isType('point'))
+                      rep = '\t' + 'marker-fill' + ': ' + val + ';\n';
                   if(propMatch[1].trim().toLowerCase() != val) {
                     cartocss = cartocss.replace(propRegex, rep);
                   }
                 } else {
                   if(val !== '')
-                    cartocss += '\t' + 'polygon-fill' + ': ' + val + ';\n';
+                    if($scope.isType('polygon'))
+                      cartocss += '\t' + 'polygon-fill' + ': ' + val + ';\n';
+                    else
+                      cartocss += '\t' + 'marker-fill' + ': ' + val + ';\n';
                 }
 
-                var result = '#' + $scope.table.title + ' [ ' + $scope.column.key + ' = "' + category + '" ] {\n' + cartocss + '}';
+                var result = '#' + $scope.table.title + ' [ ' + $scope.styles.column.name + ' = "' + category + '" ] {\n' + cartocss + '}';
 
                 if(catMatch != null && (catMatch[1] || catMatch[1] == '')) {
                   $scope.cartocss = $scope.cartocss.replace(catRegex, result);
@@ -284,21 +278,25 @@ angular.module('domegis')
 
           var updateChoropleth = function(styles) {
 
-            if($scope.column && styles) {
-              if(styles[$scope.column.key]) {
-                styles = styles[$scope.column.key];
+            if($scope.styles.column && styles) {
+              if(styles[$scope.styles.column.name]) {
+                styles = styles[$scope.styles.column.name];
               } else {
                 styles = false;
               }
             }
 
-            if(styles && $scope.column) {
+            if(styles && $scope.styles.column) {
 
-              clearChoropleth($scope.column.key);
+              clearChoropleth($scope.styles.column.name);
 
               var size = styles.bucket_size || 3;
-              var ramp = styles.color_ramp || ['#123', '#234', '#345', '#456', '#567', '#678', '#789', '#89a'];
-              var categories = quantiles($scope.column.values, size);
+              var categories = quantiles($scope.styles.column.values, size);
+
+              if(!_.isArray(styles.scale)) {
+                styles.scale = ['#000000', '#FFFFFF'];
+              }
+              var ramp = chroma.scale(styles.scale).colors(categories.length);
 
               categories = _.sortBy(categories, function(cat) { return -cat; });
 
@@ -306,7 +304,7 @@ angular.module('domegis')
 
                 var cartocss = '';
 
-                var catRegex = new RegExp(regexEscape('#' + $scope.table.title + ' [ ' + $scope.column.key + ' <= ' + category + ' ] {\n') + '([\\s\\S]*?)}');
+                var catRegex = new RegExp(regexEscape('#' + $scope.table.title + ' [ ' + $scope.styles.column.name + ' <= ' + category + ' ] {\n') + '([\\s\\S]*?)}');
 
                 var catMatch = $scope.cartocss.match(catRegex);
 
@@ -317,7 +315,7 @@ angular.module('domegis')
                   cartocss += '\t' + 'marker-fill' + ': ' + ramp[i] + ';\n';
                 }
 
-                var result = '#' + $scope.table.title + ' [ ' + $scope.column.key + ' <= ' + category + ' ] {\n' + cartocss + '}';
+                var result = '#' + $scope.table.title + ' [ ' + $scope.styles.column.name + ' <= ' + category + ' ] {\n' + cartocss + '}';
 
                 if(catMatch != null && (catMatch[1] || catMatch[1] == '')) {
                   $scope.cartocss = $scope.cartocss.replace(catRegex, result);
@@ -340,50 +338,55 @@ angular.module('domegis')
               clearChoropleth(prevColumnKey);
             }
 
-            if(!$scope.column) {
+            if(!$scope.styles.column) {
 
               $scope.categories = [];
 
             } else {
 
-              if($scope.column.type == 'number') {
+              if($scope.styles.column.type == 'number') {
 
-                if(!$scope.styles.choropleth[$scope.column.key]) {
-                  $scope.styles.choropleth[$scope.column.key] = {
+                if(!$scope.styles.choropleth[$scope.styles.column.name]) {
+                  $scope.styles.choropleth[$scope.styles.column.name] = {
                     bucket_size: 3
                   };
                 }
 
               } else {
 
-                $scope.categories = $scope.column.values;
+                $scope.categories = $scope.styles.column.values;
 
               }
             }
 
-            if($scope.mapType == 'category') {
+            if($scope.styles.type == 'category') {
               updateCategories($scope.styles.category);
             }
 
-            if($scope.mapType == 'choropleth') {
+            if($scope.styles.type == 'choropleth') {
               updateChoropleth($scope.styles.choropleth);
             }
 
           };
 
           $scope.$watch('styles.category', function(styles) {
-            if($scope.mapType == 'category') {
+            if($scope.styles.type == 'category') {
               updateCategories(styles);
             }
           }, true);
 
           $scope.$watch('styles.choropleth', function(styles) {
-            if($scope.mapType == 'choropleth') {
+            if($scope.styles.type == 'choropleth') {
               updateChoropleth(styles);
             }
           }, true);
 
+          if($scope.styles.column) {
+            $scope.selectColumn($scope.styles.column.name);
+          }
+
         }
+
       ]
     }
   }

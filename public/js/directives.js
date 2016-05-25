@@ -129,7 +129,9 @@ angular.module('domegis')
               map.fitBounds(mapBounds);
             }
             layer.legend = getViewLegend(view, l);
-            layer.grid._dm_fields = l.fields;
+            if(layer.grid) {
+              layer.grid._dm_fields = l.fields;
+            }
             legendControl.addLegend(layer.legend);
           });
         }
@@ -180,9 +182,6 @@ angular.module('domegis')
             clss = 'ln';
           }
 
-          var bgColor = style.fill.color;
-          var bgOpacity = style.fill.opacity;
-
           var stroke = '0';
           var strokeColor = 'transparent';
           if(style.stroke) {
@@ -190,10 +189,27 @@ angular.module('domegis')
             strokeColor = style.stroke.color;
           }
 
+          var bgColor = style.fill.color;
+          var bgOpacity = style.fill.opacity;
+
+          if(view.style.type == 'category') {
+            var catStyle = view.style.category[view.style.column.name];
+          }
+
           var html = '<div id="legend-' + view.id + '">';
           html += '<p class="item">';
-          html += '<span class="' + clss + ' feat-ref" style="background:' + bgColor + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
-          html += layer.name;
+          if(view.style.type == 'simple') {
+            html += '<span class="' + clss + ' feat-ref" style="background:' + bgColor + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
+            html += layer.name;
+          } else if(view.style.type == 'category') {
+            html += '<span class="layer-title">' + layer.name + '</span>';
+            for(var name in catStyle) {
+              html += '<span class="category-item clearfix">';
+              html += '<span class="' + clss + ' feat-ref" style="background:' + catStyle[name] + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
+              html += name;
+              html += '</span>';
+            }
+          }
           html += '</p>';
           html += '</div>';
           return html;

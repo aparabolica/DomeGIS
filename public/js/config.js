@@ -95,6 +95,13 @@ angular.module('domegis')
               return false;
             }
           }
+        ],
+        Distinct: [
+          'Layer',
+          '$http',
+          function(layer, $http) {
+            return $http.get('/layers/' + layer.id + '/values');
+          }
         ]
       }
     })
