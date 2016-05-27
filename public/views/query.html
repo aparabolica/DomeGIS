@@ -4,9 +4,6 @@
       <nav>
         <form>
           <input type="text" ng-model="search" placeholder="Search anything"/>
-          <!-- <select ng-model="query.type" ng-options="type as type for type in availableTypes" ng-change="doQuery()">
-            <option value="">Select content type</option>
-          </select> -->
           <select ng-model="sort" ng-change="doQuery()">
             <option value="numviews">Sort by most viewed</option>
             <option value="modified">Sort by most recent</option>
@@ -29,7 +26,6 @@
             <td></td>
             <td>Name</td>
             <td>Date</td>
-            <!-- <td>Type</td> -->
             <td>Source</td>
             <td ng-show="token">Add to collection</td>
           </tr>
@@ -44,7 +40,6 @@
               {{item.created | formatDate}}
               <span class="modified">Modified: {{item.modified | formatDate}}</span>
             </td>
-            <!-- <td><span class="tag">{{item.type}}</span></td> -->
             <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link"></a></td>
             <td ng-show="token"><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
           </tr>
@@ -55,34 +50,6 @@
           </tr>
         </tbody>
       </table>
-      <!-- <article ng-repeat="item in content.results" class="content-item clearfix">
-        <div class="clearfix">
-          <content-thumbnail content="item"></content-thumbnail>
-          <h3>{{item.title}}</h3>
-        </div>
-        <div class="meta">
-          <p>Created: {{item.created | formatDate}}</p>
-          <p>Modified: {{item.modified | formatDate}}</p>
-        </div>
-        <p ng-show="item.snippet">{{item.snippet}}</p>
-        <button ng-click="syncItem(item)">Synchronize</button>
-      </article> -->
     </div>
   </div>
 </section>
-<!-- <div class="container">
-  <div class="eight columns">
-    <section id="synced" ng-show="synced.length">
-      <h2>Synced data</h2>
-      <article ng-repeat="item in synced" content-item="item" class="content-item clearfix"></article>
-    </section>
-    <section id="views" ng-show="views.length">
-      <h2>Views</h2>
-      <article ng-repeat="view in views" class="view-item clearfix">
-        <h3>{{view.name}}</h3>
-        <a class="button" ui-sref="editView({id: view.id})">Edit view</a>
-        <button ng-click="removeView(view)">Delete view</button>
-      </article>
-    </section>
-  </div>
-</div> -->

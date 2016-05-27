@@ -185,19 +185,11 @@ exports.after = {
     request({
       url: hook.data.url + '/query',
       qs: {
-        returnGeometry: true,
         where: '1=1',
-        outSR: 4326,
-        outFields: '*',
-        f: 'geojson'
+        returnCountOnly: 'true',
+        f: 'json'
       }
-    }, function(err, res, body){
-      if (err) {
-        console.log(hook.data.id + ': error');
-        console.log(err);
-        return emitSyncFinishEvent(err)
-      }
-
+    }, function(err, res, body) {
       var data = {};
       try {
         data = JSON.parse(body);
@@ -205,8 +197,8 @@ exports.after = {
         return emitSyncFinishEvent({message: 'could not parse json'})
       }
 
-      // if layers is empty, don't create feature table
-      if (!data.features || (data.features.length == 0)) {
+      if(!data.count) {
+
         console.log(hook.data.id + ': no features');
 
         Layers.patch(layerId, {
@@ -218,68 +210,122 @@ exports.after = {
           console.log(err);
         });
 
-      // layer is not empty, sync
       } else {
 
-        var postgisType = data.features[0]['geometry']['type'];
+        var total = data.count;
+        var current = 0;
+        var perPage = 100;
+        var geojson = {};
 
-        switch (postgisType) {
-          case 'Polygon':
-            postgisType = 'MultiPolygon';
-            break;
-          case 'LineString':
-            postgisType = 'MultiLineString';
-            break;
-        }
+        async.whilst(
+          function() {
+            return current < total;
+          },
+          function(cb) {
+            request({
+              url: hook.data.url + '/query',
+              qs: {
+                returnGeometry: true,
+                where: '1=1',
+                outSR: 4326,
+                resultOffset: current,
+                resultRecordCount: perPage,
+                outFields: '*',
+                f: 'geojson'
+              }
+            }, function(err, res, body) {
 
-        var schema = {
-          geometry: { type: Sequelize.GEOMETRY(postgisType, 4326) }
-        }
-
-        _.each(hook.data.fields, function(field){
-          var fieldType = esriToSequelizeType(field.type);
-          if (fieldType) schema[field.name] = { type: fieldType }
-        });
-
-        // drop table if exists
-        sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'s\";').then(function(){
-          // create feature table
-          var Features = sequelize.define(layerId, schema);
-          sequelize.sync().then(function(){
-
-            // insert features
-            async.eachSeries(data.features, function(esriFeature, doneEach){
-
-              // set srid on feature (because of PostGIS)
-              esriFeature.geometry.crs = data.crs;
-
-              // create fake MultiPolygon if needed
-              if (postgisType == 'MultiPolygon' && esriFeature.geometry.type == 'Polygon') {
-                esriFeature.geometry.type = 'MultiPolygon';
-                esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
-              } else if (postgisType == 'MultiLineString' && esriFeature.geometry.type == 'LineString') {
-                esriFeature.geometry.type = 'MultiLineString';
-                esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
+              var data = {};
+              try {
+                data = JSON.parse(body);
+              } catch (e) {
+                console.log('could not parse json');
               }
 
-              _.each(_.keys(esriFeature.properties), function(property){
-                esriFeature[property] = esriFeature.properties[property];
+              if(data.features.length) {
+                if(current == 0) {
+                  geojson = data;
+                } else {
+                  geojson.features = geojson.features.concat(data.features);
+                }
+              }
+
+              Layers.emit('syncProgress', {
+                layerId: hook.data.id,
+                progress: geojson.features.length/total
               });
 
-              Features.create(esriFeature).then(function(result){
-                doneEach();
-              }).catch(emitSyncFinishEvent);
-            }, function(err){
-              if (err) return emitSyncFinishEvent(err);
-              var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"s\"), \"featureCount\" = " + data.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
-              sequelize.query(query).then(function(result){
-                emitSyncFinishEvent();
-              }).catch(emitSyncFinishEvent);
+              current = current + perPage;
+              cb();
+
+            })
+          },
+          function() {
+
+            var postgisType = geojson.features[0]['geometry']['type'];
+
+            switch (postgisType) {
+              case 'Polygon':
+                postgisType = 'MultiPolygon';
+                break;
+              case 'LineString':
+                postgisType = 'MultiLineString';
+                break;
+            }
+
+            var schema = {
+              geometry: { type: Sequelize.GEOMETRY(postgisType, 4326) }
+            }
+
+            _.each(hook.data.fields, function(field){
+              var fieldType = esriToSequelizeType(field.type);
+              if (fieldType) schema[field.name] = { type: fieldType }
             });
-          }).catch(emitSyncFinishEvent);
-        }).catch(emitSyncFinishEvent);
+
+            // drop table if exists
+            sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'s\";').then(function(){
+              // create feature table
+              var Features = sequelize.define(layerId, schema);
+              sequelize.sync().then(function(){
+
+                // insert features
+                async.eachSeries(geojson.features, function(esriFeature, doneEach){
+
+                  // set srid on feature (because of PostGIS)
+                  esriFeature.geometry.crs = geojson.crs;
+
+                  // create fake MultiPolygon if needed
+                  if (postgisType == 'MultiPolygon' && esriFeature.geometry.type == 'Polygon') {
+                    esriFeature.geometry.type = 'MultiPolygon';
+                    esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
+                  } else if (postgisType == 'MultiLineString' && esriFeature.geometry.type == 'LineString') {
+                    esriFeature.geometry.type = 'MultiLineString';
+                    esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
+                  }
+
+                  _.each(_.keys(esriFeature.properties), function(property){
+                    esriFeature[property] = esriFeature.properties[property];
+                  });
+
+                  Features.create(esriFeature).then(function(result){
+                    doneEach();
+                  }).catch(emitSyncFinishEvent);
+                }, function(err){
+                  if (err) return emitSyncFinishEvent(err);
+                  var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"s\"), \"featureCount\" = " + geojson.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
+                  sequelize.query(query).then(function(result){
+                    emitSyncFinishEvent();
+                  }).catch(emitSyncFinishEvent);
+                });
+              }).catch(emitSyncFinishEvent);
+            }).catch(emitSyncFinishEvent);
+          }
+        )
+
       }
+
     });
+
   }],
   update: [],
   patch: [],

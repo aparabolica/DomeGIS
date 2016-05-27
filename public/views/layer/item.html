@@ -1,7 +1,8 @@
-<td>
-  <p class="status" ng-class="{ok: layer.status == 'synced'}">
+<td class="status">
+  <p ng-class="{ok: layer.status == 'synced'}">
     <span class="fa fa-refresh fa-spin" ng-hide="layer.status"></span>
     <span class="fa fa-check-circle" ng-show="layer.status == 'synced'"></span>
+    <span class="layer-progress">{{progress}}</span>
   </p>
 </td>
 <td class="main">

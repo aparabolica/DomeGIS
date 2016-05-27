@@ -10,7 +10,7 @@
         <input id="name_input" type="text" placeholder="View name" ng-model="view.name" />
       </p>
       <domegis-styles ng-model="view.style" layer="layer" cartocss="view.cartocss" columns="distinct.fields"></domegis-styles>
-      <div class="cartocss-wizard">
+      <div class="cartocss-wizard" ng-show="(layer.fields | parseLayerField).length">
         <table>
           <tr>
             <td>Interactivity</td>

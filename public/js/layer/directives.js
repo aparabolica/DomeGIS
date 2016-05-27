@@ -31,6 +31,11 @@ angular.module('domegis')
             })
           }
         });
+        Server.on(layerService, 'syncProgress', function(prog) {
+          if(scope.layer.id == prog.layerId) {
+            scope.progress = parseInt(prog.progress * 100) + '%';
+          }
+        });
         Server.on(layerService, 'updated', function(data) {
           console.log(data);
           if(scope.layer.id == data.id) {

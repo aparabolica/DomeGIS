@@ -20,7 +20,7 @@ module.exports = function(){
 
   var LayerService = service(options);
 
-  LayerService.events = ['syncFinish'];
+  LayerService.events = ['syncFinish', 'syncProgress'];
 
   // Initialize our service with any options it requires
   app.use('/layers', LayerService);

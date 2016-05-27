@@ -310,12 +310,22 @@ table.results {
         padding: 2px 8px;
         white-space: nowrap;
       }
-      .status {
+      &.status {
+        width: 50px;
         font-size: 1.6em;
         text-align: center;
         color: #999;
         &.ok {
           color: green;
+        }
+        .layer-progress {
+          display: block;
+          font-size: .8em;
+        }
+        &.ok {
+          .layer-progress {
+            display: none;
+          }
         }
       }
       .fa-toggle-on,
