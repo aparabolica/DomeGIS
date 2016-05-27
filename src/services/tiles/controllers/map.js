@@ -56,6 +56,11 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
 
   var fields = view.fields || [];
 
+  if (view.style.column) {
+    fields.push(view.style.column.name);
+    fields = _.uniq(fields);
+  }
+
   var fieldsStr = '';
   if (fields.length > 0) {
     fieldsStr = ',' + _.map(fields, function(f){ return '"'+f+'"' }).join(',');
