@@ -4,6 +4,7 @@ var user = require('./user');
 var content = require('./content');
 var layer = require('./layer');
 var view = require('./view');
+var preview = require('./preview');
 var search = require('./search');
 var authentication = require('./authentication');
 
@@ -20,6 +21,7 @@ module.exports = function() {
   app.configure(user);
   app.configure(content);
   app.configure(layer);
+  app.configure(preview);
   app.configure(view);
   app.configure(search);
 

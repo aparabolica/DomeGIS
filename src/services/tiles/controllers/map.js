@@ -34,6 +34,7 @@ function MapController(app, mapStore, mapBackend, tileBackend, attributesBackend
 
   var viewService = app.service('views');
 
+  // init views when server is restarted
   viewService.find({}).then(function(views){
     _.each(views.data, function(view){
       self.getLayerGroupId(view, function(err, layergroupIds){
@@ -66,63 +67,30 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
     fieldsStr = ',' + _.map(fields, function(f){ return '"'+f+'"' }).join(',');
   }
 
-  async.series([ function(doneEach){
-    // preview
-    var mapnikLayer = {
-      type: 'mapnik',
-      options: {
-        sql: 'select id, geometry '+ fieldsStr +' from "' + view.layerId + 's"',
-        geom_column: "geometry",
-        cartocss_version: "2.0.0",
-        interactivity: fields,
-        cartocss: view.previewCartoCss || view.cartocss || defaultCartoCSS
-      }
+  var mapnikLayer = {
+    type: 'mapnik',
+    options: {
+      sql: 'select id, geometry '+ fieldsStr +' from "' + view.layerId + 's"',
+      geom_column: "geometry",
+      cartocss_version: "2.0.0",
+      interactivity: fields,
+      cartocss: view.previewCartoCss || view.cartocss || defaultCartoCSS
     }
+  }
 
-    var mapConfig = MapConfig.create({
-      version: '1.2.0',
-      layers: [ mapnikLayer ]
-    });
-
-    self
-      .mapBackend
-      .createLayergroup(mapConfig, dbParams, new DummyMapConfigProvider(mapConfig, dbParams), function(err, res){
-        if (err) doneEach(err)
-        else doneEach(null, res.layergroupid);
-      });
-  }, function(doneEach){
-
-    // view
-    var mapnikLayer = {
-      type: 'mapnik',
-      options: {
-        sql: 'select id, geometry '+ fieldsStr +' from "' + view.layerId + 's"',
-        geom_column: "geometry",
-        cartocss_version: "2.0.0",
-        interactivity: fields,
-        cartocss: view.cartocss || defaultCartoCSS
-      }
-    }
-
-    var mapConfig = MapConfig.create({
-      version: '1.2.0',
-      layers: [ mapnikLayer ]
-    });
-
-    self
-      .mapBackend
-      .createLayergroup(mapConfig, dbParams, new DummyMapConfigProvider(mapConfig, dbParams), function(err, res){
-        if (err) doneEach(err)
-        else doneEach(null, res.layergroupid);
-      });
-  }], function(err, results){
-    if (err) return doneGetLayerGroupId(err);
-    doneGetLayerGroupId(null, {
-      previewLayergroupId: results[0],
-      layergroupId: results[1]
-    });
+  var mapConfig = MapConfig.create({
+    version: '1.2.0',
+    layers: [ mapnikLayer ]
   });
 
+  self
+    .mapBackend
+    .createLayergroup(mapConfig, dbParams, new DummyMapConfigProvider(mapConfig, dbParams), function(err, res){
+      if (err) {
+        console.log(err);
+        doneGetLayerGroupId(err);
+      } else doneGetLayerGroupId(null, res.layergroupid);
+    });
 }
 
 // Gets a tile for a given token and set of tile ZXY coords. (OSM style)
@@ -140,19 +108,27 @@ MapController.prototype.layer = function(req, res, next) {
 
 MapController.prototype.tileOrLayer = function (req, res) {
   var self = this;
-  var views = self._app.service('views');
 
-  views.get(req.params.viewId).then(function(view){
+  if (req.query.preview) {
+    var previews = self._app.service('previews');
+    previews.get(req.params.viewId).then(getTile).catch(function(err){
+      console.log('error loading view at tileOrLayer');
+      console.log(err);
+    });
+  } else {
+    var views = self._app.service('views');
+    views.get(req.params.viewId).then(getTile).catch(function(err){
+      console.log('error loading view at tileOrLayer');
+      console.log(err);
+    });
+  }
 
+  function getTile(view) {
     var opts = self._app.get('windshaftOpts');
 
     var params = _.extend(req.params, opts.dbParams);
 
-    if (req.query.preview) {
-      params.token = view.previewLayergroupId;
-    } else {
-      params.token = view.layergroupId;
-    }
+    params.token = view.layergroupId;
 
     step(
       function mapController$getTile(err) {
@@ -171,9 +147,7 @@ MapController.prototype.tileOrLayer = function (req, res) {
         }
       }
     );
-  }).catch(function(err){
-    console.log('error'+err);
-  });
+  }
 };
 
 // This function is meant for being called as the very last
@@ -181,7 +155,6 @@ MapController.prototype.tileOrLayer = function (req, res) {
 MapController.prototype.finalizeGetTileOrGrid = function(err, req, res, tile, headers) {
   if (err){
     console.log(err);
-
 
     // See https://github.com/Vizzuality/Windshaft-cartodb/issues/68
     var errMsg = err.message ? ( '' + err.message ) : ( '' + err );
