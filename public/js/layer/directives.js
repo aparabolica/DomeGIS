@@ -33,11 +33,13 @@ angular.module('domegis')
         });
         Server.on(layerService, 'syncProgress', function(prog) {
           if(scope.layer.id == prog.layerId) {
-            scope.progress = parseInt(prog.progress * 100) + '%';
+            if(prog.progress == 1)
+              scope.progress = '99%';
+            else
+              scope.progress = parseInt(prog.progress * 100) + '%';
           }
         });
         Server.on(layerService, 'updated', function(data) {
-          console.log(data);
           if(scope.layer.id == data.id) {
             console.log('should replace updated', data);
             scope.layer = data;

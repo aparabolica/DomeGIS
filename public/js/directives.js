@@ -203,7 +203,7 @@ angular.module('domegis')
           }
           if(view.style.type == 'choropleth') {
             var cPlethStyle = view.style.choropleth[view.style.column.name];
-            var categories = quantiles(view.style.column.values, cPlethStyle.bucket_size);
+            var categories = quantiles(view.style.column.values, cPlethStyle.bucket_size || 3);
             var ramp = chroma.scale(cPlethStyle.scale).colors(categories.length).reverse();
             var columnName = _.find(layer.fields, function(field) {
               return field.name == view.style.column.name;
