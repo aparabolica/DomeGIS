@@ -238,6 +238,8 @@ angular.module('domegis')
                   propRegex = new RegExp('\t' + 'polygon-fill' + ':(.*?);\n');
                 else if($scope.isType('point'))
                   propRegex = new RegExp('\t' + 'marker-fill' + ':(.*?);\n');
+                else if($scope.isType('linestring'))
+                  propRegex = new RegExp('\t' + 'line-color' + ':(.*?);\n');
 
                 var propMatch = cartocss.match(propRegex);
 
@@ -250,6 +252,8 @@ angular.module('domegis')
                       rep = '\t' + 'polygon-fill' + ': ' + val + ';\n';
                     else if ($scope.isType('point'))
                       rep = '\t' + 'marker-fill' + ': ' + val + ';\n';
+                    else if ($scope.isType('linestring'))
+                      rep = '\t' + 'line-color' + ': ' + val + ';\n';
                   if(propMatch[1].trim().toLowerCase() != val) {
                     cartocss = cartocss.replace(propRegex, rep);
                   }
@@ -257,8 +261,10 @@ angular.module('domegis')
                   if(val !== '')
                     if($scope.isType('polygon'))
                       cartocss += '\t' + 'polygon-fill' + ': ' + val + ';\n';
-                    else
+                    else if ($scope.isType('point'))
                       cartocss += '\t' + 'marker-fill' + ': ' + val + ';\n';
+                    else if ($scope.isType('linestring'))
+                      cartocss += '\t' + 'line-color' + ': ' + val + ';\n';
                 }
 
                 var result = '#' + $scope.table.title + ' [ ' + $scope.styles.column.name + ' = "' + category + '" ] {\n' + cartocss + '}';
@@ -313,6 +319,9 @@ angular.module('domegis')
                 }
                 if($scope.isType('point')) {
                   cartocss += '\t' + 'marker-fill' + ': ' + ramp[i] + ';\n';
+                }
+                if($scope.isType('linestring')) {
+                  cartocss += '\t' + 'line-color' + ': ' + ramp[i] + ';\n';
                 }
 
                 var result = '#' + $scope.table.title + ' [ ' + $scope.styles.column.name + ' <= ' + category + ' ] {\n' + cartocss + '}';

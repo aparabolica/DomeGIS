@@ -346,8 +346,6 @@ angular.module('domegis')
   'Distinct',
   function($scope, $state, Server, Edit, Layer, Distinct) {
 
-    console.log(Edit);
-
     $scope.distinct = Distinct.data;
 
     var viewService = Server.service('views');

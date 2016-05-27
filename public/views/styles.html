@@ -17,7 +17,7 @@
           <label for="category_column">Select column</label>
         </td>
         <td>
-          <select ng-options="column.name for column in (columns | parseLayerField | mapType:styles.type) track by column.name" ng-model="styles.column" ng-change="selectColumn(column.name, '{{column.name}}')">
+          <select ng-options="column.name for column in (columns | parseLayerField | mapType:styles.type) track by column.name" ng-model="styles.column" ng-change="selectColumn(column.name, '{{styles.column.name}}')">
             <option value=''>Select a column</option>
           </select>
         </td>
@@ -124,5 +124,5 @@
       </tr>
     </tbody>
   </table>
-  <pre ng-hide="1==1" carto-editor="styles" group="table.title" ng-model="cartocss">{{cartocss}}</pre>
+  <pre carto-editor="styles" group="table.title" ng-model="cartocss">{{cartocss}}</pre>
 </div>
