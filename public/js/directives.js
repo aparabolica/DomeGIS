@@ -60,9 +60,9 @@ angular.module('domegis')
         var legendControl = L.control.legend();
         map.addControl(legendControl);
 
-        map.on('move', function() {
+        map.on('move', _.debounce(function() {
           $state.go($state.current.name, {loc: getLocStr()}, {notify: false})
-        });
+        }, 400));
 
         map.addLayer(L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'));
 
@@ -197,6 +197,17 @@ angular.module('domegis')
 
           if(view.style.type == 'category') {
             var catStyle = view.style.category[view.style.column.name];
+            var columnName = _.find(layer.fields, function(field) {
+              return field.name == view.style.column.name;
+            }).title[Lang.get()];
+          }
+          if(view.style.type == 'choropleth') {
+            var cPlethStyle = view.style.choropleth[view.style.column.name];
+            var categories = quantiles(view.style.column.values, cPlethStyle.bucket_size);
+            var ramp = chroma.scale(cPlethStyle.scale).colors(categories.length).reverse();
+            var columnName = _.find(layer.fields, function(field) {
+              return field.name == view.style.column.name;
+            }).title[Lang.get()];
           }
 
           var html = '<div id="legend-' + view.id + '">';
@@ -206,12 +217,24 @@ angular.module('domegis')
             html += name;
           } else if(view.style.type == 'category') {
             html += '<span class="layer-title">' + name + '</span>';
+            html += '<span class="column-title">' + columnName + '</span>';
             for(var name in catStyle) {
               html += '<span class="category-item clearfix">';
               html += '<span class="' + clss + ' feat-ref" style="background:' + catStyle[name] + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
               html += name;
               html += '</span>';
             }
+          } else if(view.style.type == 'choropleth') {
+            html += '<span class="layer-title">' + name + '</span>';
+            html += '<span class="column-title">' + columnName + '</span>';
+            html += '<span class="choropleth">';
+            categories.forEach(function(cat, i) {
+              html += '<span class="choropleth-item">';
+              html += '<span class="choropleth-color" style="background-color:' + ramp[i] + ';"></span>';
+              html += '<span class="choropleth-label">' + cat + '</span>';
+              html += '</span>';
+            });
+            html += '</span>';
           }
           html += '</p>';
           html += '</div>';
