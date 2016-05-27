@@ -8,6 +8,7 @@
   <table class="sub-table layers-table">
     <thead>
       <tr>
+        <td></td>
         <td>Name</td>
         <td>Geometry type</td>
         <td>Feature count</td>
@@ -17,7 +18,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="layer in layers" layer-item="layer"></tr>
+      <tr ng-repeat="layer in layers" layer-item="layer" ng-class="{'not-synced': layer.status !== 'synced'}"></tr>
     </tbody>
   </table>
   <!-- <article ng-repeat="layer in layers" layer-item="layer" class="layer-item clearfix"></article> -->

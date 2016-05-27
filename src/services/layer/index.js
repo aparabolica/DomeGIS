@@ -14,11 +14,16 @@ module.exports = function(){
     paginate: {
       default: 5,
       max: 25
-    }
+    },
+    events: ['syncFinish', 'custom']
   };
 
+  var LayerService = service(options);
+
+  LayerService.events = ['syncFinish'];
+
   // Initialize our service with any options it requires
-  app.use('/layers', service(options));
+  app.use('/layers', LayerService);
 
   // Get our initialize service to that we can bind hooks
   var layerService = app.service('/layers');

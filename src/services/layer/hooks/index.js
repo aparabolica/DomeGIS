@@ -175,7 +175,7 @@ exports.after = {
       Layers.patch(layerId, {
         status: status
       }).then(function(){
-        Layers.emit('syncFinish', {id: layerId});
+        Layers.emit('syncFinish', layerId);
       }).catch(function(err){
         console.log(hook.data.id + ': error setting status');
         console.log(err);

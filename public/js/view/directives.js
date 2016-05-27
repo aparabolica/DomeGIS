@@ -12,7 +12,12 @@ angular.module('domegis')
       link: function(scope, element, attrs) {
 
         var viewService = Server.service('views');
-        
+
+        Server.on(viewService, 'updated', function(data) {
+          if(data.id == scope.view.id)
+            scope.view = data;
+        });
+
         scope.token = Server.app.get('token');
 
         scope.remove = function(view) {

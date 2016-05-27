@@ -1,6 +1,12 @@
+<td>
+  <p class="status" ng-class="{ok: layer.status == 'synced'}">
+    <span class="fa fa-refresh fa-spin" ng-hide="layer.status"></span>
+    <span class="fa fa-check-circle" ng-show="layer.status == 'synced'"></span>
+  </p>
+</td>
 <td class="main">
   <h3>{{layer.name | translate}}</h3>
-  <p class="actions" ng-show="token">
+  <p class="actions" ng-show="token && layer.status == 'synced'">
     <a class="button" ui-sref="editLayer({id:layer.id})">Edit layer</a>
   </p>
 </td>
@@ -15,5 +21,5 @@
 </td>
 <td>
   <div ng-repeat="view in views" view-item="view" class="view-item"></div>
-  <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="token">Create new view</a>
+  <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="token && layer.status == 'synced'">Create new view</a>
 </td>

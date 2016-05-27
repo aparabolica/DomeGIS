@@ -30,15 +30,6 @@ angular.module('domegis')
           if(scope.content && data.contentId == scope.content.id && !_.find(scope.layers, function(l) { return l.id == data.id; }))
             scope.layers.push(data);
         });
-        /* NOT FIRING */
-        Server.on(layerService, 'syncFinish', function(data) {
-          console.log(data);
-          scope.layers.forEach(function(layer) {
-            if(layer.id == data.id) {
-              layer = data;
-            }
-          });
-        });
         Server.on(layerService, 'removed', function(data) {
           scope.layers = _.filter(scope.layers, function(item) {
             return item.id !== data.id;
