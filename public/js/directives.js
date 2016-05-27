@@ -229,7 +229,10 @@ angular.module('domegis')
             html += '<span class="column-title">' + columnName + '</span>';
             html += '<span class="choropleth">';
             categories.forEach(function(cat, i) {
-              html += '<span class="choropleth-item">';
+              if(cat % 1 !== 0) {
+                cat = cat.toFixed(2);
+              }
+              html += '<span class="choropleth-item" title="' + cat + '">';
               html += '<span class="choropleth-color" style="background-color:' + ramp[i] + ';"></span>';
               html += '<span class="choropleth-label">' + cat + '</span>';
               html += '</span>';
