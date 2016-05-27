@@ -32,10 +32,10 @@ angular.module('domegis')
   function() {
     return function(input) {
       return _.filter(input, function(field) {
-        return field.alias.trim().toLowerCase() !== 'fid' &&
-          field.alias !== 'OBJECTID' &&
-          field.alias.trim().toLowerCase() !== 'id' &&
-          field.alias !== 'OBJECTID_1';
+        return field.name.trim().toLowerCase() !== 'fid' &&
+          field.name !== 'OBJECTID' &&
+          field.name.trim().toLowerCase() !== 'id' &&
+          field.name !== 'OBJECTID_1';
       });
     }
   }
