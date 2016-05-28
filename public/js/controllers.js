@@ -495,7 +495,7 @@ angular.module('domegis')
         alert('Passwords don\'t match');
       } else {
         Server.patch(userService, Edit.id, {
-          currentPassword: pwd.currentPassword,
+          userPassword: pwd.userPassword,
           password: pwd.password
         }).then(function(data) {
           console.log(data);
