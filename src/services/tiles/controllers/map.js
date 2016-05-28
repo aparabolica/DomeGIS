@@ -56,17 +56,22 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
   var defaultCartoCSS = "#style{ polygon-fill: blue;  line-color: red; marker-width:8; marker-fill: red; }";
 
   var fields = view.fields || [];
-  var interactivity = fields;
 
   // add field used for cloropeth and category to SELECT
-  if (view.style.column) {
-    fields.push(view.style.column.name);
-    fields = _.uniq(fields);
-  }
-
   var fieldsStr = '';
   if (fields.length > 0) {
-    fieldsStr = ',' + _.map(fields, function(f){ return '"'+f+'"' }).join(',');
+
+    // clone fields object
+    var selectedFields = JSON.parse(JSON.stringify(fields));
+
+    // add field selected for category/cloropeth
+    if (view.style.column) {
+      selectedFields.push(view.style.column.name);
+      selectedFields = _.uniq(selectedFields);
+    }
+
+    // merge then as a string
+    fieldsStr = ',' + _.map(selectedFields, function(f){ return '"'+f+'"' }).join(',');
   }
 
   var mapnikLayer = {
@@ -75,7 +80,7 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
       sql: 'select id, geometry '+ fieldsStr +' from "' + view.layerId + 's"',
       geom_column: "geometry",
       cartocss_version: "2.0.0",
-      interactivity: interactivity,
+      interactivity: view.fields,
       cartocss: view.cartocss || defaultCartoCSS
     }
   }
