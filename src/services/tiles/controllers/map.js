@@ -57,20 +57,18 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
 
   var fields = view.fields || [];
 
-  // add field used for cloropeth and category to SELECT
+  // clone fields property
+  var selectedFields = JSON.parse(JSON.stringify(fields));
+
+  // add field selected for category/cloropeth
+  if (view.style.column) {
+    selectedFields.push(view.style.column.name);
+    selectedFields = _.uniq(selectedFields);
+  }
+
+  // merge then as a string
   var fieldsStr = '';
-  if (fields.length > 0) {
-
-    // clone fields object
-    var selectedFields = JSON.parse(JSON.stringify(fields));
-
-    // add field selected for category/cloropeth
-    if (view.style.column) {
-      selectedFields.push(view.style.column.name);
-      selectedFields = _.uniq(selectedFields);
-    }
-
-    // merge then as a string
+  if (selectedFields.length > 0) {
     fieldsStr = ',' + _.map(selectedFields, function(f){ return '"'+f+'"' }).join(',');
   }
 
