@@ -3,7 +3,7 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize) {
-  var view = sequelize.define('views', {
+  var preview = sequelize.define('preview', {
     id: { type: Sequelize.UUID, defaultValue: Sequelize.UUIDV1, primaryKey: true},
     name: { type: Sequelize.STRING, required: true},
     fields: { type: Sequelize.ARRAY(Sequelize.STRING), defaultValue: []},
@@ -14,10 +14,10 @@ module.exports = function(sequelize) {
     freezeTableName: true,
     classMethods: {
       associate: function(models){
-        view.belongsTo(models.layers);
+        preview.belongsTo(models.layers);
       }
     }
   });
 
-  return view;
+  return preview;
 };

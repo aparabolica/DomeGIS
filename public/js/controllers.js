@@ -349,6 +349,7 @@ angular.module('domegis')
     $scope.distinct = Distinct.data;
 
     var viewService = Server.service('views');
+    var previewService = Server.service('previews');
 
     // console.log(Layer);
     $scope.layer = Layer;
@@ -368,11 +369,14 @@ angular.module('domegis')
     };
 
     $scope.$watch('view.style', _.debounce(function() {
-      var preview = angular.copy(Edit);
-      if(Edit.id) {
-        Server.update(viewService, Edit.id, _.extend(preview, {
-          previewCartoCss: $scope.view.cartocss
-        })).then(function(data) {
+      if($scope.view.id) {
+        Server.update(previewService, $scope.view.id, $scope.view).then(function(preview) {
+          $scope.view = preview;
+          $scope.$broadcast('updateLayers');
+        });
+      } else {
+        Server.create(previewService, $scope.view).then(function(preview) {
+          $scope.view = preview;
           $scope.$broadcast('updateLayers');
         });
       }
