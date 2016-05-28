@@ -44,7 +44,7 @@
     "step": "0.0.6",
     "underscore": "^1.8.3",
     "windshaft": "^1.16.1",
-    "winston": "^2.2.0"
+    "bcryptjs": "~2.3.0"
   },
   "devDependencies": {
     "jshint": "^2.9.1",
