@@ -470,6 +470,7 @@ angular.module('domegis')
 
     $scope.save = function(user) {
       if(Edit.id) {
+        delete user.password;
         Server.update(userService, Edit.id, user).then(function(user) {
           $scope.user = user;
           $state.go('usersEdit', {id: user.id}, {reload: true});
