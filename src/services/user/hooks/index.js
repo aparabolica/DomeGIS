@@ -6,14 +6,11 @@ var errors = require('feathers-errors');
 var hooks = require('feathers-hooks');
 var auth = require('feathers-authentication').hooks;
 
-var checkPasswordChange =  function(options){
-  options = options || {};
+var checkPasswordChange =  function(){
   return function(hook) {
     if (hook.type !== 'before') {
-      throw new Error('The \'isChangingPassword\' hook should only be used as a \'before\' hook.');
+      throw new errors.GeneralError('The \'isChangingPassword\' hook should only be used as a \'before\' hook.');
     }
-
-    options = Object.assign({}, defaults, hook.app.get('auth'), options);
 
     // ignores when no data is sent
     if (hook.data === undefined) {
@@ -24,39 +21,42 @@ var checkPasswordChange =  function(options){
     var newPassword = hook.data['password'];
     if (newPassword === undefined) {
       return hook;
+    } else if (newPassword.length < 5) {
+      throw new errors.BadRequest('Password should have at least 5 characters.');
     }
 
     // check if currentPassword is included in the request
-    var currentPassword = hook.data['currentPassword'];
-    if (currentPassword === undefined) {
-      throw new errors.BadRequest('\'currentPassword\' field is missing.');
+    var userPassword = hook.data['userPassword'];
+    if (userPassword === undefined || userPassword.length == 0) {
+      throw new errors.BadRequest('\'userPassword\' field is missing.');
     }
 
     // check if current user is populated in the hook
     if (hook.params.user === undefined) {
-      throw new Error('Current user should be populated at \'checkPasswordChange\'.');
+      throw new errors.BadRequest('Current user should be populated at \'checkPasswordChange\'.');
     } else var user = hook.params.user;
 
-    // check if currentPassword is valid
-    crypto.compare(currentPassword, user.password, function(error, result) {
-      if (error) throw new Error('Error comparing passwords with bcrypt.');
+    // check if userPassword is valid
+    // var crypto = hook.app.get('auth').crypto;
+    return new Promise(function(resolve, reject){
+      bcrypt.compare(userPassword, user.password, function(error, result) {
+        if (error) return reject(new errors.GeneralError('Error comparing passwords with bcrypt.'));
 
-      if (result) {
-        return new Promise(function(resolve, reject){
-          bcrypt.genSalt(10, function(err, salt) {
-            bcrypt.hash(newPassword, salt, function(err, hash) {
-              if (err) {
-                return reject(err);
-              }
+        if (result) {
+            bcrypt.genSalt(10, function(err, salt) {
+              bcrypt.hash(newPassword, salt, function(err, hash) {
+                if (err) {
+                  return reject(err);
+                }
 
-              hook.data['password'] = hash;
-              resolve(hook);
+                hook.data['password'] = hash;
+                resolve(hook);
+              });
             });
-          });
-        });
-      } else {
-        throw new errors.BadRequest('\'currentPassword\' don\'t match.');
-      }
+        } else {
+          reject(new errors.BadRequest('\'userPassword\' don\'t match.'));
+        }
+      });
     });
   };
 }
