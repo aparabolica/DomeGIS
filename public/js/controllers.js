@@ -491,14 +491,17 @@ angular.module('domegis')
     $scope.updatePwd = function(pwd) {
       if(!pwd.password) {
         alert('You have to type in a new password');
-      } else if(pwd.password !== pwd.repeat_password) {
+      } else if(pwd.password !== pwd.passwordRepeat) {
         alert('Passwords don\'t match');
       } else {
         Server.patch(userService, Edit.id, {
+          currentPassword: pwd.currentPassword,
           password: pwd.password
         }).then(function(data) {
           console.log(data);
-        })
+        }, function(err) {
+          console.log(err);
+        });
       }
     }
   }

@@ -38,12 +38,16 @@
       <div class="form-section">
         <h2>Update password</h2>
         <p>
+          <label for="cur_password_input">Your user password</label>
+          <input id="cur_password_input" type="password" placeholder="Password" ng-model="pwd.currentPassword" />
+        </p>
+        <p>
           <label for="password_input">New password</label>
-          <input id="password_input" type="password" placeholder="Password" ng-model="pwd.password" />
+          <input id="password_input" type="password" placeholder="New password" ng-model="pwd.password" />
         </p>
         <p>
           <label for="rpt_password_input">Repeat new password</label>
-          <input id="rpt_password_input" type="password" placeholder="Password" ng-model="pwd.repeat_password" />
+          <input id="rpt_password_input" type="password" placeholder="Password" ng-model="pwd.passwordRepeat" />
         </p>
       </div>
       <p>
