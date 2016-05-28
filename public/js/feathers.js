@@ -36,6 +36,9 @@ angular.module('domegis')
       update: function(service, id, data) {
         return req(service.update(id, data));
       },
+      patch: function(service, id, data) {
+        return req(service.patch(id, data));
+      },
       remove: function(service, id) {
         return req(service.remove(id));
       },

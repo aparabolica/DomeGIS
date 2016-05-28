@@ -476,5 +476,21 @@ angular.module('domegis')
         });
       }
     };
+
+    $scope.pwd = {};
+
+    $scope.updatePwd = function(pwd) {
+      if(!pwd.password) {
+        alert('You have to type in a new password');
+      } else if(pwd.password !== pwd.repeat_password) {
+        alert('Passwords don\'t match');
+      } else {
+        Server.patch(userService, Edit.id, {
+          password: pwd.password
+        }).then(function(data) {
+          console.log(data);
+        })
+      }
+    }
   }
 ]);

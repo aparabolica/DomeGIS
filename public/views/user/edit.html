@@ -34,5 +34,21 @@
         <input type="submit" value="Save user" />
       </p>
     </form>
+    <form id="edit_pwd" class="main-form" ng-submit="updatePwd(pwd)" ng-show="user.id">
+      <div class="form-section">
+        <h2>Update password</h2>
+        <p>
+          <label for="password_input">New password</label>
+          <input id="password_input" type="password" placeholder="Password" ng-model="pwd.password" />
+        </p>
+        <p>
+          <label for="rpt_password_input">Repeat new password</label>
+          <input id="rpt_password_input" type="password" placeholder="Password" ng-model="pwd.repeat_password" />
+        </p>
+      </div>
+      <p>
+        <input type="submit" value="Save new password" />
+      </p>
+    </form>
   </div>
 </div>

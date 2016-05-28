@@ -19,8 +19,10 @@ exports.before = {
     auth.hashPassword()
   ],
   update: [
+    auth.hashPassword()
   ],
   patch: [
+    auth.hashPassword()
   ],
   remove: [
   ]
