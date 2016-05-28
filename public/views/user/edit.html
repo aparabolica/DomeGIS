@@ -1,0 +1,38 @@
+<header id="inner-header" class="form-header">
+  <div class="container">
+    <div class="six columns offset-by-three">
+      <h2 ng-show="user.id">Editing user {{user.name}}</h2>
+      <h2 ng-hide="user.id">New user</h2>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="six columns offset-by-three">
+    <form id="edit_user" class="main-form" ng-submit="save(user)">
+      <div class="form-section">
+        <p>
+          <label for="name_input">Name</label>
+          <input id="name_input" type="text" placeholder="Name" ng-model="user.name" />
+        </p>
+        <p>
+          <label for="email_input">Email</label>
+          <input id="email_input" type="email" placeholder="Email" ng-model="user.email" />
+        </p>
+        <p>
+          <label>Roles</label>
+          <label class="checkbox-label" for="role_{{role}}_input" ng-repeat="role in ['admin', 'editor']">
+            <input id="role_{{role}}_input" type="checkbox" type="checkbox" name="userRoles[]" ng-checked="user.roles.indexOf(role) > -1" ng-click="toggleRole(role)" ng-disabled="user.id == 1" />
+            {{role}}
+          </label>
+        </p>
+        <p ng-hide="user.id">
+          <label for="password_input">Password</label>
+          <input id="password_input" type="password" placeholder="Password" ng-model="user.password" />
+        </p>
+      </div>
+      <p>
+        <input type="submit" value="Save user" />
+      </p>
+    </form>
+  </div>
+</div>

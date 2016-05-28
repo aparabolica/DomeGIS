@@ -29,6 +29,7 @@
         <div class="twelve columns">
           <h1><a ui-sref="home">DomeGIS</a></h1>
           <nav id="mastnav">
+            <a ui-sref="users" ng-show="token">Users</a>
             <a ui-sref="generateMap">Generate map</a>
             <a ui-sref="login" ng-hide="token">Login</a>
             <a href="javascript:void(0);" ng-show="token" ng-click="logout()">Logout</a>

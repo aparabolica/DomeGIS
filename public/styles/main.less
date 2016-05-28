@@ -265,6 +265,20 @@ table {
     h1,
     h2 {
       letter-spacing: 0;
+      float: left;
+      margin-right: 4rem;
+    }
+    nav.head-nav {
+      float: left;
+      margin-top: 1.4rem;
+      background: lighten(@blue, 5%);
+      padding: .5rem 1.5rem;
+      font-size: .8em;
+      text-transform: uppercase;
+      a {
+        display: inline-block;
+        color: lighten(@blue, 50%);
+      }
     }
     &.form-header {
       h2 {
@@ -274,6 +288,9 @@ table {
   }
   .results-container {
     margin: 0 -4rem;
+  }
+  .checkbox-label {
+    font-weight: 400;
   }
 }
 

@@ -1,0 +1,32 @@
+<header id="inner-header">
+  <div class="container">
+    <div class="twelve columns">
+      <h2>Users</h2>
+      <nav class="head-nav">
+        <a ui-sref="usersEdit">New user</a>
+      </nav>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="twelve columns">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Actions</th>
+      </thead>
+      <tbody>
+        <tr ng-repeat="user in users">
+          <td>{{user.name}}</td>
+          <td>{{user.email}}</td>
+          <td>
+            <a ui-sref="usersEdit({id: user.id})" class="fa fa-edit"></a>
+            <a href="javascript:void(0);" ng-click="remove(user)" class="fa fa-remove" ng-show="user.id !== 1"></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

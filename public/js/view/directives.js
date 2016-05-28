@@ -21,7 +21,9 @@ angular.module('domegis')
         scope.token = Server.app.get('token');
 
         scope.remove = function(view) {
-          Server.remove(viewService, view.id);
+          if(confirm('Are you sure?')) {
+            Server.remove(viewService, view.id);
+          }
         };
       }
     }

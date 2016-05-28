@@ -1,3 +1,21 @@
+var AuthDep = [
+  '$q',
+  'Server',
+  function($q, Server) {
+    var deferred = $q.defer();
+    Server.auth().then(function() {
+      deferred.resolve({
+        token: Server.app.get('token'),
+        user: Server.app.get('user')
+      });
+    }, function() {
+      console.log(err);
+      deferred.reject('not logged in');
+    });
+    return deferred.promise;
+  }
+];
+
 angular.module('domegis')
 .config([
   '$stateProvider',
@@ -37,6 +55,42 @@ angular.module('domegis')
     .state('login', {
       url: '/login/',
       templateUrl: '/views/login.html'
+    })
+    .state('users', {
+      url: '/users/',
+      templateUrl: '/views/user/index.html',
+      controller: 'UserCtrl',
+      resolve: {
+        Auth: AuthDep,
+        Users: [
+          'Auth',
+          'Server',
+          function(Auth, Server) {
+            return Server.find(Server.service('users'));
+          }
+        ]
+      }
+    })
+    .state('usersEdit', {
+      url: '/users/edit/?id',
+      templateUrl: '/views/user/edit.html',
+      controller: 'UserEditCtrl',
+      resolve: {
+        Auth: AuthDep,
+        Edit: [
+          'Auth',
+          '$q',
+          '$stateParams',
+          'Server',
+          function(Auth, $q, $stateParams, Server) {
+            if($stateParams.id) {
+              return Server.get(Server.service('users'), $stateParams.id);
+            } else {
+              return {};
+            }
+          }
+        ]
+      }
     })
     .state('generateMap', {
       url: '/generate/',

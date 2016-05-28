@@ -401,4 +401,80 @@ angular.module('domegis')
     };
 
   }
+])
+
+.controller('UserCtrl', [
+  '$scope',
+  'Server',
+  'Users',
+  function($scope, Server, Users) {
+
+    var userService = Server.service('users');
+
+    $scope.users = Users.data;
+
+    $scope.remove = function(user) {
+      if(confirm('Are you sure?')) {
+        Server.remove(userService, user.id);
+      }
+    };
+
+    Server.on(userService, 'created', function(data) {
+      $scope.users.push(data);
+    });
+    Server.on(userService, 'removed', function(data) {
+      $scope.users = _.filter($scope.users, function(user) {
+        return user.id !== data.id;
+      });
+    });
+
+
+  }
+])
+
+.controller('UserEditCtrl', [
+  '$scope',
+  '$state',
+  'Server',
+  'Edit',
+  function($scope, $state, Server, Edit) {
+
+    var userService = Server.service('users');
+
+    $scope.user = angular.copy(Edit);
+
+    $scope.toggleRole = function(role) {
+
+      if(!$scope.user.roles)
+        $scope.user.roles = [];
+
+      var idx = $scope.user.roles.indexOf(role);
+      // is currently selected
+      if (idx > -1) {
+        $scope.user.roles.splice(idx, 1);
+      }
+      // is newly selected
+      else {
+        $scope.user.roles.push(role);
+      }
+    };
+
+    $scope.save = function(user) {
+      if(Edit.id) {
+        Server.update(userService, Edit.id, user).then(function(user) {
+          $scope.user = user;
+          $state.go('usersEdit', {id: user.id}, {reload: true});
+        }, function(err) {
+          console.log(err);
+        });
+      } else {
+        Server.create(userService, user).then(function(user) {
+          $scope.user = user;
+          $state.go('usersEdit', {id: user.id}, {reload: true});
+        }, function(err) {
+          console.log(err);
+        });
+      }
+    };
+  }
 ]);
