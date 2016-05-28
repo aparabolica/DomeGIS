@@ -94,6 +94,7 @@ module.exports = function(){
 
       var fields = [];
       async.eachSeries(layer.fields, function(field, doneEach){
+        if (field.name == 'OBJECTID') return doneEach();
         var query = 'SELECT DISTINCT \"' + field.name +'\" FROM \"' + layerId + 's\" ORDER BY \"' + field.name +'\";';
         sequelize.query(query)
           .then(function(queryResult){
