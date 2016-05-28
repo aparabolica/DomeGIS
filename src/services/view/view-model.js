@@ -9,9 +9,7 @@ module.exports = function(sequelize) {
     fields: { type: Sequelize.ARRAY(Sequelize.STRING), defaultValue: []},
     style: { type: Sequelize.JSON, required: true},
     cartocss: { type: Sequelize.TEXT, required: true},
-    layergroupId: { type: Sequelize.STRING },
-    previewCartoCss: { type: Sequelize.TEXT },
-    previewLayergroupId: { type: Sequelize.STRING }
+    layergroupId: { type: Sequelize.STRING }
   }, {
     freezeTableName: true,
     classMethods: {

@@ -56,7 +56,9 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
   var defaultCartoCSS = "#style{ polygon-fill: blue;  line-color: red; marker-width:8; marker-fill: red; }";
 
   var fields = view.fields || [];
+  var interactivity = fields;
 
+  // add field used for cloropeth and category to SELECT
   if (view.style.column) {
     fields.push(view.style.column.name);
     fields = _.uniq(fields);
@@ -73,8 +75,8 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
       sql: 'select id, geometry '+ fieldsStr +' from "' + view.layerId + 's"',
       geom_column: "geometry",
       cartocss_version: "2.0.0",
-      interactivity: fields,
-      cartocss: view.previewCartoCss || view.cartocss || defaultCartoCSS
+      interactivity: interactivity,
+      cartocss: view.cartocss || defaultCartoCSS
     }
   }
 
