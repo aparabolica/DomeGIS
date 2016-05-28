@@ -1,7 +1,7 @@
 var langConfig = {
-  'pt': '',
-  'en': '',
-  'es': ''
+  'en': 'en',
+  'pt': 'pt',
+  'es': 'es'
 };
 
 String.prototype.langsplit = function(_regEx){
@@ -98,15 +98,33 @@ angular.module('domegis')
 
 .factory('Lang', [
   '$cookies',
-  function($cookies) {
+  '$stateParams',
+  function($cookies, $stateParams) {
 
-    if(!$cookies.get('lang')) {
-      $cookies.put('lang', 'en');
+    var userLang = navigator.language || navigator.userLanguage;
+
+    var defaultLang;
+
+    if($stateParams.lang) {
+      defaultLang = _.find(langConfig, function(l) {
+        return $stateParams.lang == l;
+      });
+    } else {
+      defaultLang = _.find(langConfig, function(l) {
+        return userLang.indexOf(l) !== -1;
+      });
+    }
+
+    if(!$cookies.get('lang') || $stateParams.lang) {
+      $cookies.put('lang', defaultLang || 'en');
     }
 
     return {
       get: function() {
         return $cookies.get('lang');
+      },
+      getLanguages: function() {
+        return langConfig;
       },
       set: function(lang) {
         $cookies.put('lang', lang);

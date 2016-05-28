@@ -51,10 +51,17 @@ angular.module('domegis')
 .controller('GenerateCtrl', [
   '$scope',
   '$state',
+  'Lang',
   'Server',
-  function($scope, $state, Server) {
+  function($scope, $state, Lang, Server) {
     var searchService = Server.service('search');
     var viewService = Server.service('views');
+
+    $scope.langs = Lang.getLanguages();
+
+    $scope.settings = {
+      lng: ''
+    };
 
     $scope.search = '';
     $scope.results = [];
@@ -109,30 +116,37 @@ angular.module('domegis')
     };
 
     $scope.getHTMLEmbed = function() {
-      var url = $state.href('map', {views: getCSViews()}, {absolute: true});
+      var url = $state.href('map', {views: getCSViews(), lang: $scope.settings.lng}, {absolute: true});
       return '<iframe src="' + url + '" width="100%" height="400" frameborder="0"></iframe>';
     };
 
     $scope.getWPShortcode = function() {
-      return '[domegis views="' + getCSViews() + '"]';
+      var config = {
+        views: getCSViews(),
+        lang: $scope.settings.lng
+      };
+      var shortcode = '[domegis_map';
+      for(var key in config) {
+        if(config[key])
+          shortcode += ' ' + key + '="' + config[key] + '"';
+      }
+      shortcode += ']';
+      return shortcode;
     };
 
     $scope.views = [];
 
-    $scope.$watch('map', function() {
+    var _update = function() {
       $scope.views = [];
       $scope._layers.forEach(function(l) {
         if($scope.map[l.id] && $scope.map[l.id] != true)
           $scope.views.push($scope.map[l.id]);
       });
-    }, true);
-    $scope.$watch('_layers', function() {
-      $scope.views = [];
-      $scope._layers.forEach(function(l) {
-        if($scope.map[l.id] && $scope.map[l.id] != true)
-          $scope.views.push($scope.map[l.id]);
-      });
-    }, true);
+    };
+
+    $scope.$watch('map', _update, true);
+    $scope.$watch('_layers', _update, true);
+    $scope.$watch('settings', _update, true);
 
     function getCSViews() {
       var views = [];
@@ -263,9 +277,8 @@ angular.module('domegis')
   '$scope',
   'Server',
   'Edit',
-  function($scope, Server, Edit) {
-
-    console.log(Edit);
+  'Lang',
+  function($scope, Server, Edit, Lang) {
 
     var layerService = Server.service('layers');
 
@@ -273,13 +286,9 @@ angular.module('domegis')
 
     $scope.layer.name = langSplit($scope.layer.name);
 
-    $scope.langs = [
-      'en',
-      'pt',
-      'es'
-    ];
+    $scope.langs = Lang.getLanguages();
 
-    $scope.lang = $scope.langs[0];
+    $scope.lang = Lang.get();
 
     $scope.formLang = function(lang) {
       $scope.lang = lang;

@@ -42,6 +42,18 @@
             </p>
           </li>
         </ul>
+        <div class="language-selector">
+          <h3>Output language</h3>
+          <p>Default is <code>auto</code>, which seeks for the user's browser language</p>
+          <label for="auto_lang">
+            <input id="auto_lang" type="radio" name="lng" ng-model="settings.lng" value="" />
+            Auto
+          </label>
+          <label for="{{l}}_lang" ng-repeat="l in langs">
+            <input id="{{l}}_lang" type="radio" name="lng" ng-model="settings.lng" ng-value="l" />
+            {{l}}
+          </label>
+        </div>
       </div>
     </div>
   </div>

@@ -810,6 +810,11 @@ form {
     padding: 6rem 0;
     background: @blue;
     color: #fff;
+    code {
+      background: darken(@blue, 10%);
+      border-color: darken(@blue, 15%);
+      color: #fff;
+    }
     .layer-item {
       background: darken(@blue, 5%);
       padding: 2rem 2rem 2rem 50px;
@@ -852,6 +857,17 @@ form {
           margin-right: 2rem;
           font-weight: 400;
         }
+      }
+    }
+    .language-selector {
+      h3 {
+        font-size: 1.8em;
+      }
+      label {
+        float: left;
+        text-transform: uppercase;
+        margin-right: 1.5rem;
+        font-size: .8em;
       }
     }
   }

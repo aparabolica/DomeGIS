@@ -116,7 +116,7 @@ angular.module('domegis')
       }
     })
     .state('editView', {
-      url: '/views/edit/?id&layerId&loc',
+      url: '/views/edit/?id&layerId&loc&lang',
       templateUrl: '/views/view/edit.html',
       controller: 'ViewEditCtrl',
       resolve: {
@@ -160,7 +160,7 @@ angular.module('domegis')
       }
     })
     .state('editLayer', {
-      url: '/layers/edit?id&contentId',
+      url: '/layers/edit?id&contentId&lang',
       templateUrl: '/views/layer/edit.html',
       controller: 'LayerEditCtrl',
       resolve: {
@@ -184,7 +184,7 @@ angular.module('domegis')
       }
     })
     .state('map', {
-      url: '/map/?views&base&loc',
+      url: '/map/?views&base&loc&lang',
       templateUrl: '/views/map.html',
       controller: [
         '$stateParams',
