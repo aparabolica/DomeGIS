@@ -7,6 +7,8 @@ var view = require('./view');
 var preview = require('./preview');
 var search = require('./search');
 var authentication = require('./authentication');
+var feathersLogger = require('feathers-logger');
+var Logger = require('../lib/logger');
 
 module.exports = function() {
   var app = this;
@@ -24,6 +26,13 @@ module.exports = function() {
   app.configure(preview);
   app.configure(view);
   app.configure(search);
+
+  var logger = new Logger({
+    app: app,
+    sequelize: sequelize
+  });
+  app.configure(feathersLogger(logger));
+
 
   // Setup relationships
   var models = sequelize.models;

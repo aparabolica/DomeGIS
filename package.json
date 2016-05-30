@@ -44,7 +44,9 @@
     "step": "0.0.6",
     "underscore": "^1.8.3",
     "windshaft": "^1.16.1",
-    "bcryptjs": "~2.3.0"
+    "bcryptjs": "~2.3.0",
+    "feathers-logger": "~0.2.2",
+    "request-ip": "~1.2.2"
   },
   "devDependencies": {
     "jshint": "^2.9.1",
