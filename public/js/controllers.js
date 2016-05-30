@@ -32,17 +32,19 @@ angular.module('domegis')
 
     $scope.$on('$stateChangeStart', function(ev, toState, toParams) {
       $scope.bodyClass = [];
-      if(self != top) {
-        $scope.bodyClass.push('iframe');
-      }
       if(toState.name == 'map') {
         $scope.bodyClass.push('map');
       }
+      $scope.bodyClass.push('loading');
     });
 
     $scope.$on('$stateChangeSuccess', function(ev, toState, toParams) {
       if(toState.name == 'login' && $scope.token)
         $state.go('home');
+      $scope.bodyClass = _.filter($scope.bodyClass, function(c) {
+        return c != 'loading';
+      });
+      $scope.bodyClass.push('loaded');
     });
 
   }
@@ -117,7 +119,7 @@ angular.module('domegis')
 
     $scope.getHTMLEmbed = function() {
       var url = $state.href('map', {views: getCSViews(), lang: $scope.settings.lng}, {absolute: true});
-      return '<iframe src="' + url + '" width="100%" height="400" frameborder="0"></iframe>';
+      return '<iframe src="' + url + '" width="100%" height="400" frameborder="0" allowfullscren></iframe>';
     };
 
     $scope.getWPShortcode = function() {

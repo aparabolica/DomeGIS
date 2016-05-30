@@ -22,16 +22,18 @@ angular.module('domegis')
 
 .directive('domeMap', [
   '$q',
+  '$http',
   '$state',
   '$filter',
   'Server',
   'Lang',
-  function($q, $state, $filter, Server, Lang) {
+  function($q, $http, $state, $filter, Server, Lang) {
     return {
       restrict: 'A',
       scope: {
         views: '=domeMap',
         base: '=',
+        feature: '=',
         preview: '='
       },
       replace: true,
@@ -54,7 +56,8 @@ angular.module('domegis')
         var map = L.map('map', {
           center: center,
           zoom: zoom,
-          fullscreenControl: true
+          fullscreenControl: true,
+          scrollWheelZoom: self == top
         });
 
         var legendControl = L.control.legend();
@@ -64,7 +67,28 @@ angular.module('domegis')
           $state.go($state.current.name, {loc: getLocStr()}, {notify: false})
         }, 400));
 
-        map.addLayer(L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'));
+
+        var baseLayers = [];
+
+        if(scope.base == 'infoamazonia') {
+
+          baseLayers.push('http://{s}.tiles.mapbox.com/v3/infoamazonia.AndesAguaAmazonia_relevo_12AmzRaisg,infoamazonia.AndesAguaAmazonia_relevo_11AmzRaisg,infoamazonia.AndesAguaAmazonia_relevo1-10/{z}/{x}/{y}.png');
+
+          baseLayers.push('http://{s}.tiles.mapbox.com/v3/infoamazonia.naturalEarth_baltimetria/{z}/{x}/{y}.png');
+
+          baseLayers.push('http://{s}.tiles.mapbox.com/v3/infoamazonia.rivers/{z}/{x}/{y}.png');
+
+          baseLayers.push('http://{s}.tiles.mapbox.com/v3/infoamazonia.AAA_pois,infoamazonia.osm-brasil/{z}/{x}/{y}.png');
+
+        } else {
+
+          baseLayers.push('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+
+        }
+
+        baseLayers.forEach(function(url) {
+          map.addLayer(L.tileLayer(url));
+        });
 
         var layers = [];
 
@@ -120,20 +144,41 @@ angular.module('domegis')
             map.addLayer(layer.grid);
           }
           layers.push(layer);
-          Server.get(layerService, view.layerId).then(function(l) {
-            if(!getStateLoc().length && l.extents) {
-              var bounds = parseBounds(l.extents);
-              if(mapBounds)
-                mapBounds.extend(bounds);
-              else
-                mapBounds = bounds;
-              map.fitBounds(mapBounds);
-            }
-            layer.legend = getViewLegend(view, l);
-            if(layer.grid) {
-              layer.grid._dm_fields = l.fields;
-            }
-            legendControl.addLegend(layer.legend);
+
+          var featureBounds = false;
+          var doneFeature = $q.defer();
+
+          // get feature bounds
+          if(scope.feature) {
+            $http.get('/layers/' + scope.feature[0] + '/feature/' + scope.feature[1]).then(function(res) {
+              featureBounds = res.data.extents;
+              map.fitBounds(parseBounds(featureBounds));
+              doneFeature.resolve();
+            }, function(err) {
+              doneFeature.resolve()
+            });
+          } else {
+            doneFeature.resolve();
+          }
+
+          doneFeature.promise.then(function() {
+            Server.get(layerService, view.layerId).then(function(l) {
+              if(!featureBounds) {
+                if(!getStateLoc().length && l.extents) {
+                  var bounds = parseBounds(l.extents);
+                  if(mapBounds)
+                    mapBounds.extend(bounds);
+                  else
+                    mapBounds = bounds;
+                  map.fitBounds(mapBounds);
+                }
+              }
+              layer.legend = getViewLegend(view, l);
+              if(layer.grid) {
+                layer.grid._dm_fields = l.fields;
+              }
+              legendControl.addLegend(layer.legend);
+            });
           });
         }
 

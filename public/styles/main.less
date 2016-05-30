@@ -5,6 +5,25 @@ body {
   overflow-x: hidden;
 }
 
+body.iframe {
+  #masthead {
+    display: none;
+  }
+  &:after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #000;
+    z-index: 9999;
+  }
+  &.loaded:after {
+    display: none;
+  }
+}
+
 body.iframe.map {
   overflow: hidden;
   width: 100%;

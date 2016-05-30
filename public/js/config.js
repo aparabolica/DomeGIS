@@ -184,14 +184,23 @@ angular.module('domegis')
       }
     })
     .state('map', {
-      url: '/map/?views&base&loc&lang',
+      url: '/map/?views&feature&base&loc&lang',
       templateUrl: '/views/map.html',
       controller: [
         '$stateParams',
         '$scope',
         function($stateParams, $scope) {
-          $scope.views = $stateParams.views.split(',');
+
+          if($stateParams.views)
+            $scope.views = $stateParams.views.split(',');
+          else
+            $scope.views = [];
+
+          if($stateParams.feature)
+            $scope.feature = $stateParams.feature.split(':');
+
           $scope.base = $stateParams.base;
+
         }
       ]
     });

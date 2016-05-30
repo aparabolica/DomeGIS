@@ -42,12 +42,52 @@ module.exports = function(){
   var sequelize = app.get('sequelize');
   var Layers = app.service('layers');
 
+  app.use('/layers/:id/feature/:featureId', function(req, res, next) {
+
+    var layerId = req.params.id;
+    var featureId = req.params.featureId;
+
+    Layers.get(layerId).then(function(layer) {
+
+      if (!layer) return res.sendStatus(404);
+
+      var _from = 'FROM \"' + layerId + 's\" as t WHERE t.id = ' + parseInt(featureId);
+
+      var select = 'SELECT * ' + _from;
+      var extentSelect = 'SELECT ST_Extent(ST_Transform(geometry,4326)) ' + _from;
+
+      sequelize
+        .query(select)
+        .then(function(queryResult) {
+          if(queryResult[0] && queryResult[0].length) {
+            var feature = queryResult[0][0];
+            sequelize.query(extentSelect)
+              .then(function(extent) {
+                delete feature.geometry;
+                feature.extents = extent[0][0].st_extent;
+                res.json(feature);
+              })
+              .catch(function(err) {
+                res.json(feature);
+              });
+          } else {
+            res.sendStatus(404);
+          }
+        })
+        .catch(function(err) {
+          console.log(err);
+          res.status(500).json({ error: 'error while finding feature' });
+        });
+
+    })
+
+  });
+
   app.use('/layers/:id/search', function(req, res, next) {
      var layerId = req.params.id;
      var term = req.query.term;
 
      var results = { features: [] };
-
 
      Layers.get(layerId).then(function(layer){
        if (!layer) return res.sendStatus(404);
