@@ -149,7 +149,8 @@ angular.module('domegis')
           var doneFeature = $q.defer();
 
           // get feature bounds
-          if(scope.feature) {
+          if(scope.feature && scope.feature.length && scope.feature[0] && scope.feature[1]) {
+            console.log(scope.feature);
             $http.get('/layers/' + scope.feature[0] + '/feature/' + scope.feature[1]).then(function(res) {
               featureBounds = res.data.extents;
               map.fitBounds(parseBounds(featureBounds));
