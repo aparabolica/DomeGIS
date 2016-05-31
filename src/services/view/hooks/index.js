@@ -57,8 +57,47 @@ exports.after = {
   all: [],
   find: [],
   get: [],
-  create: [],
-  update: [],
-  patch: [],
-  remove: []
+  create: [
+    function(hook){
+      hook.app.log('info', 'created view "'+hook.data.id+'" for layer "'+hook.data.layerId+'" by "'+hook.params.user.email+'"', {
+        event: 'viewCreated',
+        viewId: hook.data.id,
+        layerId: hook.data.layerId,
+        user: hook.params.user.email
+      });
+      return hook;
+    }
+  ],
+  update: [
+    function(hook){
+      hook.app.log('info', 'updated view "'+hook.id+'" for layer "'+hook.data.layerId+'" by "'+hook.params.user.email+'"', {
+        event: 'viewUpdated',
+        viewId: hook.id,
+        layerId: hook.data.layerId,
+        user: hook.params.user.email
+      });
+      return hook;
+    }
+  ],
+  patch: [
+    function(hook){
+      hook.app.log('info', 'updated view "'+hook.id+'" for layer "'+hook.data.layerId+'" by "'+hook.params.user.email+'"', {
+        event: 'viewUpdated',
+        viewId: hook.id,
+        layerId: hook.data.layerId,
+        user: hook.params.user.email
+      });
+      return hook;
+    }
+  ],
+  remove: [
+    function(hook){
+      hook.app.log('info', 'removed view "'+hook.result.id+'" for layer "'+hook.result.layerId+'" by "'+hook.params.user.email+'"', {
+        event: 'viewRemoved',
+        view: hook.result,
+        user: hook.params.user.email
+      });
+      return hook;
+    }
+  ]
 };
