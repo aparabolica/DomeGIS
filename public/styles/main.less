@@ -151,15 +151,35 @@ table {
       border-bottom: 1px solid #ddd;
     }
   }
-  .map-legend {
+  .map-legend,
+  .download-data {
     background: #fff;
     background: #fff;
     box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
     padding: .1rem 1rem;
   }
-  .map-legend {
+  .download-data {
+    padding: .7rem 1rem;
+    text-align: center;
+    font-weight: 400;
+    font-size: .9em;
+    span {
+      padding-right: 1rem;
+    }
+    a {
+      color: #666;
+      display: block;
+      &:hover {
+        color: #333;
+        text-decoration: none;
+      }
+    }
+  }
+  .map-legend,
+  .download-data {
     width: 200px;
     color: #666;
+    box-sizing: border-box;
     p {
       margin: 1rem 0;
       font-size: .8em;

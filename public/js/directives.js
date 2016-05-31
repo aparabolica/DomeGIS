@@ -60,8 +60,12 @@ angular.module('domegis')
           scrollWheelZoom: self == top
         });
 
+        var downloadControl = L.control.downloadData();
+        map.addControl(downloadControl);
+
         var legendControl = L.control.legend();
         map.addControl(legendControl);
+
 
         map.on('move', _.debounce(function() {
           $state.go($state.current.name, {loc: getLocStr()}, {notify: false})
@@ -150,7 +154,6 @@ angular.module('domegis')
 
           // get feature bounds
           if(scope.feature && scope.feature.length && scope.feature[0] && scope.feature[1]) {
-            console.log(scope.feature);
             $http.get('/layers/' + scope.feature[0] + '/feature/' + scope.feature[1]).then(function(res) {
               featureBounds = res.data.extents;
               map.fitBounds(parseBounds(featureBounds));
