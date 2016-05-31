@@ -1,6 +1,5 @@
 'use strict';
 
-var globalHooks = require('../../../hooks');
 var bcrypt = require('bcryptjs');
 var errors = require('feathers-errors');
 var hooks = require('feathers-hooks');

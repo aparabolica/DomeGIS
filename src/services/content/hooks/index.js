@@ -2,7 +2,6 @@
 
 var async = require('async');
 var request = require('request');
-var globalHooks = require('../../../hooks');
 var hooks = require('feathers-hooks');
 var auth = require('feathers-authentication').hooks;
 

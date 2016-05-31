@@ -1,7 +1,6 @@
 'use strict';
 
 var _ = require('underscore');
-var globalHooks = require('../../../hooks');
 var hooks = require('feathers-hooks');
 var auth = require('feathers-authentication').hooks;
 

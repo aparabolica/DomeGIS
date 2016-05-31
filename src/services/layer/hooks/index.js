@@ -2,7 +2,6 @@
 
 var _ = require('underscore');
 var async = require('async');
-var globalHooks = require('../../../hooks');
 var hooks = require('feathers-hooks');
 var request = require('request');
 var Sequelize = require('sequelize');
