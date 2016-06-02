@@ -28,6 +28,20 @@ angular.module('domegis')
       Server.app.logout();
     };
 
+    $scope.getLogs = function() {
+      Server.find(Server.service('/admin/logs.csv')).then(function(data) {
+        console.log(data);
+        var uri = 'data:text/csv;charset=utf-8,' + escape(data);
+        var link = document.createElement('a');
+        link.href = uri;
+        link.style = 'visibility:hidden';
+        link.download = 'domegis-logs.csv';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+    };
+
     $scope.bodyClass = [];
 
     $scope.$on('$stateChangeStart', function(ev, toState, toParams) {
