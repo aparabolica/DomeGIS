@@ -46,7 +46,9 @@
     "windshaft": "^1.16.1",
     "bcryptjs": "~2.3.0",
     "feathers-logger": "~0.2.2",
-    "request-ip": "~1.2.2"
+    "request-ip": "~1.2.2",
+    "csv-stringify": "~1.0.4",
+    "moment-timezone": "~0.5.4"
   },
   "devDependencies": {
     "jshint": "^2.9.1",

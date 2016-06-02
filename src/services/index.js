@@ -6,6 +6,7 @@ var layer = require('./layer');
 var view = require('./view');
 var preview = require('./preview');
 var search = require('./search');
+var logging = require('./logging');
 var authentication = require('./authentication');
 var feathersLogger = require('feathers-logger');
 var Logger = require('../lib/logger');
@@ -26,6 +27,7 @@ module.exports = function() {
   app.configure(preview);
   app.configure(view);
   app.configure(search);
+  app.configure(logging);
 
   var logger = new Logger({
     app: app,
