@@ -15,13 +15,13 @@ module.exports = function(){
   app.use('/admin/logs.csv', {
     find: function(params){
       return new Promise(function(resolve, reject){
-        var results = [['timestamp', 'id', 'level', 'message']];
+        var results = [['timestamp', 'event', 'id', 'level', 'message']];
         var query = "SELECT * FROM logs ORDER BY timestamp ASC";
         sequelize.query(query)
           .then(function(queryResult){
             queryResult[0].forEach(function(item){
               var time = moment(item.timestamp);
-              results.push([moment().tz("Brazil/East").format(), item.id, item.level, item.message]);
+              results.push([moment().tz("Brazil/East").format(), item.meta.event, item.id, item.level, item.message]);
             });
             csvStringify(results, function(err, csv){
               if (err) return reject(new errors.GeneralError('Error while parsing logs.'));
