@@ -409,7 +409,7 @@ angular.module('domegis')
 
     $scope.save = function(view) {
       if(Edit.id) {
-        Server.update(viewService, Edit.id, view).then(function(view) {
+        Server.patch(viewService, Edit.id, view).then(function(view) {
           $scope.view = view;
           $state.go('editView', {id: view.id}, {reload: true});
         }, function(err) {

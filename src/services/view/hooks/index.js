@@ -3,6 +3,38 @@
 var _ = require('underscore');
 var hooks = require('feathers-hooks');
 var auth = require('feathers-authentication').hooks;
+var errors = require('feathers-errors');
+
+var retrisctToOwnerOrAdmin = function() {
+
+  return function(hook) {
+    if (hook.data && hook.data.creatorId) delete hook.data.creatorId;
+
+    var userId = hook.params.user.id;
+    var userRoles = hook.params.user.roles;
+
+    return new Promise( function (resolve, reject) {
+
+      var Views = hook.app.service('views');
+
+      return Views.get(hook.id).then(function(data) {
+
+        if (data.toJSON) {
+          data = data.toJSON();
+        }
+        else if (data.toObject) {
+          data = data.toObject();
+        }
+
+        var creatorId = data.creatorId;
+
+        if (_.contains(userRoles, 'admin') || (creatorId.toString() == userId.toString()) )
+          resolve(hook);
+        else reject(new errors.Forbidden('You do not have the permissions to access this.'));
+      }).catch(reject);
+    });
+  }
+};
 
 var setLayergroup = function(hook) {
   return new Promise(function(resolve, reject){
@@ -28,27 +60,30 @@ exports.before = {
     auth.populateUser(),
     auth.restrictToAuthenticated(),
     auth.restrictToRoles({ roles: ['admin', 'editor'] }),
-    setLayergroup
+    setLayergroup,
+    function(hook) {
+      hook.data.creatorId = hook.params.user.id;
+    }
   ],
   update: [
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin', 'editor'] }),
+    retrisctToOwnerOrAdmin(),
     setLayergroup
   ],
   patch: [
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin', 'editor'] }),
+    retrisctToOwnerOrAdmin(),
     setLayergroup
   ],
   remove: [
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin'] })
+    retrisctToOwnerOrAdmin()
   ]
 };
 
