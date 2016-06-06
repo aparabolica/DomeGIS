@@ -18,7 +18,23 @@ angular.module('domegis')
             scope.view = data;
         });
 
-        scope.token = Server.app.get('token');
+        scope.user = Server.app.get('user');
+
+        scope.canCreate = function(view) {
+          if(scope.user) {
+            return scope.user.roles.indexOf('editor') != -1;
+          } else {
+            return false;
+          }
+        };
+
+        scope.canEdit = function(view) {
+          if(scope.user) {
+            return scope.user.roles.indexOf('admin') != -1 || scope.user.id == view.creatorId;
+          } else {
+            return false;
+          }
+        };
 
         scope.remove = function(view) {
           if(confirm('Are you sure?')) {

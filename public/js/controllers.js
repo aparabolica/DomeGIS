@@ -28,9 +28,15 @@ angular.module('domegis')
       Server.app.logout();
     };
 
+    $scope.hasRole = function(role) {
+      if($scope.user)
+        return _.find($scope.user.roles, function(r) { return r == role; });
+      else
+        return false;
+    }
+
     $scope.getLogs = function() {
       Server.find(Server.service('/admin/logs.csv')).then(function(data) {
-        console.log(data);
         var uri = 'data:text/csv;charset=utf-8,' + escape(data);
         var link = document.createElement('a');
         link.href = uri;
