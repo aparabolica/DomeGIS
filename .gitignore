@@ -32,3 +32,5 @@ data/
 
 .vagrant
 bower_components
+
+public/downloads

@@ -51,7 +51,7 @@ module.exports = function(){
 
       if (!layer) return res.sendStatus(404);
 
-      var _from = 'FROM \"' + layerId + 's\" as t WHERE t.id = ' + parseInt(featureId);
+      var _from = 'FROM \"' + layerId + '\" as t WHERE t.id = ' + parseInt(featureId);
 
       var select = 'SELECT * ' + _from;
       var extentSelect = 'SELECT ST_Extent(ST_Transform(geometry,4326)) ' + _from;
@@ -100,7 +100,7 @@ module.exports = function(){
        });
 
        if (where.length > 0) {
-         var query = 'SELECT * FROM \"' + layerId + 's\" as t WHERE ' + where.join(' OR ');
+         var query = 'SELECT * FROM \"' + layerId + '\" as t WHERE ' + where.join(' OR ');
          sequelize.query(query)
            .then(function(queryResult){
              queryResult[0].forEach(function(item){
@@ -135,7 +135,7 @@ module.exports = function(){
       var fields = [];
       async.eachSeries(layer.fields, function(field, doneEach){
         if (field.name == 'OBJECTID') return doneEach();
-        var query = 'SELECT DISTINCT \"' + field.name +'\" FROM \"' + layerId + 's\" ORDER BY \"' + field.name +'\";';
+        var query = 'SELECT DISTINCT \"' + field.name +'\" FROM \"' + layerId + '\" ORDER BY \"' + field.name +'\";';
         sequelize.query(query)
           .then(function(queryResult){
 

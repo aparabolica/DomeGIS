@@ -1,5 +1,6 @@
 'use strict';
 
+var fs = require('fs');
 var async = require('async');
 var request = require('request');
 var hooks = require('feathers-hooks');
@@ -36,7 +37,46 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin'] })
+    auth.restrictToRoles({ roles: ['admin'] }),
+    function(hook) {
+      // remove associated layer tables and shapefiles
+      return new Promise(function(resolve, reject){
+        var Layers = hook.app.service('layers');
+        var sequelize = hook.app.get('sequelize');
+
+        Layers.find({query: {contentId: hook.id} }).then(function(layers){
+          async.eachSeries(layers.data, function(layer, doneLayer){
+            var layerId = layer.id;
+
+            /*
+             * Remove layer table
+             */
+            sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'\";').then(function(){
+              var shapefilePath = hook.app.get('public') + '/downloads/' + layerId + '.shp.zip';
+
+              /*
+               * Remove shapefile if exists
+               */
+              try {
+                fs.exists(shapefilePath, function(exists) {
+                  if (exists) fs.unlinkSync(shapefilePath);
+                  doneLayer();
+                });
+              } catch (e) {
+                doneLayer(e);
+              }
+
+            }).catch(doneLayer);
+          }, function(err){
+            if (err) return reject(err);
+            resolve();
+          })
+        }).catch(function(err){
+          console.log('err');
+          console.log(err);
+        });
+      });
+    }
   ]
 };
 
@@ -92,26 +132,16 @@ exports.after = {
             console.log(err);
           }
         });
-      }); claudia
+      });
   }],
   update: [],
   patch: [],
-  remove: [
-    function(hook){
-      hook.app.log('info', 'removed content "'+hook.result.id+'" by "'+hook.params.user.email+'"', {
+  remove: [ function(hook){
+    hook.app.log('info', 'removed content "'+hook.result.id+'" by "'+hook.params.user.email+'"', {
         event: 'contentRemoved',
         contentId: hook.result.id,
         userEmail: hook.params.user.email
-      });
-      return hook;
-    },
-    function(hook){
-      return new Promise(function(resolve, reject){
-        hook.app.service('layers')
-          .remove(null, { query: { contentId: hook.id }})
-          .then(function(results){
-            resolve();
-          });
-      });
+    });
+    return hook;
   }]
 };

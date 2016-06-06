@@ -1,11 +1,13 @@
 'use strict';
 
+var fs = require('fs');
 var _ = require('underscore');
 var async = require('async');
 var hooks = require('feathers-hooks');
 var request = require('request');
 var Sequelize = require('sequelize');
 var auth = require('feathers-authentication').hooks;
+var exec = require('child_process').exec;
 
 function esriToSequelizeType(esriType) {
   switch (esriType) {
@@ -51,7 +53,7 @@ function esriToSequelizeType(esriType) {
 }
 
 function dropLayer(sequelize, layerId, doneResetLayer) {
-  sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'s\"')
+  sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'\"')
     .then(function(results){
       doneResetLayer();
     }).catch(doneResetLayer);
@@ -282,9 +284,9 @@ exports.after = {
             });
 
             // drop table if exists
-            sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'s\";').then(function(){
+            sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'\";').then(function(){
               // create feature table
-              var Features = sequelize.define(layerId, schema);
+              var Features = sequelize.define(layerId, schema, {freezeTableName: true});
               sequelize.sync().then(function(){
 
                 // insert features
@@ -311,7 +313,10 @@ exports.after = {
                   }).catch(emitSyncFinishEvent);
                 }, function(err){
                   if (err) return emitSyncFinishEvent(err);
-                  var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"s\"), \"featureCount\" = " + geojson.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
+
+                  generateShapefile(hook);
+
+                  var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = " + geojson.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
                   sequelize.query(query).then(function(result){
                     emitSyncFinishEvent();
                   }).catch(emitSyncFinishEvent);
@@ -320,13 +325,45 @@ exports.after = {
             }).catch(emitSyncFinishEvent);
           }
         )
-
       }
-
     });
-
   }],
   update: [],
   patch: [],
   remove: []
 };
+
+
+var generateShapefile = function(hook) {
+  /*
+  * Generate shapefile from data
+  */
+
+  var publicDir = hook.app.get('public');
+  var layerId = hook.data.id;
+  var dbParams = hook.app.get('windshaftOpts').dbParams;
+
+  // command steps
+  var cmds = [
+    'mkdir -p /tmp/domegis',
+    'mkdir -p '+publicDir+'/downloads',
+    'pgsql2shp -f /tmp/domegis/'+hook.data.id+' -u '+dbParams.dbuser+' -P '+dbParams.dbuser+' '+dbParams.dbname+' '+hook.data.id,
+    'zip -ju '+publicDir+'/downloads/'+hook.data.id+'.shp.zip /tmp/domegis/'+hook.data.id+'.*',
+    'rm /tmp/domegis/'+hook.data.id+'.*'
+  ]
+
+  async.eachSeries(cmds, function(cmd, doneCmd){
+    exec(cmd, function(error, stdout, stderr) {
+      if (error) {
+        console.error('exec error:' + error);
+        console.log('stdout: '+ stdout);
+        console.log('stderr: '+ stderr);
+        return doneCmd(error);
+      }
+      doneCmd();
+    });
+  }, function(err){
+    if (err) console.log('could not generate shapefile');
+    return hook;
+  });
+}
