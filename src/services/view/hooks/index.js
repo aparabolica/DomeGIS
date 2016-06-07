@@ -97,7 +97,7 @@ exports.after = {
         event: 'viewCreated',
         viewId: hook.data.id,
         layerId: hook.data.layerId,
-        user: hook.params.user.email
+        userId: hook.params.user.email
       });
       return hook;
     }
@@ -108,7 +108,7 @@ exports.after = {
         event: 'viewUpdated',
         viewId: hook.id,
         layerId: hook.data.layerId,
-        user: hook.params.user.email
+        userId: hook.params.user.email
       });
       return hook;
     }
@@ -119,7 +119,7 @@ exports.after = {
         event: 'viewUpdated',
         viewId: hook.id,
         layerId: hook.data.layerId,
-        user: hook.params.user.email
+        userId: hook.params.user.email
       });
       return hook;
     }
@@ -129,7 +129,7 @@ exports.after = {
       hook.app.log('info', 'removed view "'+hook.result.id+'" for layer "'+hook.result.layerId+'" by "'+hook.params.user.email+'"', {
         event: 'viewRemoved',
         view: hook.result,
-        user: hook.params.user.email
+        userId: hook.params.user.email
       });
       return hook;
     }

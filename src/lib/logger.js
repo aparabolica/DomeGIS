@@ -19,7 +19,7 @@ var Logger = function (options) {
         app.info('login attempt from '+ clientIp +' to account "'+hook.data.email+'"', {
           event: 'loginAttempt',
           ip: clientIp,
-          account: hook.data.email
+          userId: hook.data.email
         });
         return hook;
       }]
@@ -32,7 +32,7 @@ var Logger = function (options) {
         app.info('login successful from '+ clientIp +' to account "'+hook.data.email+'"', {
           event: 'loginSuccessful',
           ip: clientIp,
-          account: hook.data.email
+          userId: hook.data.email
         });
         return hook;
       }]
@@ -95,7 +95,7 @@ Logger.prototype.log = function (level, message, meta, callback) {
 
   } catch (e) {
     console.log(e);
-  } 
+  }
 
 };
 

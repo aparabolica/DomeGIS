@@ -89,7 +89,7 @@ exports.after = {
       hook.app.log('info', 'created content "'+hook.data.id+'" by "'+hook.params.user.email+'"', {
         event: 'contentCreated',
         content: hook.data,
-        userEmail: hook.params.user.email
+        userId: hook.params.user.email
       });
       return hook;
     },
@@ -140,7 +140,7 @@ exports.after = {
     hook.app.log('info', 'removed content "'+hook.result.id+'" by "'+hook.params.user.email+'"', {
         event: 'contentRemoved',
         contentId: hook.result.id,
-        userEmail: hook.params.user.email
+        userId: hook.params.user.email
     });
     return hook;
   }]
