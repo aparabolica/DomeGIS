@@ -110,6 +110,7 @@ angular.module('domegis')
               map.removeLayer(layer.grid);
             map.removeLayer(layer.tile);
             legendControl.removeLegend(layer.legend);
+            downloadControl.removeLayer(layer.id);
           });
           layers = [];
           if(views && views.length) {
@@ -182,6 +183,11 @@ angular.module('domegis')
                 layer.grid._dm_fields = l.fields;
               }
               legendControl.addLegend(layer.legend);
+              downloadControl.addLayer({
+                layerId: l.id,
+                title: $filter('translate')(l.name),
+                url: '/downloads/' + l.id + '.shp.zip'
+              });
             });
           });
         }
