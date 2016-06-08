@@ -9,6 +9,10 @@ var Sequelize = require('sequelize');
 var auth = require('feathers-authentication').hooks;
 var exec = require('child_process').exec;
 
+var debug = require('debug');
+var log = debug('service:layers:hooks');
+
+
 function esriToSequelizeType(esriType) {
   switch (esriType) {
     case 'esriFieldTypeSmallInteger':
@@ -165,12 +169,14 @@ exports.after = {
 
     Layers.emit('created', hook.data);
 
+    log('layer metadata saved, trying to to sync from arcgis');
+
     function emitSyncFinishEvent(err, data) {
       var status = 'synced';
       if (err) {
         console.log(hook.data.id + ': sync error');
         console.log(err);
-        status = 'sync error';
+        status = 'failed_sync';
       };
 
       Layers.patch(layerId, {
@@ -198,9 +204,11 @@ exports.after = {
         return emitSyncFinishEvent({message: 'could not parse json'})
       }
 
+      log('got feature count from arcgis');
+
       if(!data.count) {
 
-        console.log(hook.data.id + ': no features');
+        log('no features were found');
 
         Layers.patch(layerId, {
           featureCount: 0
@@ -213,6 +221,8 @@ exports.after = {
 
       } else {
 
+        log('features were found');
+
         var total = data.count;
         var current = 0;
         var perPage = 100;
@@ -222,7 +232,10 @@ exports.after = {
           function() {
             return current < total;
           },
-          function(cb) {
+          function(doneFeaturesPageRequest) {
+
+            log('requesting features after index '+ current);
+
             request({
               url: hook.data.url + '/query',
               qs: {
@@ -235,6 +248,11 @@ exports.after = {
                 f: 'geojson'
               }
             }, function(err, res, body) {
+
+              if (err) {
+                log(err);
+                return doneFeaturesPageRequest(err);
+              } else log('success, adding to geojson... ');
 
               var data = {};
               try {
@@ -257,11 +275,13 @@ exports.after = {
               });
 
               current = current + perPage;
-              cb();
+              doneFeaturesPageRequest();
 
             })
           },
           function() {
+
+            log('starting importing geojson to database');
 
             var postgisType = geojson.features[0]['geometry']['type'];
 
@@ -280,14 +300,26 @@ exports.after = {
 
             _.each(hook.data.fields, function(field){
               var fieldType = esriToSequelizeType(field.type);
-              if (fieldType) schema[field.name] = { type: fieldType }
+              if (fieldType) schema[field.name] = { type: fieldType };
             });
 
+            // define a primary key to avoid sequelize errors
+            if (schema['OBJECTID']) schema['OBJECTID'].primaryKey = true;
+            else if (schema['objectid']) schema['objectid'].primaryKey = true;
+
             // drop table if exists
+            log('drop current table, if exists');
             sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'\";').then(function(){
+
+
               // create feature table
+              log('create layer feature table');
               var Features = sequelize.define(layerId, schema, {freezeTableName: true});
               sequelize.sync().then(function(){
+
+
+                // create feature table
+                log('start feature import');
 
                 // insert features
                 async.eachSeries(geojson.features, function(esriFeature, doneEach){
