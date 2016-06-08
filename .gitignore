@@ -33,4 +33,8 @@ data/
 .vagrant
 bower_components
 
+# Shapefile download dir
 public/downloads
+
+# OSX system files
+.DS_Store
