@@ -75,7 +75,7 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
   var mapnikLayer = {
     type: 'mapnik',
     options: {
-      sql: 'select id, geometry '+ fieldsStr +' from "' + view.layerId + '"',
+      sql: 'select domegis_id, geometry '+ fieldsStr +' from "' + view.layerId + '"',
       geom_column: "geometry",
       cartocss_version: "2.0.0",
       interactivity: view.fields,

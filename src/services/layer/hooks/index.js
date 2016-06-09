@@ -174,10 +174,12 @@ exports.after = {
     function emitSyncFinishEvent(err, data) {
       var status = 'synced';
       if (err) {
+        log('error syncing layer '+hook.data.id);
         console.log(hook.data.id + ': sync error');
         console.log(err);
         status = 'failed_sync';
-      };
+      } else log('success syncing layer '+hook.data.id);
+
 
       Layers.patch(layerId, {
         status: status
@@ -295,6 +297,7 @@ exports.after = {
             }
 
             var schema = {
+              domegisId: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true, field: 'domegis_id'},
               geometry: { type: Sequelize.GEOMETRY(postgisType, 4326) }
             }
 
@@ -302,10 +305,6 @@ exports.after = {
               var fieldType = esriToSequelizeType(field.type);
               if (fieldType) schema[field.name] = { type: fieldType };
             });
-
-            // define a primary key to avoid sequelize errors
-            if (schema['OBJECTID']) schema['OBJECTID'].primaryKey = true;
-            else if (schema['objectid']) schema['objectid'].primaryKey = true;
 
             // drop table if exists
             log('drop current table, if exists');
@@ -315,6 +314,7 @@ exports.after = {
               // create feature table
               log('create layer feature table');
               var Features = sequelize.define(layerId, schema, {freezeTableName: true});
+              Features.removeAttribute('id');
               sequelize.sync().then(function(){
 
 

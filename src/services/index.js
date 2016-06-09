@@ -43,7 +43,7 @@ module.exports = function() {
    .filter(function(model) { return model.associate })
    .forEach(function(model) { return  model.associate(models) } );
 
-  sequelize.sync({force: true}).then(function(){
+  sequelize.sync().then(function(){
 
     // init admin user
     var Users = app.service('users');
