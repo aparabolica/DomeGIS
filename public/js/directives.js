@@ -110,7 +110,7 @@ angular.module('domegis')
               map.removeLayer(layer.grid);
             map.removeLayer(layer.tile);
             legendControl.removeLegend(layer.legend);
-            downloadControl.removeLayer(layer.id);
+            downloadControl.removeLayer(layer.layerId);
           });
           layers = [];
           if(views && views.length) {
@@ -126,6 +126,8 @@ angular.module('domegis')
 
         function addView(view) {
           var layer = {};
+          layer.layerId = view.layerId;
+          layer.id = view.id;
           var url = '/tiles/' + view.id + '/{z}/{x}/{y}.png';
           var gridUrl = '/tiles/' + view.id + '/{z}/{x}/{y}.grid.json';
           if(scope.preview) {
