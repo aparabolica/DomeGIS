@@ -76,6 +76,7 @@ angular.module('domegis')
   'Lang',
   'Server',
   function($scope, $state, Lang, Server) {
+
     var searchService = Server.service('search');
     var viewService = Server.service('views');
 
@@ -184,9 +185,10 @@ angular.module('domegis')
 .controller('QueryCtrl', [
   '$scope',
   'Content',
+  'Synced',
   'Server',
   'esriService',
-  function($scope, Content, Server, Esri) {
+  function($scope, Content, Synced, Server, Esri) {
 
     var contentService = Server.service('contents');
 
@@ -270,15 +272,11 @@ angular.module('domegis')
       }
     }
 
-    Server.find(contentService, {
-      query: {
-        $limit: 100
-      }
-    }).then(function(res) {
-      $scope.synced = res.data;
-    });
+    $scope.synced = Synced.data;
+
     Server.on(contentService, 'created', function(data) {
-      $scope.synced.push(data);
+      if(!$scope.isSynced(data))
+        $scope.synced.push(data);
     });
     Server.on(contentService, 'removed', function(data) {
       $scope.synced = _.filter($scope.synced, function(item) {

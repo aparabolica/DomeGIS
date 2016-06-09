@@ -41,7 +41,6 @@ angular.module('domegis')
         });
         Server.on(layerService, 'updated', function(data) {
           if(scope.layer.id == data.id) {
-            console.log('should replace updated', data);
             scope.layer = data;
           }
         });

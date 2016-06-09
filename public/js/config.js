@@ -40,6 +40,7 @@ angular.module('domegis')
           'esriService',
           function(Esri) {
             return Esri.getContent(
+              '',
               {
                 type: 'Feature Service',
               },
@@ -48,6 +49,16 @@ angular.module('domegis')
                 sortOrder: 'desc'
               }
             );
+          }
+        ],
+        Synced: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('contents'), {
+              query: {
+                $limit: 100
+              }
+            });
           }
         ]
       }
