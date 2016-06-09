@@ -11,7 +11,7 @@
   "postgres": "postgres://domegis:domegis@localhost:5432/domegis",
   "windshaftOpts": {
     "baseUrl": "/tiles",
-    "layergroup_ttl": 60000,
+    "layergroup_ttl": 31536000, 
     "dbParams": {
       "dbuser": "domegis",
       "dbname": "domegis",

@@ -50,7 +50,7 @@ module.exports = function() {
 
   var mapStore  = new windshaft.storage.MapStore({
     pool: new RedisPool(opts.redis),
-    expire_time: 0
+    expire_time: opts.layergroup_ttl
   });
 
   /*
