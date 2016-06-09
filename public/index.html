@@ -24,6 +24,12 @@
 
   </head>
   <body ng-controller="SiteCtrl" class="{{bodyClass | join:' '}}">
+    <div id="messages" class="message-notification" ng-controller="MessageCtrl" ng-hide="isDialog">
+      <div class="message-content" ng-repeat="message in messages" ng-show="message.text">
+        <a class="close-button" ng-click="close(message)" href="javascript:void(0);">{{labels('Close')}}</a>
+        <p ng-class="message.status" ng-bind-html="getMessage(message)"></p>
+      </div>
+    </div>
     <header id="masthead">
       <div class="container">
         <div class="twelve columns">
@@ -81,6 +87,7 @@
 
     <script type="text/javascript" src="/js/app.js"></script>
     <script type="text/javascript" src="/js/config.js"></script>
+    <script type="text/javascript" src="/js/messages.js"></script>
     <script type="text/javascript" src="/js/services.js"></script>
     <script type="text/javascript" src="/js/feathers.js"></script>
     <script type="text/javascript" src="/js/language.js"></script>

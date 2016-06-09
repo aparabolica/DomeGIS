@@ -4,7 +4,8 @@ angular.module('domegis')
   '$state',
   'Server',
   '$scope',
-  function($state, Server, $scope) {
+  'MessageService',
+  function($state, Server, $scope, Message) {
 
     Server.auth().then(function() {
       $scope.token = Server.app.get('token');
@@ -19,6 +20,8 @@ angular.module('domegis')
         $scope.user = Server.app.get('user');
         if($state.current.name == 'login')
           $state.go('home');
+      }, function(err) {
+        Message.add(err.message);
       });
     };
 
@@ -188,7 +191,8 @@ angular.module('domegis')
   'Synced',
   'Server',
   'esriService',
-  function($scope, Content, Synced, Server, Esri) {
+  'MessageService',
+  function($scope, Content, Synced, Server, Esri, Message) {
 
     var contentService = Server.service('contents');
 
@@ -236,9 +240,8 @@ angular.module('domegis')
 
     $scope.syncItem = function(item) {
       return Server.create(contentService, item).then(function() {
-
       }, function(err) {
-        console.log(err);
+        Message.add(err.message);
       });
     };
 
@@ -298,7 +301,8 @@ angular.module('domegis')
   'Server',
   'Edit',
   'Lang',
-  function($scope, Server, Edit, Lang) {
+  'MessageService',
+  function($scope, Server, Edit, Lang, Message) {
 
     var layerService = Server.service('layers');
 
@@ -321,14 +325,14 @@ angular.module('domegis')
           $scope.layer = layer;
           $scope.layer.name = langSplit($scope.layer.name);
         }, function(err) {
-          console.log(err);
+          Message.add(err.message);
         });
       } else {
         Server.create(layerService, layer).then(function(layer) {
           $scope.layer = layer;
           $scope.layer.name = langSplit($scope.layer.name);
         }, function(err) {
-          console.log(err);
+          Message.add(err.message);
         });
       }
     };
@@ -373,7 +377,8 @@ angular.module('domegis')
   'Edit',
   'Layer',
   'Distinct',
-  function($scope, $state, Server, Edit, Layer, Distinct) {
+  'MessageService',
+  function($scope, $state, Server, Edit, Layer, Distinct, Message) {
 
     $scope.distinct = Distinct.data;
 
@@ -417,14 +422,14 @@ angular.module('domegis')
           $scope.view = view;
           $state.go('editView', {id: view.id}, {reload: true});
         }, function(err) {
-          console.log(err);
+          Message.add(err.message);
         });
       } else {
         Server.create(viewService, view).then(function(view) {
           $scope.view = view;
           $state.go('editView', {id: view.id}, {reload: true});
         }, function(err) {
-          console.log(err);
+          Message.add(err.message);
         });
       }
     };
@@ -466,7 +471,8 @@ angular.module('domegis')
   '$state',
   'Server',
   'Edit',
-  function($scope, $state, Server, Edit) {
+  'MessageService',
+  function($scope, $state, Server, Edit, Message) {
 
     var userService = Server.service('users');
 
@@ -495,14 +501,14 @@ angular.module('domegis')
           $scope.user = user;
           $state.go('usersEdit', {id: user.id}, {reload: true});
         }, function(err) {
-          console.log(err);
+          Message.add(err.message);
         });
       } else {
         Server.create(userService, user).then(function(user) {
           $scope.user = user;
           $state.go('usersEdit', {id: user.id}, {reload: true});
         }, function(err) {
-          console.log(err);
+          Message.add(err.message);
         });
       }
     };
@@ -521,7 +527,7 @@ angular.module('domegis')
         }).then(function(data) {
           console.log(data);
         }, function(err) {
-          console.log(err);
+          Message.add(err.message);
         });
       }
     }

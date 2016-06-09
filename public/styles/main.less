@@ -1005,3 +1005,37 @@ form {
     height: 400px;
   }
 }
+
+.message-notification {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 14px;
+  color: #fff;
+  z-index: 999999;
+  &#dialog-messages {
+    position: absolute;
+  }
+  a,
+  strong {
+    color:#fff;
+  }
+  .message-content {
+    background: @blue;
+    border-bottom: 1px solid darken(@blue, 10%);
+    padding: 10px;
+  }
+  p {
+    margin: 0;
+  }
+  .close-button {
+    color: #fff;
+    font-size: 12px;
+    text-decoration: none;
+    float: right;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+}
