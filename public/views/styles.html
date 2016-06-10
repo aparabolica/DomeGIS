@@ -23,9 +23,16 @@
         </td>
       </tr>
       <tr ng-show="categories && styles.type != 'choropleth'" ng-repeat="category in categories">
-        <td>{{category}}</td>
         <td>
-          <input class="colorpicker-input" colorpicker ng-style="{'background-color': styles.category[styles.column.name][category] || '#ffffff', 'color': getContrastYIQ(styles.category[styles.column.name][category] || '#ffffff')}" ng-model="styles.category[styles.column.name][category]" type="text" />
+          <label for="color_input_{{category}}">{{category}}</label>
+        </td>
+        <td>
+          <span class="input-ctn">
+            <span class="input-lbl on-hover">
+              <label for="color_input_{{category}}">Select color:</label>
+            </span>
+            <input id="color_input_{{category}}" class="colorpicker-input" colorpicker ng-style="{'background-color': styles.category[styles.column.name][category] || '#ffffff', 'color': getContrastYIQ(styles.category[styles.column.name][category] || '#ffffff')}" ng-model="styles.category[styles.column.name][category]" type="text" placeholder="#" />
+          </span>
         </td>
       </tr>
     </tbody>

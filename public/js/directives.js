@@ -42,6 +42,7 @@ angular.module('domegis')
 
         var layerService = Server.service('layers');
         var viewService = Server.service('views');
+        var previewService = Server.service('previews');
 
         var loc = getStateLoc();
 
@@ -116,7 +117,7 @@ angular.module('domegis')
           if(views && views.length) {
             var promises = [];
             views.forEach(function(id) {
-              promises.push(Server.get(viewService, id));
+              promises.push(Server.get(previewService, id));
             });
             $q.all(promises).then(function(data) {
               data.forEach(addView);
@@ -252,19 +253,25 @@ angular.module('domegis')
           var bgColor = style.fill.color;
           var bgOpacity = style.fill.opacity;
 
-          if(view.style.type == 'category') {
-            var catStyle = view.style.category[view.style.column.name];
-            var columnName = _.find(layer.fields, function(field) {
-              return field.name == view.style.column.name;
-            }).title[Lang.get()];
-          }
-          if(view.style.type == 'choropleth') {
-            var cPlethStyle = view.style.choropleth[view.style.column.name];
-            var categories = quantiles(view.style.column.values, cPlethStyle.bucket_size || 3);
-            var ramp = chroma.scale(cPlethStyle.scale).colors(categories.length).reverse();
-            var columnName = _.find(layer.fields, function(field) {
-              return field.name == view.style.column.name;
-            }).title[Lang.get()];
+          if(view.style.column) {
+            if(view.style.type == 'category') {
+              if(view.style.category[view.style.column.name]) {
+                var catStyle = view.style.category[view.style.column.name];
+                var columnName = _.find(layer.fields, function(field) {
+                  return field.name == view.style.column.name;
+                }).title[Lang.get()];
+              }
+            }
+            if(view.style.type == 'choropleth') {
+              if(view.style.choropleth && view.style.choropleth[view.style.column.name]) {
+                var cPlethStyle = view.style.choropleth[view.style.column.name];
+                var categories = quantiles(view.style.column.values, cPlethStyle.bucket_size || 3);
+                var ramp = chroma.scale(cPlethStyle.scale).colors(categories.length).reverse();
+                var columnName = _.find(layer.fields, function(field) {
+                  return field.name == view.style.column.name;
+                }).title[Lang.get()];
+              }
+            }
           }
 
           var html = '<div id="legend-' + view.id + '">';
@@ -274,26 +281,32 @@ angular.module('domegis')
             html += name;
           } else if(view.style.type == 'category') {
             html += '<span class="layer-title">' + name + '</span>';
-            html += '<span class="column-title">' + columnName + '</span>';
-            for(var name in catStyle) {
-              html += '<span class="category-item clearfix">';
-              html += '<span class="' + clss + ' feat-ref" style="background:' + catStyle[name] + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
-              html += name;
-              html += '</span>';
+            if(columnName)
+              html += '<span class="column-title">' + columnName + '</span>';
+            if(catStyle) {
+              for(var name in catStyle) {
+                html += '<span class="category-item clearfix">';
+                html += '<span class="' + clss + ' feat-ref" style="background:' + catStyle[name] + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
+                html += name;
+                html += '</span>';
+              }
             }
           } else if(view.style.type == 'choropleth') {
             html += '<span class="layer-title">' + name + '</span>';
-            html += '<span class="column-title">' + columnName + '</span>';
+            if(columnName)
+              html += '<span class="column-title">' + columnName + '</span>';
             html += '<span class="choropleth">';
-            categories.forEach(function(cat, i) {
-              if(cat % 1 !== 0) {
-                cat = cat.toFixed(2);
-              }
-              html += '<span class="choropleth-item" title="' + cat + '">';
-              html += '<span class="choropleth-color" style="background-color:' + ramp[i] + ';"></span>';
-              html += '<span class="choropleth-label">' + cat + '</span>';
-              html += '</span>';
-            });
+            if(categories) {
+              categories.forEach(function(cat, i) {
+                if(cat % 1 !== 0) {
+                  cat = cat.toFixed(2);
+                }
+                html += '<span class="choropleth-item" title="' + cat + '">';
+                html += '<span class="choropleth-color" style="background-color:' + ramp[i] + ';"></span>';
+                html += '<span class="choropleth-label">' + cat + '</span>';
+                html += '</span>';
+              });
+            }
             html += '</span>';
           }
           html += '</p>';

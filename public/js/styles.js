@@ -33,7 +33,8 @@ var mapCarto = {
 angular.module('domegis')
 
 .directive('domegisStyles', [
-  function() {
+  '$filter',
+  function($filter) {
     return {
       restrict: 'E',
       templateUrl: '/views/styles.html',
@@ -88,11 +89,11 @@ angular.module('domegis')
             polygon: {
               composite: '',
               fill: {
-                color: '#ff0000',
+                color: '#61c7e2',
                 opacity: .8,
               },
               stroke: {
-                color: '#00ff00',
+                color: '#000000',
                 width: 1,
                 opacity: .8
               }
@@ -103,11 +104,11 @@ angular.module('domegis')
               allowOverlap: true,
               fill: {
                 width: 10,
-                color: '#0000ff',
+                color: '#ff8a00',
                 opacity: 1
               },
               stroke: {
-                color: '#00ff00',
+                color: '#000000',
                 width: .5,
                 opacity: .8
               }
@@ -116,7 +117,7 @@ angular.module('domegis')
               composite: '',
               fill: {
                 width: 1.5,
-                color: '#0000ff',
+                color: '#70ff00',
                 opacity: .8
               }
             }
@@ -296,7 +297,7 @@ angular.module('domegis')
 
               clearChoropleth($scope.styles.column.name);
 
-              var size = styles.bucket_size || 3;
+              var size = styles.bucket_size || 5;
               var categories = quantiles($scope.styles.column.values, size);
 
               if(!_.isArray(styles.scale)) {
@@ -353,11 +354,12 @@ angular.module('domegis')
 
             } else {
 
-              if($scope.styles.column.type == 'number') {
+              if($scope.styles.column.type == 'esriFieldTypeInteger' || $scope.styles.column.type == 'esriFieldTypeDouble') {
 
                 if(!$scope.styles.choropleth[$scope.styles.column.name]) {
                   $scope.styles.choropleth[$scope.styles.column.name] = {
-                    bucket_size: 3
+                    bucket_size: 5,
+                    scale: ['#000000', '#ffffff']
                   };
                 }
 

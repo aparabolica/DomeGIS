@@ -782,6 +782,11 @@ form {
     margin: 0 0 0 .5rem;
     font-family: monospace;
   }
+  tr:hover {
+    td .input-ctn .input-lbl {
+      display: inline;
+    }
+  }
   .input-ctn {
     float: right;
     margin-left: 1rem;
@@ -789,6 +794,15 @@ form {
       text-transform: uppercase;
       font-size: .8em;
       color: #999;
+      &.on-hover {
+        display: none;
+      }
+      label {
+        font-weight: 400;
+        display: inline;
+        margin: 0;
+        padding: 0;
+      }
     }
     input,
     select,
