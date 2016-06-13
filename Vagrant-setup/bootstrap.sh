@@ -101,9 +101,12 @@ echo "Successfully created PostgreSQL dev virtual machine."
 echo ""
 print_db_usage
 
+apt-get -y install python-software-properties
+add-apt-repository ppa:ubuntugis/ppa
+
 # install postgis
 echo "Installing extensions..."
-apt-get -y install "build-essential" "git" "postgresql-$PG_VERSION-postgis-2.2" "postgis" "zip"
+apt-get -y install "build-essential" "git" "postgresql-$PG_VERSION-postgis-2.2" "gdal-bin" "zip"
 
 # install pg_schema_triggers
 git clone https://github.com/CartoDB/pg_schema_triggers.git

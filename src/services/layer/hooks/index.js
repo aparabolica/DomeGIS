@@ -313,7 +313,10 @@ exports.after = {
 
               // create feature table
               log('create layer feature table');
-              var Features = sequelize.define(layerId, schema, {freezeTableName: true});
+              var Features = sequelize.define(layerId, schema, {
+                timestamps: false,
+                freezeTableName: true
+              });
               Features.removeAttribute('id');
               sequelize.sync().then(function(){
 
@@ -377,11 +380,15 @@ var generateShapefile = function(hook) {
 
   // command steps
   var cmds = [
-    'mkdir -p /tmp/domegis',
     'mkdir -p '+publicDir+'/downloads',
-    'pgsql2shp -f /tmp/domegis/'+hook.data.id+' -u '+dbParams.dbuser+' -P '+dbParams.dbuser+' '+dbParams.dbname+' '+hook.data.id,
-    'zip -ju '+publicDir+'/downloads/'+hook.data.id+'.shp.zip /tmp/domegis/'+hook.data.id+'.*',
-    'rm /tmp/domegis/'+hook.data.id+'.*'
+    'mkdir -p /tmp/domegis/shapefiles',
+    'ogr2ogr -overwrite -f "ESRI Shapefile" /tmp/domegis/shapefiles/' + hook.data.id + ' PG:"user=domegis dbname=domegis" ' + hook.data.id,
+    'zip -ju '+publicDir+'/downloads/'+hook.data.id+'.shp.zip /tmp/domegis/shapefiles/' + hook.data.id + '/' + hook.data.id + '.*',
+    'rm -rf /tmp/domegis/shapefiles/'+hook.data.id,
+    'mkdir -p /tmp/domegis/csvs',
+    'ogr2ogr -overwrite -f "CSV" /tmp/domegis/csvs/'+hook.data.id+'.csv PG:"user=domegis dbname=domegis" ' + hook.data.id,
+    'zip -ju '+publicDir+'/downloads/'+hook.data.id+'.csv.zip /tmp/domegis/csvs/'+hook.data.id+'.csv',
+    'rm /tmp/domegis/csvs/'+hook.data.id+'.csv'
   ]
 
   async.eachSeries(cmds, function(cmd, doneCmd){
