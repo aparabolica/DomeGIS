@@ -10,7 +10,7 @@ var auth = require('feathers-authentication').hooks;
 var exec = require('child_process').exec;
 
 var debug = require('debug');
-var log = debug('service:layers:hooks');
+var log = debug('domegis:service:layers');
 
 
 function esriToSequelizeType(esriType) {
@@ -174,11 +174,9 @@ exports.after = {
     function emitSyncFinishEvent(err, data) {
       var status = 'synced';
       if (err) {
-        log('error syncing layer '+hook.data.id);
-        console.log(hook.data.id + ': sync error');
-        console.log(err);
+        log(hook.data.id + ' sync error: ' + err.message);
         status = 'failed_sync';
-      } else log('success syncing layer '+hook.data.id);
+      } else log('success syncing layer ' + hook.data.id);
 
 
       Layers.patch(layerId, {
@@ -186,11 +184,12 @@ exports.after = {
       }).then(function(){
         Layers.emit('syncFinish', layerId);
       }).catch(function(err){
-        console.log(hook.data.id + ': error setting status');
-        console.log(err);
+        log(hook.data.id + ' error saving sync status');
       });
     }
 
+
+    // Get layer feature count
     request({
       url: hook.data.url + '/query',
       qs: {
@@ -200,29 +199,22 @@ exports.after = {
       }
     }, function(err, res, body) {
       var data = {};
+
+      // Parse result JSON
       try {
         data = JSON.parse(body);
       } catch (e) {
-        return emitSyncFinishEvent({message: 'could not parse json'})
+        return emitSyncFinishEvent({message: 'invalid json for layer count'})
       }
-
       log('got feature count from arcgis');
 
-      if(!data.count) {
+      // Layer should have features
+      if(!data.count)
+        return emitSyncFinishEvent({message: 'layer is empty'});
+      else {
 
-        log('no features were found');
 
-        Layers.patch(layerId, {
-          featureCount: 0
-        }).then(function(result){
-          emitSyncFinishEvent()
-        }).catch(function(err){
-          console.log(hook.data.id + ': error update layer count to 0');
-          console.log(err);
-        });
-
-      } else {
-
+        // Prepare for iteration
         log('features were found');
 
         var total = data.count;
@@ -230,10 +222,9 @@ exports.after = {
         var perPage = 100;
         var geojson = {};
 
+        // Start iteration
         async.whilst(
-          function() {
-            return current < total;
-          },
+          function() { return current < total; },
           function(doneFeaturesPageRequest) {
 
             log('requesting features after index '+ current);
@@ -251,37 +242,45 @@ exports.after = {
               }
             }, function(err, res, body) {
 
+              // Check for request errors
               if (err) {
-                log(err);
                 return doneFeaturesPageRequest(err);
               } else log('success, adding to geojson... ');
 
+              // Parse JSON
               var data = {};
               try {
                 data = JSON.parse(body);
               } catch (e) {
-                console.log('could not parse json');
+                return doneFeaturesPageRequest({message: 'invalid json'})
               }
 
-              if(data.features.length) {
-                if(current == 0) {
+              // Result should have features
+              if (data.features && data.features.length) {
+                if(current == 0)
                   geojson = data;
-                } else {
+                else
                   geojson.features = geojson.features.concat(data.features);
-                }
+              } else {
+                return doneFeaturesPageRequest({message: 'no features were found'})
               }
 
+              // If no errors, emit progess
               Layers.emit('syncProgress', {
                 layerId: hook.data.id,
                 progress: geojson.features.length/total
               });
 
+              // Update counter
               current = current + perPage;
-              doneFeaturesPageRequest();
 
+              doneFeaturesPageRequest();
             })
           },
-          function() {
+          function(err) {
+
+            // Check for errors while request data batch
+            if (err) return emitSyncFinishEvent(err);
 
             log('starting importing geojson to database');
 
@@ -349,11 +348,9 @@ exports.after = {
                 }, function(err){
                   if (err) return emitSyncFinishEvent(err);
 
-                  generateShapefile(hook);
-
                   var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = " + geojson.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
                   sequelize.query(query).then(function(result){
-                    emitSyncFinishEvent();
+                    generateShapefile(hook, emitSyncFinishEvent);
                   }).catch(emitSyncFinishEvent);
                 });
               }).catch(emitSyncFinishEvent);
@@ -369,7 +366,7 @@ exports.after = {
 };
 
 
-var generateShapefile = function(hook) {
+var generateShapefile = function(hook, doneGenerateShapefile) {
   /*
   * Generate shapefile from data
   */
@@ -393,16 +390,12 @@ var generateShapefile = function(hook) {
 
   async.eachSeries(cmds, function(cmd, doneCmd){
     exec(cmd, function(error, stdout, stderr) {
-      if (error) {
-        console.error('exec error:' + error);
-        console.log('stdout: '+ stdout);
-        console.log('stderr: '+ stderr);
-        return doneCmd(error);
-      }
+      if (error) return doneCmd(error);
       doneCmd();
     });
   }, function(err){
-    if (err) console.log('could not generate shapefile');
+    if (err) doneGenerateShapefile({message:'could not generate shapefile'});
+    else doneGenerateShapefile();
     return hook;
   });
 }
