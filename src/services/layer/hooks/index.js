@@ -349,6 +349,8 @@ exports.after = {
                   if (err) return emitSyncFinishEvent(err);
 
                   var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = " + geojson.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
+                    + "GRANT SELECT ON \""+layerId+"\" TO domegis_readonly;";
+
                   sequelize.query(query).then(function(result){
                     generateShapefile(hook, emitSyncFinishEvent);
                   }).catch(emitSyncFinishEvent);
