@@ -285,7 +285,7 @@ angular.module('domegis')
             if(catStyle) {
               for(var name in catStyle) {
                 html += '<span class="category-item clearfix">';
-                html += '<span class="' + clss + ' feat-ref" style="background:' + catStyle[name] + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
+                html += '<span class="' + clss + ' feat-ref" style="background:rgba(' + catStyle[name] + ', ' + style.fill.opacity + ');border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
                 html += name;
                 html += '</span>';
               }
