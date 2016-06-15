@@ -247,11 +247,10 @@ angular.module('domegis')
           var strokeColor = 'transparent';
           if(style.stroke) {
             stroke = style.stroke.width + 'px';
-            strokeColor = style.stroke.color;
+            strokeColor = 'rgba(' + style.stroke.color + ', ' + style.stroke.opacity + ')';
           }
 
-          var bgColor = style.fill.color;
-          var bgOpacity = style.fill.opacity;
+          var bgColor = 'rgba(' + style.fill.color + ', ' + style.fill.opacity + ')';
 
           if(view.style.column) {
             if(view.style.type == 'category') {
@@ -277,7 +276,7 @@ angular.module('domegis')
           var html = '<div id="legend-' + view.id + '">';
           html += '<p class="item">';
           if(view.style.type == 'simple') {
-            html += '<span class="' + clss + ' feat-ref" style="background:' + bgColor + ';opacity:' + bgOpacity + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
+            html += '<span class="' + clss + ' feat-ref" style="background:' + bgColor + ';border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
             html += name;
           } else if(view.style.type == 'category') {
             html += '<span class="layer-title">' + name + '</span>';
