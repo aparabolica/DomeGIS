@@ -3,6 +3,8 @@
 # Edit the following to change the name of the database user that will be created:
 APP_DB_USER=domegis
 APP_DB_PASS=domegis
+APP_DB_READONLY_USER=domegis_readonly
+APP_DB_READONLY_USER_PWD=domegis
 
 # Edit the following to change the name of the database that is created (defaults to the user name)
 APP_DB_NAME=$APP_DB_USER
@@ -92,6 +94,12 @@ CREATE DATABASE $APP_DB_NAME WITH OWNER=$APP_DB_USER
                                   LC_CTYPE='en_US.utf8'
                                   ENCODING='UTF8'
                                   TEMPLATE=template0;
+
+-- Create the database user:
+CREATE USER $APP_DB_READONLY_USER WITH PASSWORD '$APP_DB_READONLY_USER_PWD';
+GRANT CONNECT ON DATABASE $APP_DB_NAME TO $APP_DB_READONLY_USER;
+GRANT USAGE ON SCHEMA public TO $APP_DB_READONLY_USER;
+
 EOF
 
 # Tag the provision time:
@@ -101,7 +109,7 @@ echo "Successfully created PostgreSQL dev virtual machine."
 echo ""
 print_db_usage
 
-apt-get -y install python-software-properties
+apt-get -y install software-properties-common
 add-apt-repository ppa:ubuntugis/ppa
 
 # install postgis
