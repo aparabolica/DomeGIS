@@ -247,10 +247,10 @@ angular.module('domegis')
           var strokeColor = 'transparent';
           if(style.stroke) {
             stroke = style.stroke.width + 'px';
-            strokeColor = 'rgba(' + style.stroke.color + ', ' + style.stroke.opacity + ')';
+            strokeColor = 'rgba(' + chroma(style.stroke.color).rgb().join(',') + ', ' + style.stroke.opacity + ')';
           }
 
-          var bgColor = 'rgba(' + style.fill.color + ', ' + style.fill.opacity + ')';
+          var bgColor = 'rgba(' + chroma(style.fill.color).rgb().join(',') + ', ' + style.fill.opacity + ')';
 
           if(view.style.column) {
             if(view.style.type == 'category') {
@@ -285,7 +285,7 @@ angular.module('domegis')
             if(catStyle) {
               for(var name in catStyle) {
                 html += '<span class="category-item clearfix">';
-                html += '<span class="' + clss + ' feat-ref" style="background:rgba(' + catStyle[name] + ', ' + style.fill.opacity + ');border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
+                html += '<span class="' + clss + ' feat-ref" style="background:rgba(' + chroma(catStyle[name]).rgb().join(',') + ', ' + style.fill.opacity + ');border-color:' + strokeColor + ';border-width:' + stroke + ';"></span>';
                 html += name;
                 html += '</span>';
               }
