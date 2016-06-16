@@ -1,0 +1,36 @@
+<header id="inner-header" class="form-header">
+  <div class="container">
+    <div class="six columns offset-by-three">
+      <h2>Derived Layers</h2>
+      <p>Create new layers based on raw SQL queries.</p>
+    </div>
+  </div>
+</header>
+<div id="derived_layers">
+  <div class="container row">
+    <div class="six columns offset-by-three">
+      <form class="main-form" ng-submit="submit()">
+        <h3>SQL Query</h3>
+        <p>
+          <textarea ng-model="sql"></textarea>
+        </p>
+        <p class="err" ng-show="err">{{err}}</p>
+        <input type="submit" value="Send query" />
+      </form>
+    </div>
+  </div>
+  <div class="results" ng-show="data && data.length">
+    <h3>Sample results</h3>
+    <table>
+      <thead>
+        <tr>
+          <th ng-repeat="key in keys">{{key}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="item in data">
+          <td ng-repeat="key in keys">{{item[key]}}</td>
+        </tr>
+      </tbody>
+  </div>
+</div>

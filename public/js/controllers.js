@@ -532,4 +532,29 @@ angular.module('domegis')
       }
     }
   }
+])
+
+.controller('DerivedCtrl', [
+  '$http',
+  '$scope',
+  function($http, $scope) {
+    $scope.sql = '';
+    $scope.err = '';
+    $scope.submit = function() {
+      $scope.err = '';
+      $scope.data = [];
+      $http.get('/derived', {
+        params: {
+          q: $scope.sql
+        }
+      }).then(function(res) {
+        console.log(res);
+        $scope.data = res.data[0];
+        $scope.keys = Object.keys(res.data[0][0]);        
+      }, function(err) {
+        $scope.err = err.data.message;
+        console.log(err);
+      });
+    };
+  }
 ]);

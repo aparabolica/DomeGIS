@@ -108,6 +108,11 @@ angular.module('domegis')
       controller: 'GenerateCtrl',
       templateUrl: '/views/generate.html'
     })
+    .state('derived', {
+      url: '/derived/',
+      controller: 'DerivedCtrl',
+      templateUrl: '/views/derived.html'
+    })
     .state('editContent', {
       url: '/contents/edit/?id',
       templateUrl: '/views/content/edit.html',
