@@ -51,6 +51,16 @@ module.exports = function(){
       sequelize_readonly
         .query(sql)
         .then(function(queryResult) {
+
+          // top results;
+          queryResult[0] = _.first(queryResult[0], 50);
+
+          // remove geometries
+          queryResult[0] = _.map(queryResult[0], function(row){
+            delete row.geometry;
+            return row;
+          });
+
           return res.json(queryResult);
         })
         .catch(function(err) {
