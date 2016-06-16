@@ -40,7 +40,23 @@ module.exports = function(){
    */
 
   var sequelize = app.get('sequelize');
+  var sequelize_readonly = app.get('sequelize_readonly');
   var Layers = app.service('layers');
+
+  app.use('/derived', function(req, res, next) {
+    var sql = req.query.q;
+    if (!sql)
+      return res.status(400).json({message: 'Missing SQL query'})
+    else
+      sequelize_readonly
+        .query(sql)
+        .then(function(queryResult) {
+          return res.json(queryResult);
+        })
+        .catch(function(err) {
+          return res.status(500).json({message: err.message});
+        });
+  });
 
   app.use('/layers/:id/feature/:featureId', function(req, res, next) {
 
@@ -78,9 +94,7 @@ module.exports = function(){
           console.log(err);
           res.status(500).json({ error: 'error while finding feature' });
         });
-
-    })
-
+    });
   });
 
   app.use('/layers/:id/search', function(req, res, next) {

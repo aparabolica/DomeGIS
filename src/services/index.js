@@ -14,11 +14,19 @@ var Logger = require('../lib/logger');
 module.exports = function() {
   var app = this;
 
+  // sequelize with full access
   var sequelize = new Sequelize(app.get('postgres'), {
     dialect: 'postgres',
     logging: false
   });
   app.set('sequelize', sequelize);
+
+  // sequelize with read only
+  var sequelize_readonly = new Sequelize(app.get('postgres_ro'), {
+    dialect: 'postgres',
+    logging: false
+  });
+  app.set('sequelize_readonly', sequelize_readonly);
 
   app.configure(authentication);
   app.configure(user);
