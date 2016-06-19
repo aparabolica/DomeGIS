@@ -543,14 +543,14 @@ angular.module('domegis')
     $scope.submit = function() {
       $scope.err = '';
       $scope.data = [];
-      $http.get('/derived', {
+      $http.get('/layers/preview', {
         params: {
-          q: $scope.sql
+          sql: $scope.sql
         }
       }).then(function(res) {
         console.log(res);
         $scope.data = res.data[0];
-        $scope.keys = Object.keys(res.data[0][0]);        
+        $scope.keys = Object.keys(res.data[0][0]);
       }, function(err) {
         $scope.err = err.data.message;
         console.log(err);

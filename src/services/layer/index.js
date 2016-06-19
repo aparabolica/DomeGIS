@@ -22,29 +22,14 @@ module.exports = function(){
 
   LayerService.events = ['syncFinish', 'syncProgress'];
 
-  // Initialize our service with any options it requires
-  app.use('/layers', LayerService);
-
-  // Get our initialize service to that we can bind hooks
-  var layerService = app.service('/layers');
-
-  // Set up our before hooks
-  layerService.before(hooks.before);
-
-  // Set up our after hooks
-  layerService.after(hooks.after);
-
-
-  /*
-   * Feature search
-   */
-
   var sequelize = app.get('sequelize');
   var sequelize_readonly = app.get('sequelize_readonly');
-  var Layers = app.service('layers');
 
-  app.use('/derived', function(req, res, next) {
-    var sql = req.query.q;
+  /*
+   * Derived layers preview
+   */
+  app.use('/layers/preview', function(req, res, next) {
+    var sql = req.query.sql;
     if (!sql)
       return res.status(400).json({message: 'Missing SQL query'})
     else
@@ -64,12 +49,18 @@ module.exports = function(){
           return res.json(queryResult);
         })
         .catch(function(err) {
+
+          // query is invalid
           return res.status(500).json({message: err.message});
         });
   });
 
+  /*
+   * Get feature with extents
+   */
   app.use('/layers/:id/feature/:featureId', function(req, res, next) {
 
+    var Layers = app.service('layers');
     var layerId = req.params.id;
     var featureId = req.params.featureId;
 
@@ -107,7 +98,12 @@ module.exports = function(){
     });
   });
 
+
+  /*
+   * Feature search
+   */
   app.use('/layers/:id/search', function(req, res, next) {
+     var Layers = app.service('layers');
      var layerId = req.params.id;
      var term = req.query.term;
 
@@ -146,6 +142,7 @@ module.exports = function(){
    */
 
   app.use('/layers/:id/values', function(req, res, next) {
+    var Layers = app.service('layers');
     var layerId = req.params.id;
     var term = req.query.term;
 
@@ -185,5 +182,16 @@ module.exports = function(){
     });
   });
 
+  // Initialize our service with any options it requires
+  app.use('/layers', LayerService);
+
+  // Get our initialize service to that we can bind hooks
+  var layerService = app.service('/layers');
+
+  // Set up our before hooks
+  layerService.before(hooks.before);
+
+  // Set up our after hooks
+  layerService.after(hooks.after);
 
 };
