@@ -115,6 +115,26 @@ angular.module('domegis')
         var mapLayers = L.layerGroup();
         mapLayers.addTo(map);
 
+        var featureBounds = false;
+        var doneFeature = $q.defer();
+        // get feature bounds
+        if(
+          scope.feature &&
+          scope.feature.length &&
+          scope.feature[0] &&
+          scope.feature[1]
+        ) {
+          $http.get('/layers/' + scope.feature[0] + '/feature/' + scope.feature[1]).then(function(res) {
+            featureBounds = res.data.extents;
+            map.fitBounds(parseBounds(featureBounds));
+            doneFeature.resolve();
+          }, function(err) {
+            doneFeature.resolve()
+          });
+        } else {
+          doneFeature.resolve();
+        }
+
         function updateLayers(views) {
           layers.forEach(function(layer) {
             if(layer.grid)
@@ -127,12 +147,34 @@ angular.module('domegis')
           if(views && views.length) {
             var promises = [];
             views.forEach(function(id) {
-              promises.push(Server.get(previewService, id));
+              if(scope.preview) {
+                promises.push(Server.get(previewService, id));
+              } else {
+                promises.push(Server.get(viewService, id));
+              }
             });
             $q.all(promises).then(function(data) {
+              doneFeature.promise.then(function() {
+                if(!featureBounds) {
+                  data.forEach(setViewBounds);
+                }
+              });
               data.forEach(addView);
             });
           }
+        };
+
+        function setViewBounds(view) {
+          Server.get(layerService, view.layerId).then(function(l) {
+            if(!getStateLoc().length && l.extents) {
+              var bounds = parseBounds(l.extents);
+              if(mapBounds)
+                mapBounds.extend(bounds);
+              else
+                mapBounds = bounds;
+              map.fitBounds(mapBounds);
+            }
+          });
         }
 
         function addView(view) {
@@ -161,50 +203,21 @@ angular.module('domegis')
             });
             mapLayers.addLayer(layer.grid);
           }
-          layers.push(layer);
-
-          var featureBounds = false;
-          var doneFeature = $q.defer();
-
-          // get feature bounds
-          if(scope.feature && scope.feature.length && scope.feature[0] && scope.feature[1]) {
-            $http.get('/layers/' + scope.feature[0] + '/feature/' + scope.feature[1]).then(function(res) {
-              featureBounds = res.data.extents;
-              map.fitBounds(parseBounds(featureBounds));
-              doneFeature.resolve();
-            }, function(err) {
-              doneFeature.resolve()
-            });
-          } else {
-            doneFeature.resolve();
-          }
-
-          doneFeature.promise.then(function() {
-            Server.get(layerService, view.layerId).then(function(l) {
-              if(!featureBounds) {
-                if(!getStateLoc().length && l.extents) {
-                  var bounds = parseBounds(l.extents);
-                  if(mapBounds)
-                    mapBounds.extend(bounds);
-                  else
-                    mapBounds = bounds;
-                  map.fitBounds(mapBounds);
-                }
-              }
-              layer.legend = getViewLegend(view, l);
-              if(layer.grid) {
-                layer.grid._dm_fields = l.fields;
-              }
-              legendControl.addLegend(layer.legend);
-              downloadControl.addLayer({
-                layerId: l.id,
-                title: $filter('translate')(l.name),
-                shp: '/downloads/' + l.id + '.shp.zip',
-                csv: '/downloads/' + l.id + '.csv.zip'
-              });
+          Server.get(layerService, view.layerId).then(function(l) {
+            layer.legend = getViewLegend(view, l);
+            if(layer.grid) {
+              layer.grid._dm_fields = l.fields;
+            }
+            legendControl.addLegend(layer.legend);
+            downloadControl.addLayer({
+              layerId: l.id,
+              title: $filter('translate')(l.name),
+              shp: '/downloads/' + l.id + '.shp.zip',
+              csv: '/downloads/' + l.id + '.csv.zip'
             });
           });
-        }
+          layers.push(layer);
+        };
 
         function getTooltipHtml(data, fields) {
           var html = '<div class="tooltip-content">';
