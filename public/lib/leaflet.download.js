@@ -32,7 +32,8 @@ L.Control.DownloadData = L.Control.extend({
     this._layers.push({
       layerId: layerObj.layerId,
       title: layerObj.title,
-      url: layerObj.url
+      shp: layerObj.shp,
+      csv: layerObj.csv
     });
 
     return this._update();
@@ -57,7 +58,7 @@ L.Control.DownloadData = L.Control.extend({
     var $download = $('<div class="download-box"><div class="close" /><div class="download-box-content" /></div>');
 
     this._layers.forEach(function(layer) {
-      $download.find('.download-box-content').append('<div class="layer-item clearfix"><h2>' + layer.title + '</h2><a href="' + layer.url + '" target="_self"><span class="fa fa-download"></span> Shapefile</a></div>');
+      $download.find('.download-box-content').append('<div class="layer-item clearfix"><h2>' + layer.title + '</h2><span class="links"><a href="' + layer.shp + '" target="_self"><span class="fa fa-download"></span> Shapefile</a> <a href="' + layer.csv + '" target="_self"><span class="fa fa-download"></span> CSV</a></span></div>');
     });
 
     $download.hide();

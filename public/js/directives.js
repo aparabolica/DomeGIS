@@ -189,7 +189,8 @@ angular.module('domegis')
               downloadControl.addLayer({
                 layerId: l.id,
                 title: $filter('translate')(l.name),
-                url: '/downloads/' + l.id + '.shp.zip'
+                shp: '/downloads/' + l.id + '.shp.zip',
+                csv: '/downloads/' + l.id + '.csv.zip'
               });
             });
           });
