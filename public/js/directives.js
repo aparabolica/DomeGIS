@@ -72,27 +72,34 @@ angular.module('domegis')
           $state.go($state.current.name, {loc: getLocStr()}, {notify: false})
         }, 400));
 
+        var baseLayers = L.layerGroup();
 
-        var baseLayers = [];
+        baseLayers.addTo(map);
 
-        if(scope.base == 'infoamazonia') {
+        scope.$watch('base', function() {
 
-          baseLayers.push('http://{s}.tiles.mapbox.com/v3/infoamazonia.AndesAguaAmazonia_relevo_12AmzRaisg,infoamazonia.AndesAguaAmazonia_relevo_11AmzRaisg,infoamazonia.AndesAguaAmazonia_relevo1-10/{z}/{x}/{y}.png');
+          var layers = [];
 
-          baseLayers.push('http://{s}.tiles.mapbox.com/v3/infoamazonia.naturalEarth_baltimetria/{z}/{x}/{y}.png');
+          baseLayers.clearLayers();
 
-          baseLayers.push('http://{s}.tiles.mapbox.com/v3/infoamazonia.rivers/{z}/{x}/{y}.png');
+          if(scope.base == 'infoamazonia') {
 
-          baseLayers.push('http://{s}.tiles.mapbox.com/v3/infoamazonia.AAA_pois,infoamazonia.osm-brasil/{z}/{x}/{y}.png');
+            layers.push('http://{s}.tiles.mapbox.com/v3/infoamazonia.AndesAguaAmazonia_relevo_12AmzRaisg,infoamazonia.AndesAguaAmazonia_relevo_11AmzRaisg,infoamazonia.AndesAguaAmazonia_relevo1-10,infoamazonia.naturalEarth_baltimetria,infoamazonia.rivers,infoamazonia.AAA_pois,infoamazonia.osm-brasil/{z}/{x}/{y}.png');
 
-        } else {
+          } else if(scope.base == 'mapquest_satellite') {
 
-          baseLayers.push('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+            layers.push('http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png');
 
-        }
+          } else {
 
-        baseLayers.forEach(function(url) {
-          map.addLayer(L.tileLayer(url));
+            layers.push('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+
+          }
+
+          layers.forEach(function(url) {
+            baseLayers.addLayer(L.tileLayer(url, {zIndex: -1}));
+          });
+
         });
 
         var layers = [];
@@ -105,11 +112,14 @@ angular.module('domegis')
 
         var mapBounds;
 
+        var mapLayers = L.layerGroup();
+        mapLayers.addTo(map);
+
         function updateLayers(views) {
           layers.forEach(function(layer) {
             if(layer.grid)
-              map.removeLayer(layer.grid);
-            map.removeLayer(layer.tile);
+              mapLayers.removeLayer(layer.grid);
+            mapLayers.removeLayer(layer.tile);
             legendControl.removeLegend(layer.legend);
             downloadControl.removeLayer(layer.layerId);
           });
@@ -136,7 +146,7 @@ angular.module('domegis')
             gridUrl += '?preview=true&time=' + Date.now();
           }
           layer.tile = L.tileLayer(url);
-          map.addLayer(layer.tile);
+          mapLayers.addLayer(layer.tile);
           if(view.fields && view.fields.length) {
             layer.grid = new L.UtfGrid(gridUrl, {
               useJsonP: false
@@ -149,7 +159,7 @@ angular.module('domegis')
                   .openOn(map);
               }
             });
-            map.addLayer(layer.grid);
+            mapLayers.addLayer(layer.grid);
           }
           layers.push(layer);
 

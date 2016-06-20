@@ -42,6 +42,15 @@
             </p>
           </li>
         </ul>
+        <div class="baselayer-selector">
+          <h3>Select a base layer</h3>
+          <p>Default base layer is OpenStretMap, you can choose between the options below:</p>
+          <select id="baselayer_input" name="baselayer" ng-model="base">
+            <option value="osm" selected>OpenStreetMap</option>
+            <option value="infoamazonia">InfoAmazonia</option>
+            <option value="mapquest_satellite">MapQuest Satellite</option>
+          </select>
+        </div>
         <div class="language-selector">
           <h3>Output language</h3>
           <p>Default is <code>auto</code>, which seeks for the user's browser language</p>
@@ -78,7 +87,7 @@
     <div class="container">
       <div class="eight columns offset-by-two">
         <div class="output-map">
-          <div dome-map="views"></div>
+          <div dome-map="views" base="base"></div>
         </div>
       </div>
     </div>

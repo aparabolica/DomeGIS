@@ -142,14 +142,15 @@ angular.module('domegis')
     };
 
     $scope.getHTMLEmbed = function() {
-      var url = $state.href('map', {views: getCSViews(), lang: $scope.settings.lng}, {absolute: true});
+      var url = $state.href('map', {views: getCSViews(), lang: $scope.settings.lng, base: $scope.base}, {absolute: true});
       return '<iframe src="' + url + '" width="100%" height="400" frameborder="0" allowfullscren></iframe>';
     };
 
     $scope.getWPShortcode = function() {
       var config = {
         views: getCSViews(),
-        lang: $scope.settings.lng
+        lang: $scope.settings.lng,
+        base: $scope.base
       };
       var shortcode = '[domegis_map';
       for(var key in config) {
@@ -173,6 +174,7 @@ angular.module('domegis')
     $scope.$watch('map', _update, true);
     $scope.$watch('_layers', _update, true);
     $scope.$watch('settings', _update, true);
+    $scope.$watch('base', _update, true);
 
     function getCSViews() {
       var views = [];
