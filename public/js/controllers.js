@@ -146,7 +146,7 @@ angular.module('domegis')
 
     $scope.getHTMLEmbed = function() {
       var url = $state.href('map', {views: getCSViews(), lang: $scope.settings.lng, base: $scope.base, scroll: $scope.scroll}, {absolute: true});
-      return '<iframe src="' + url + '" width="100%" height="400" frameborder="0" allowfullscren></iframe>';
+      return '<iframe src="' + url + '" width="100%" height="400" frameborder="0" allowfullscreen></iframe>';
     };
 
     $scope.getWPShortcode = function() {
