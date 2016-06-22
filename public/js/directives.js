@@ -159,7 +159,6 @@ angular.module('domegis')
                 view.hidden = _.find(views, function(v) {
                   return view.id == v.id;
                 }).hidden;
-                console.log(view.hidden);
               });
               doneFeature.promise.then(function() {
                 if(!featureBounds) {

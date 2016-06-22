@@ -170,7 +170,6 @@ angular.module('domegis')
         if($scope.map[l.id] && $scope.map[l.id].id)
           $scope.views.push($scope.map[l.id]);
       });
-      console.log($scope.views);
     };
 
     $scope.$watch('map', _update, true);
