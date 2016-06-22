@@ -200,7 +200,7 @@ angular.module('domegis')
       }
     })
     .state('map', {
-      url: '/map/?views&feature&base&loc&lang',
+      url: '/map/?views&feature&base&scroll&loc&lang',
       templateUrl: '/views/map.html',
       controller: [
         '$stateParams',
@@ -222,6 +222,8 @@ angular.module('domegis')
               $scope.views.push(view);
             });
           }
+
+          $scope.scroll = $stateParams.scroll;
 
           if($stateParams.feature)
             $scope.feature = $stateParams.feature.split(':');

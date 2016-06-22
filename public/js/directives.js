@@ -34,7 +34,8 @@ angular.module('domegis')
         views: '=domeMap',
         base: '=',
         feature: '=',
-        preview: '='
+        preview: '=',
+        scroll: '='
       },
       replace: true,
       template: '<div id="map"></div>',
@@ -54,11 +55,21 @@ angular.module('domegis')
           zoom = loc[2];
         }
 
+        var scrollWheelZoom = true;
+        console.log(scope.scroll);
+        if(typeof scope.scroll == 'undefined') {
+          scrollWheelZoom = self == top;
+        } else {
+          scrollWheelZoom = scope.scroll;
+        }
+
+        console.log(scrollWheelZoom);
+
         var map = L.map('map', {
           center: center,
           zoom: zoom,
           fullscreenControl: true,
-          scrollWheelZoom: self == top
+          scrollWheelZoom: scrollWheelZoom
         });
 
         var downloadControl = L.control.downloadData();
@@ -129,7 +140,7 @@ angular.module('domegis')
             map.fitBounds(parseBounds(featureBounds));
             doneFeature.resolve();
           }, function(err) {
-            doneFeature.resolve()
+            doneFeature.resolve();
           });
         } else {
           doneFeature.resolve();

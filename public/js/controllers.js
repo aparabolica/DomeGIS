@@ -89,6 +89,8 @@ angular.module('domegis')
       lng: ''
     };
 
+    $scope.scroll = false;
+
     $scope.search = '';
     $scope.results = [];
 
@@ -143,7 +145,7 @@ angular.module('domegis')
     };
 
     $scope.getHTMLEmbed = function() {
-      var url = $state.href('map', {views: getCSViews(), lang: $scope.settings.lng, base: $scope.base}, {absolute: true});
+      var url = $state.href('map', {views: getCSViews(), lang: $scope.settings.lng, base: $scope.base, scroll: $scope.scroll}, {absolute: true});
       return '<iframe src="' + url + '" width="100%" height="400" frameborder="0" allowfullscren></iframe>';
     };
 
@@ -151,7 +153,8 @@ angular.module('domegis')
       var config = {
         views: getCSViews(),
         lang: $scope.settings.lng,
-        base: $scope.base
+        base: $scope.base,
+        scroll: $scope.scroll
       };
       var shortcode = '[domegis_map';
       for(var key in config) {
@@ -389,7 +392,6 @@ angular.module('domegis')
     var viewService = Server.service('views');
     var previewService = Server.service('previews');
 
-    // console.log(Layer);
     $scope.layer = Layer;
 
     $scope.view = angular.copy(Edit);
