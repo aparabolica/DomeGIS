@@ -9,29 +9,47 @@ L.Control.Legend = L.Control.extend({
     this._legends = {};
   },
 
-  onAdd: function() {
+  onAdd: function(map) {
+    var self = this;
     this._container = L.DomUtil.create('div', 'map-legends wax-legends');
     L.DomEvent.disableClickPropagation(this._container);
+
+    $(map._container).on('click', '.map-legend', function() {
+      var layers = self._legends[$(this).html()];
+      if($(this).hasClass('concealed')) {
+        $(this).removeClass('concealed');
+        layers.forEach(function(layer) {
+          if(layer && !map.hasLayer(layer))
+            map.addLayer(layer);
+        });
+      } else {
+        $(this).addClass('concealed');
+        layers.forEach(function(layer) {
+          if(layer && map.hasLayer(layer))
+            map.removeLayer(layer);
+        });
+      }
+    });
 
     this._update();
 
     return this._container;
   },
 
-  addLegend: function(text) {
+  addLegend: function(text, layers) {
     if (!text) { return this; }
 
     if (!this._legends[text]) {
-      this._legends[text] = 0;
+      this._legends[text] = layers;
     }
 
-    this._legends[text]++;
+    // this._legends[text]++;
     return this._update();
   },
 
   removeLegend: function(text) {
     if (!text) { return this; }
-    if (this._legends[text]) this._legends[text]--;
+    if (this._legends[text]) this._legends[text] = 0;
     return this._update();
   },
 

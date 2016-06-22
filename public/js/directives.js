@@ -177,7 +177,7 @@ angular.module('domegis')
           });
         }
 
-        function addView(view) {
+        function addView(view, i) {
           var layer = {};
           layer.layerId = view.layerId;
           layer.id = view.id;
@@ -187,7 +187,9 @@ angular.module('domegis')
             url += '?preview=true&time=' + Date.now();
             gridUrl += '?preview=true&time=' + Date.now();
           }
-          layer.tile = L.tileLayer(url);
+          layer.tile = L.tileLayer(url, {
+            zIndex: (i+1)*10
+          });
           mapLayers.addLayer(layer.tile);
           if(view.fields && view.fields.length) {
             layer.grid = new L.UtfGrid(gridUrl, {
@@ -208,7 +210,7 @@ angular.module('domegis')
             if(layer.grid) {
               layer.grid._dm_fields = l.fields;
             }
-            legendControl.addLegend(layer.legend);
+            legendControl.addLegend(layer.legend, [layer.tile, layer.grid]);
             downloadControl.addLayer({
               layerId: l.id,
               title: $filter('translate')(l.name),

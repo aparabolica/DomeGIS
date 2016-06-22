@@ -239,6 +239,13 @@ table {
     overflow: auto;
     color: #666;
     box-sizing: border-box;
+    cursor: pointer;
+    &:hover {
+      color: #333;
+    }
+    &.concealed {
+      color: #aaa;
+    }
     p {
       margin: 1rem 0;
       font-size: .8em;
