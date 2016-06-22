@@ -93,7 +93,7 @@ exports.after = {
   get: [],
   create: [
     function(hook){
-      hook.app.log('info', 'created view "'+hook.data.id+'" for layer "'+hook.data.layerId+'" by "'+hook.params.user.email+'"', {
+      hook.app.log('info', 'created view "'+hook.data.id, {
         event: 'viewCreated',
         viewId: hook.data.id,
         layerId: hook.data.layerId,
@@ -104,7 +104,7 @@ exports.after = {
   ],
   update: [
     function(hook){
-      hook.app.log('info', 'updated view "'+hook.id+'" for layer "'+hook.data.layerId+'" by "'+hook.params.user.email+'"', {
+      hook.app.log('info', 'updated view "'+hook.id+'" for layer "'+hook.data.layerId, {
         event: 'viewUpdated',
         viewId: hook.id,
         layerId: hook.data.layerId,
@@ -115,7 +115,7 @@ exports.after = {
   ],
   patch: [
     function(hook){
-      hook.app.log('info', 'updated view "'+hook.id+'" for layer "'+hook.data.layerId+'" by "'+hook.params.user.email+'"', {
+      hook.app.log('info', 'updated view "'+hook.id+'" for layer "'+hook.data.layerId, {
         event: 'viewUpdated',
         viewId: hook.id,
         layerId: hook.data.layerId,
@@ -126,7 +126,7 @@ exports.after = {
   ],
   remove: [
     function(hook){
-      hook.app.log('info', 'removed view "'+hook.result.id+'" for layer "'+hook.result.layerId+'" by "'+hook.params.user.email+'"', {
+      hook.app.log('info', 'removed view "'+hook.result.id+'" for layer "'+hook.result.layerId, {
         event: 'viewRemoved',
         view: hook.result,
         userId: hook.params.user.email

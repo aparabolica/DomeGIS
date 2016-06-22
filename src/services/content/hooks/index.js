@@ -86,7 +86,7 @@ exports.after = {
   get: [],
   create: [
     function(hook){
-      hook.app.log('info', 'created content "'+hook.data.id+'" by "'+hook.params.user.email+'"', {
+      hook.app.log('info', 'created content "'+hook.data.id, {
         event: 'contentCreated',
         content: hook.data,
         userId: hook.params.user.email
@@ -138,7 +138,7 @@ exports.after = {
   update: [],
   patch: [],
   remove: [ function(hook){
-    hook.app.log('info', 'removed content "'+hook.result.id+'" by "'+hook.params.user.email+'"', {
+    hook.app.log('info', 'removed content "'+hook.result.id, {
         event: 'contentRemoved',
         contentId: hook.result.id,
         userId: hook.params.user.email
