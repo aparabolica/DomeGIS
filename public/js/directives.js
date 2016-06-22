@@ -146,7 +146,8 @@ angular.module('domegis')
           layers = [];
           if(views && views.length) {
             var promises = [];
-            views.forEach(function(id) {
+            views.forEach(function(view) {
+              var id = view.id;
               if(scope.preview) {
                 promises.push(Server.get(previewService, id));
               } else {
@@ -154,12 +155,18 @@ angular.module('domegis')
               }
             });
             $q.all(promises).then(function(data) {
+              data.forEach(function(view) {
+                view.hidden = _.find(views, function(v) {
+                  return view.id == v.id;
+                }).hidden;
+                console.log(view.hidden);
+              });
               doneFeature.promise.then(function() {
                 if(!featureBounds) {
                   data.forEach(setViewBounds);
                 }
+                data.forEach(addView);
               });
-              data.forEach(addView);
             });
           }
         };
@@ -190,7 +197,8 @@ angular.module('domegis')
           layer.tile = L.tileLayer(url, {
             zIndex: (i+1)*10
           });
-          mapLayers.addLayer(layer.tile);
+          if(!view.hidden)
+            mapLayers.addLayer(layer.tile);
           if(view.fields && view.fields.length) {
             layer.grid = new L.UtfGrid(gridUrl, {
               useJsonP: false
@@ -203,7 +211,8 @@ angular.module('domegis')
                   .openOn(map);
               }
             });
-            mapLayers.addLayer(layer.grid);
+            if(!view.hidden)
+              mapLayers.addLayer(layer.grid);
           }
           Server.get(layerService, view.layerId).then(function(l) {
             layer.legend = getViewLegend(view, l);

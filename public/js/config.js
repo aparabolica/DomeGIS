@@ -207,10 +207,21 @@ angular.module('domegis')
         '$scope',
         function($stateParams, $scope) {
 
-          if($stateParams.views)
-            $scope.views = $stateParams.views.split(',');
-          else
-            $scope.views = [];
+          $scope.views = [];
+          if($stateParams.views) {
+            var views = $stateParams.views.split(',');
+            views.forEach(function(v) {
+              var view = {};
+              v = v.split(':');
+              view.id = v[0];
+              if(v[1] == 0) {
+                view.hidden = true;
+              } else {
+                view.hidden = false;
+              }
+              $scope.views.push(view);
+            });
+          }
 
           if($stateParams.feature)
             $scope.feature = $stateParams.feature.split(':');

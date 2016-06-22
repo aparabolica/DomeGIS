@@ -54,6 +54,9 @@ L.Control.Legend = L.Control.extend({
   },
 
   _update: function() {
+
+    var self = this;
+
     if (!this._map) { return this; }
 
     this._container.innerHTML = '';
@@ -64,6 +67,10 @@ L.Control.Legend = L.Control.extend({
         var div = L.DomUtil.create('div', 'map-legend wax-legend', this._container);
         div.innerHTML = i;
         hide = 'block';
+        this._legends[i].forEach(function(layer) {
+          if(layer && !self._map.hasLayer(layer))
+            $(div).addClass('concealed');
+        });
       }
     }
 

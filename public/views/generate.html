@@ -38,7 +38,13 @@
             <h3>{{layer.name | translate}}</h3>
             <p class="views" ng-show="layer.views.length">
               <span>Select a view:</span>
-              <label ng-repeat="view in layer.views" for="view_{{view.id}}" class="view-item"><input type="radio" id="view_{{view.id}}" name="layer_{{view.id}}_views" ng-model="map[layer.id]" ng-value="view.id" /> {{view.name}}</label>
+              <label ng-repeat="view in layer.views" for="view_{{view.id}}" class="view-item"><input type="radio" id="view_{{view.id}}" name="layer_{{layer.id}}_views" ng-model="map[layer.id].id" ng-value="view.id" /> {{view.name}}</label>
+            </p>
+            <p class="concealed">
+              <label for="{{layer.id}}_hidden">
+                <input id="{{layer.id}}_hidden" type="checkbox" ng-model="map[layer.id].hidden">
+                <span>Hidden by default</span>
+              </label>
             </p>
           </li>
         </ul>

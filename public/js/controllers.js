@@ -117,7 +117,7 @@ angular.module('domegis')
 
     $scope.addLayer = function(layer) {
       if(!$scope.map[layer.id]) {
-        $scope.map[layer.id] = true;
+        $scope.map[layer.id] = {};
         $scope._layers.push(layer);
         viewService.find({
           query: {
@@ -126,7 +126,8 @@ angular.module('domegis')
         }).then(function(res) {
           $scope.$apply(function() {
             layer.views = res.data;
-            $scope.map[layer.id] = res.data[0].id;
+            $scope.map[layer.id].id = res.data[0].id;
+            $scope.map[layer.id].hidden = false;
           });
         });
       }
@@ -166,9 +167,10 @@ angular.module('domegis')
     var _update = function() {
       $scope.views = [];
       $scope._layers.forEach(function(l) {
-        if($scope.map[l.id] && $scope.map[l.id] != true)
+        if($scope.map[l.id] && $scope.map[l.id].id)
           $scope.views.push($scope.map[l.id]);
       });
+      console.log($scope.views);
     };
 
     $scope.$watch('map', _update, true);
@@ -179,9 +181,10 @@ angular.module('domegis')
     function getCSViews() {
       var views = [];
       $scope._layers.forEach(function(l) {
-        if($scope.map[l.id] && $scope.map[l.id] != true)
-          views.push($scope.map[l.id]);
+        if($scope.map[l.id] && $scope.map[l.id].id)
+          views.push($scope.map[l.id].id + ':' + ($scope.map[l.id].hidden ? 0 : 1));
       });
+
       return views.join(',');
     }
   }
