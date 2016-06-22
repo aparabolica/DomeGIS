@@ -5,6 +5,7 @@ var async = require('async');
 var service = require('feathers-sequelize');
 var layer = require('./layer-model');
 var hooks = require('./hooks');
+var errors = require('feathers-errors');
 
 module.exports = function(){
   var app = this;
@@ -37,16 +38,39 @@ module.exports = function(){
         .query(sql)
         .then(function(queryResult) {
 
-          // top results;
-          queryResult[0] = _.first(queryResult[0], 50);
 
-          // remove geometries
-          queryResult[0] = _.map(queryResult[0], function(row){
-            delete row.geometry;
-            return row;
-          });
+          var records = queryResult[0];
+          var fields = queryResult[1].fields;
 
-          return res.json(queryResult);
+          // check is results are valid
+          if (records.length == 0)
+            return res.status(400).json({message: 'Query returned no records.'});
+          else if (fields.length == 0)
+            return res.status(400).json({message: 'Query returned no fields.'});
+          else {
+
+            var geometryFields = _.filter(fields, function(field){
+              return ((field.name == 'geometry') && (field.dataTypeID == 16393));
+            });
+
+            if (geometryFields.length == 0)
+              return res.status(400).json({message: 'Missing `geometry` field.'});
+            else if (geometryFields.length != 1) {
+              return res.status(400).json({message: 'Multiple `geometry` fields.'});
+            } else {
+
+              // top results;
+              queryResult[0] = _.first(queryResult[0], 50);
+
+              // remove geometries
+              queryResult[0] = _.map(queryResult[0], function(row){
+                delete row.geometry;
+                return row;
+              });
+
+              return res.json(queryResult);
+            }
+          }
         })
         .catch(function(err) {
 
