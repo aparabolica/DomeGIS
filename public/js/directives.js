@@ -56,14 +56,11 @@ angular.module('domegis')
         }
 
         var scrollWheelZoom = true;
-        console.log(scope.scroll);
         if(typeof scope.scroll == 'undefined') {
           scrollWheelZoom = self == top;
         } else {
           scrollWheelZoom = scope.scroll;
         }
-
-        console.log(scrollWheelZoom);
 
         var map = L.map('map', {
           center: center,
