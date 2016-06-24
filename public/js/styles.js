@@ -376,6 +376,14 @@ angular.module('domegis')
 
                 $scope.categories = $scope.styles.column.values;
 
+                $scope.categories.forEach(function(category) {
+                  var column = $scope.styles.category[$scope.styles.column.name];
+                  if(!column)
+                    column = {};
+                  if(!column[category])
+                    column[category] = chroma.random().hex();
+                });
+
               }
             }
 
