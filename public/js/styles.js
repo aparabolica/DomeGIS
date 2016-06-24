@@ -183,6 +183,13 @@ angular.module('domegis')
           }, true);
 
           $scope.setMapType = function(type) {
+            // Clear previous map type css
+            if($scope.styles.type == 'choropleth') {
+              clearChoropleth($scope.styles.column.name);
+            } else if($scope.styles.type == 'category') {
+              clearCategories($scope.styles.column.name, $scope.categories);
+            }
+            // Set new type
             $scope.styles.type = type;
             if(!$scope.styles[type])
               $scope.styles[type] = {};
