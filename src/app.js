@@ -10,6 +10,7 @@ var configuration = require('feathers-configuration');
 var hooks = require('feathers-hooks');
 var rest = require('feathers-rest');
 var bodyParser = require('body-parser');
+var assets = require('connect-assets');
 var socketio = require('feathers-socketio');
 var middleware = require('./middleware');
 var services = require('./services');
@@ -18,18 +19,39 @@ var app = feathers();
 
 app.configure(configuration(path.join(__dirname, '..')));
 
-app.use(compress())
+app
+  .use(compress())
+  .engine('html', require('ejs').renderFile)
   .options('*', cors())
   .use(cors())
   .use(favicon( path.join(app.get('public'), 'favicon.ico') ))
   .use('/', serveStatic( app.get('public') ))
-  .use('/assets', serveStatic( 'bower_components' ))
+  .use('/components', serveStatic( 'bower_components', {maxAge: 31536000} ))
   .use('/styles', require('express-less')( 'public/styles', {compress: true}))
+  .use('/assets', serveStatic('builtAssets', {maxAge: 31536000}))
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
+  .set('view engine', 'ejs')
+  .set('views', 'public')
+  .configure(function() {
+    var app = this;
+    app.use(assets({
+      paths: [
+        'public/js',
+        'public/lib',
+        'bower_components'
+      ]
+    }));
+  })
   .configure(hooks())
   .configure(rest())
   .configure(socketio())
+  .configure(function() {
+    var app = this;
+    app.get('/', function(req, res) {
+      res.render('index');
+    });
+  })
   .configure(services)
   .configure(middleware);
 

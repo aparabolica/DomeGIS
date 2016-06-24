@@ -32,6 +32,7 @@ data/
 
 .vagrant
 bower_components
+builtAssets
 
 # Shapefile download dir
 public/downloads

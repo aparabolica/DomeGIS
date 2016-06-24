@@ -28,6 +28,8 @@ module.exports = function() {
   });
   app.set('sequelize_readonly', sequelize_readonly);
 
+
+
   app.configure(authentication);
   app.configure(user);
   app.configure(content);

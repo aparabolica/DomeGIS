@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>DomeGIS</title>
+    <link rel="stylesheet" href="/components/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/components/fontawesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="/components/skeleton-css/css/normalize.css" />
+    <link rel="stylesheet" href="/components/skeleton-css/css/skeleton.css" />
+    <link rel="stylesheet" href="/components/jquery-ui/themes/base/spinner.css" />
+    <link rel="stylesheet" href="/components/angular-bootstrap-colorpicker/css/colorpicker.min.css" />
+    <link rel="stylesheet" href="/components/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="/components/Leaflet.fullscreen/dist/leaflet.fullscreen.css" />
+    <link rel="stylesheet" href="/styles/main.css" />
+  </head>
+  <body ng-controller="SiteCtrl" class="{{bodyClass | join:' '}}" style="display:none;">
+    <div id="messages" class="message-notification" ng-controller="MessageCtrl" ng-hide="isDialog">
+      <div class="message-content" ng-repeat="message in messages" ng-show="message.text">
+        <a class="close-button" ng-click="close(message)" href="javascript:void(0);">{{labels('Close')}}</a>
+        <p ng-class="message.status" ng-bind-html="getMessage(message)"></p>
+      </div>
+    </div>
+    <header id="masthead">
+      <div class="container">
+        <div class="twelve columns">
+          <h1><a ui-sref="home">DomeGIS</a></h1>
+          <nav id="mastnav">
+            <a ui-sref="users" ng-show="hasRole('admin')">Users</a>
+            <a ui-sref="generateMap">Generate map</a>
+            <a ui-sref="derived" ng-show="hasRole('admin')">Derived Layers</a>
+            <a href="javascript:void(0);" ng-click="getLogs()" ng-show="hasRole('admin')">Logs</a>
+            <a ui-sref="login" ng-hide="token">Login</a>
+            <a href="javascript:void(0);" ng-show="token" ng-click="logout()">Logout</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+    <div class="container">
+      <div class="twelve columns">
+        <div id="content" ui-view></div>
+      </div>
+    </div>
+    <%- js('dist.js') %>
+  </body>
+</html>
