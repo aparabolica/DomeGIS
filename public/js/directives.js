@@ -144,14 +144,16 @@ angular.module('domegis')
         }
 
         function updateLayers(views) {
-          layers.forEach(function(layer) {
-            if(layer.grid)
-              mapLayers.removeLayer(layer.grid);
-            mapLayers.removeLayer(layer.tile);
-            legendControl.removeLegend(layer.legend);
-            downloadControl.removeLayer(layer.layerId);
-          });
-          layers = [];
+          if(layers.length) {
+            layers.forEach(function(layer) {
+              if(layer.grid)
+                mapLayers.removeLayer(layer.grid);
+              mapLayers.removeLayer(layer.tile);
+              legendControl.removeLegend(layer.legend);
+              downloadControl.removeLayer(layer.layerId);
+            });
+            layers = [];
+          }
           if(views && views.length) {
             var promises = [];
             views.forEach(function(view) {
@@ -169,26 +171,40 @@ angular.module('domegis')
                 }).hidden;
               });
               doneFeature.promise.then(function() {
-                if(!featureBounds) {
-                  data.forEach(setViewBounds);
-                }
-                data.forEach(addView);
+                var layerPromises = [];
+                data.forEach(function(view) {
+                  layerPromises.push(Server.get(layerService, view.layerId));
+                })
+                $q.all(layerPromises).then(function(layers) {
+                  data.forEach(function(view) {
+                    view.layer = _.find(layers, function(layer) {
+                      return layer.id == view.layerId
+                    });
+                  });
+                  if(!featureBounds) {
+                    setViewsBounds(data);
+                  }
+                  data.forEach(addView);
+                });
               });
             });
           }
         };
 
-        function setViewBounds(view) {
-          Server.get(layerService, view.layerId).then(function(l) {
-            if(!getStateLoc().length && l.extents) {
-              var bounds = parseBounds(l.extents);
-              if(mapBounds)
-                mapBounds.extend(bounds);
-              else
-                mapBounds = bounds;
-              map.fitBounds(mapBounds);
-            }
-          });
+        function setViewsBounds(views) {
+          if(!getStateLoc().length) {
+            var mapBounds = L.latLngBounds();
+            views.forEach(function(view) {
+              if(view.layer.extents) {
+                var bounds = parseBounds(view.layer.extents);
+                if(mapBounds)
+                  mapBounds.extend(bounds);
+                else
+                  mapBounds = bounds;
+              }
+            });
+            map.fitBounds(mapBounds);
+          }
         }
 
         function addView(view, i) {
@@ -221,18 +237,16 @@ angular.module('domegis')
             if(!view.hidden)
               mapLayers.addLayer(layer.grid);
           }
-          Server.get(layerService, view.layerId).then(function(l) {
-            layer.legend = getViewLegend(view, l);
-            if(layer.grid) {
-              layer.grid._dm_fields = l.fields;
-            }
-            legendControl.addLegend(layer.legend, [layer.tile, layer.grid]);
-            downloadControl.addLayer({
-              layerId: l.id,
-              title: $filter('translate')(l.name),
-              shp: '/downloads/' + l.id + '.shp.zip',
-              csv: '/downloads/' + l.id + '.csv.zip'
-            });
+          layer.legend = getViewLegend(view, view.layer);
+          if(layer.grid) {
+            layer.grid._dm_fields = view.layer.fields;
+          }
+          legendControl.addLegend(layer.legend, [layer.tile, layer.grid]);
+          downloadControl.addLayer({
+            layerId: view.layer.id,
+            title: $filter('translate')(view.layer.name),
+            shp: '/downloads/' + view.layer.id + '.shp.zip',
+            csv: '/downloads/' + view.layer.id + '.csv.zip'
           });
           layers.push(layer);
         };
