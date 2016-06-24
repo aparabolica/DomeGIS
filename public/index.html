@@ -23,7 +23,7 @@
     <link rel="stylesheet" href="/styles/main.css" />
 
   </head>
-  <body ng-controller="SiteCtrl" class="{{bodyClass | join:' '}}">
+  <body ng-controller="SiteCtrl" class="{{bodyClass | join:' '}}" style="display:none;">
     <div id="messages" class="message-notification" ng-controller="MessageCtrl" ng-hide="isDialog">
       <div class="message-content" ng-repeat="message in messages" ng-show="message.text">
         <a class="close-button" ng-click="close(message)" href="javascript:void(0);">{{labels('Close')}}</a>
