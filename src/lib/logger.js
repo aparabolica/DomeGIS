@@ -16,7 +16,7 @@ var Logger = function (options) {
     app.service('/auth/local').before({
       create: [function(hook){
         var clientIp = requestIp.getClientIp(hook.params.req);
-        app.info('login attempt from '+ clientIp +' to account "'+hook.data.email+'"', {
+        app.info('login attempt from '+ clientIp, {
           event: 'loginAttempt',
           ip: clientIp,
           userId: hook.data.email
@@ -29,7 +29,7 @@ var Logger = function (options) {
     app.service('/auth/local').after({
       create: [function(hook){
         var clientIp = requestIp.getClientIp(hook.params.req);
-        app.info('login successful from '+ clientIp +' to account "'+hook.data.email+'"', {
+        app.info('login successful from '+ clientIp, {
           event: 'loginSuccessful',
           ip: clientIp,
           userId: hook.data.email

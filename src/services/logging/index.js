@@ -21,7 +21,7 @@ module.exports = function(){
           .then(function(queryResult){
             queryResult[0].forEach(function(item){
               var time = moment(item.timestamp);
-              results.push([moment().tz("Brazil/East").format(), item.id, item.meta.event, item.meta.userId, item.level, item.message]);
+              results.push([time.tz("Brazil/East").format(), item.id, item.meta.event, item.meta.userId, item.level, item.message]);
             });
             csvStringify(results, function(err, csv){
               if (err) return reject(new errors.GeneralError('Error while parsing logs.'));
