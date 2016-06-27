@@ -50,7 +50,7 @@ module.exports = function(){
           else {
 
             var geometryFields = _.filter(fields, function(field){
-              return ((field.name == 'geometry') && (field.dataTypeID == 16393));
+              return (field.name == 'geometry');
             });
 
             if (geometryFields.length == 0)
