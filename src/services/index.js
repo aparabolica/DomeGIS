@@ -15,14 +15,14 @@ module.exports = function() {
   var app = this;
 
   // sequelize with full access
-  var sequelize = new Sequelize(app.get('postgres'), {
+  var sequelize = new Sequelize(app.get('sequelize'), {
     dialect: 'postgres',
     logging: false
   });
   app.set('sequelize', sequelize);
 
   // sequelize with read only
-  var sequelize_readonly = new Sequelize(app.get('postgres_ro'), {
+  var sequelize_readonly = new Sequelize(app.get('sequelize_readonly'), {
     dialect: 'postgres',
     logging: false
   });
