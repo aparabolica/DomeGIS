@@ -28,8 +28,6 @@ module.exports = function() {
   });
   app.set('sequelize_readonly', sequelize_readonly);
 
-
-
   app.configure(authentication);
   app.configure(user);
   app.configure(content);
@@ -58,6 +56,7 @@ module.exports = function() {
     // init admin user
     var Users = app.service('users');
     Users.find({$limit: 1}).then(function(users){
+
       if (users.total == 0) {
         Users.create({
           name: "First Admin",
@@ -66,6 +65,9 @@ module.exports = function() {
           roles: ["admin", "editor"]
         }).then(function(){
           console.log('First admin user created sucessfully, please change its password.');
+        }).catch(function(err){
+          console.log('Couldn\'t create first user!');
+          console.log(err);
         })
       }
     }).catch(function(err){

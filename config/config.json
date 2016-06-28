@@ -1,0 +1,26 @@
+{
+  "development": {
+    "username": "domegis",
+    "password": "domegis",
+    "database": "domegis",
+    "host": "localhost",
+    "port": 5432,
+    "dialect": "postgresql"
+  },
+  "test": {
+    "username": "domegis",
+    "password": "domegis",
+    "database": "domegis",
+    "host": "localhost",
+    "port": 5432,
+    "dialect": "postgresql"
+  },
+  "production": {
+    "username": "domegis",
+    "password": "domegis",
+    "database": "domgis",
+    "host": "localhost",
+    "port": 5432,
+    "dialect": "postgresql"
+  }
+}
