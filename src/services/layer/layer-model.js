@@ -17,7 +17,6 @@ module.exports = function(sequelize) {
     url: { type: Sequelize.STRING, required: true },
     status: { type: Sequelize.STRING, defaultValue: 'syncing' }
   }, {
-    freezeTableName: true,
     classMethods: {
       associate: function(models){
         layer.belongsTo(models.contents);

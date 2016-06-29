@@ -12,7 +12,6 @@ module.exports = function(sequelize) {
     layergroupId: { type: Sequelize.STRING },
     creatorId: { type: Sequelize.INTEGER}
   }, {
-    freezeTableName: true,
     classMethods: {
       associate: function(models){
         view.belongsTo(models.layers);

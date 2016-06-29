@@ -11,7 +11,6 @@ module.exports = function(sequelize) {
     cartocss: { type: Sequelize.TEXT, required: true},
     layergroupId: { type: Sequelize.STRING }
   }, {
-    freezeTableName: true,
     classMethods: {
       associate: function(models){
         preview.belongsTo(models.layers);
