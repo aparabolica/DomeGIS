@@ -1,0 +1,21 @@
+<div class="meta">
+  <p class="info" ng-show="layer.updatedAt">Last sync: {{layer.updatedAt | formatDate}}</p>
+</div>
+<section id="{{layer.id}}_details">
+  <table class="sub-table layers-table">
+    <thead>
+      <tr>
+        <td></td>
+        <td>Name</td>
+        <td>Geometry type</td>
+        <td>Feature count</td>
+        <td>Fields</td>
+        <td class="views-column">Views</td>
+      </tr>
+      </tr>
+    </thead>
+    <tbody>
+      <tr layer-item="layer"></tr>
+    </tbody>
+  </table>
+</section>

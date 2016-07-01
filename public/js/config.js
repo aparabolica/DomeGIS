@@ -60,6 +60,17 @@ angular.module('domegis')
               }
             });
           }
+        ],
+        Derived: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('layers'), {
+              query: {
+                type: 'derived',
+                $limit: 100
+              }
+            });
+          }
         ]
       }
     })

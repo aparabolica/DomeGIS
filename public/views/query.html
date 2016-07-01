@@ -16,46 +16,88 @@
     </div>
   </div>
 </header>
-<section class="synced-container" class="clearfix" ng-show="collection.length">
+<section class="synced-container" class="clearfix">
   <header class="results-header">
-    <h2>Collection</h2>
+    <div class="clearfix">
+      <h2>Collection</h2>
+      <nav>
+        <a href="javascript:void(0);" ng-click="setCollection('arcgis')" ng-class="{active:collectionType == 'arcgis'}">ArcGIS Content</a>
+        <a href="javascript:void(0);" ng-click="setCollection('derived')" ng-class="{active:collectionType == 'derived'}">Derived Layers</a>
+      </nav>
+    </div>
   </header>
   <div class="container">
     <div class="twelve columns">
-      <table class="results">
-        <thead>
-          <tr>
-            <td></td>
-            <td>Name</td>
-            <td>Date</td>
-            <!-- <td>Source</td> -->
-            <td ng-show="hasRole('editor')">Remove from collection</td>
-          </tr>
-        </thead>
-        <tbody ng-repeat="item in collection = (synced | filter:search)" ng-class="{active: item.$viewLayers}">
-          <tr class="clickable" ng-click="toggleLayers(item)">
-            <td></td>
-            <td class="main">{{item.title}}</td>
-            <td>
-              {{item.createdAt | formatDate}}
-              <span class="modified">Modified: {{item.modifiedAt | formatDate}}</span>
-            </td>
-            <!-- <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link" ng-click="$event.stopPropagation()"></a></td> -->
-            <td ng-show="hasRole('editor')"><a href="javascript:void(0);" ng-click="$event.stopPropagation();toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
-          </tr>
-          <tr>
-            <td class="sub" colspan="6">
-              <div content-item="isSynced(item)"></div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="arcgis-content" ng-show="collectionType == 'arcgis'">
+        <p class="info" ng-hide="synced.length">There are no synchronized ArcGIS content on the database. <span ng-show="hasRole('editor')">Click on the contents below to start synchronizing.</span></p>
+        <table class="results" ng-show="collection.length && synced.length">
+          <thead>
+            <tr>
+              <td></td>
+              <td>Name</td>
+              <td>Date</td>
+              <!-- <td>Source</td> -->
+              <td ng-show="hasRole('editor')">Remove from collection</td>
+            </tr>
+          </thead>
+          <tbody ng-repeat="item in collection = (synced | filter:search)" ng-class="{active: item.$viewLayers}">
+            <tr class="clickable" ng-click="toggleLayers(item)">
+              <td></td>
+              <td class="main">{{item.title}}</td>
+              <td>
+                {{item.createdAt | formatDate}}
+                <span class="modified">Modified: {{item.modifiedAt | formatDate}}</span>
+              </td>
+              <!-- <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link" ng-click="$event.stopPropagation()"></a></td> -->
+              <td ng-show="hasRole('editor')"><a href="javascript:void(0);" ng-click="$event.stopPropagation();toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
+            </tr>
+            <tr>
+              <td class="sub" colspan="6">
+                <div content-item="isSynced(item)"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="derived-layers" ng-show="collectionType == 'derived'">
+        <p class="info" ng-hide="derived.length">There are no derived layers on the database. <a ui-sref="derived" ng-show="hasRole('editor')">Click here to create your first.</a></p>
+        <table class="results" ng-show="filteredDerived.length && derived.length">
+          <thead>
+            <tr>
+              <td></td>
+              <td>Name</td>
+              <td>Date</td>
+              <td ng-show="hasRole('editor')">Remove derived layer</td>
+            </tr>
+          </thead>
+          <tbody ng-repeat="item in filteredDerived = (derived | filter:search)" ng-class="{active: item.$viewLayers}">
+            <tr class="clickable" ng-click="toggleLayers(item)">
+              <td></td>
+              <td class="main">{{item.name}}</td>
+              <td>
+                {{item.createdAt | formatDate}}
+                <span class="modified">Updated: {{item.updatedAt | formatDate}}</span>
+              </td>
+              <td ng-show="hasRole('editor')">
+                <a href="javascript:void(0);" ng-click="$event.stopPropagation();removeLayer(item)" class="fa fa-remove"></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="sub" colspan="6">
+                <div derived-item="item"></div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>
 <section class="results-container" class="clearfix" ng-show="token">
   <header class="results-header">
-    <h2>ArcGIS Library</h2>
+    <div class="clearfix">
+      <h2>ArcGIS Library</h2>
+    </div>
     <p>Showing {{content.start}}-{{content.num}} out of {{content.total}} items.</p>
   </header>
   <div class="container">

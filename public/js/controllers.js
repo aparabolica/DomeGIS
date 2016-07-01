@@ -196,10 +196,11 @@ angular.module('domegis')
   '$scope',
   'Content',
   'Synced',
+  'Derived',
   'Server',
   'esriService',
   'MessageService',
-  function($scope, Content, Synced, Server, Esri, Message) {
+  function($scope, Content, Synced, Derived, Server, Esri, Message) {
 
     var contentService = Server.service('contents');
 
@@ -272,7 +273,9 @@ angular.module('domegis')
       if(item.$viewLayers) {
         item.$viewLayers = false;
       } else {
-        if(!$scope.isSynced(item) && Server.app.get('token')) {
+        if(item.type && item.type == 'derived') {
+          item.$viewLayers = true;
+        } else if(!$scope.isSynced(item) && Server.app.get('token')) {
           if(confirm('Would you like to add this content to collection?')) {
             $scope.toggleSync(item);
           }
@@ -295,9 +298,31 @@ angular.module('domegis')
     });
 
     $scope.isSynced = function(item) {
-      return _.find($scope.synced, function(s) {
-        return item.id == s.id;
-      });
+      if(item.type && item.type == 'derived') {
+        return item;
+      } else {
+        return _.find($scope.synced, function(s) {
+          return item.id == s.id;
+        });
+      }
+    };
+
+    $scope.derived = Derived.data;
+
+    $scope.removeLayer = function(layer) {
+      if(confirm('Are you sure?')) {
+        Server.remove(Server.service('layers'), layer.id).then(function() {
+          $scope.derived = _.filter($scope.derived, function(item) {
+            return item.id !== layer.id;
+          });
+        });
+      }
+    };
+
+    $scope.collectionType = 'arcgis';
+
+    $scope.setCollection = function(type) {
+      $scope.collectionType = type;
     };
 
   }

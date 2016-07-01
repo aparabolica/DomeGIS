@@ -1,5 +1,21 @@
 angular.module('domegis')
 
+.directive('derivedItem', [
+  'Server',
+  function(Server) {
+    return {
+      restrict: 'A',
+      scope: {
+        'layer': '=derivedItem',
+      },
+      templateUrl: '/views/layer/derived-item.html',
+      link: function(scope, element, attrs) {
+
+      }
+    }
+  }
+])
+
 .directive('layerItem', [
   'Server',
   function(Server) {
