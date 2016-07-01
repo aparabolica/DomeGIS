@@ -7,20 +7,21 @@
   </div>
 </header>
 <div id="derived_layers">
-  <div class="container row">
-    <div class="six columns offset-by-three">
-      <form class="main-form" ng-submit="submit()">
-        <h3>SQL Query</h3>
-        <p>
-          <textarea ng-model="sql"></textarea>
-        </p>
-        <p class="err" ng-show="err">{{err}}</p>
-        <input type="submit" value="Send query" />
-      </form>
+  <div class="sql-query" ng-hide="data && data.length">
+    <div class="container row">
+      <div class="six columns offset-by-three">
+        <form class="main-form" ng-submit="submit()">
+          <h3>SQL Query</h3>
+          <p>
+            <textarea ng-model="sql"></textarea>
+          </p>
+          <input type="submit" value="Send query" />
+        </form>
+      </div>
     </div>
   </div>
   <div class="results" ng-show="data && data.length">
-    <h3>Sample results</h3>
+    <h3>Sample data</h3>
     <table>
       <thead>
         <tr>
@@ -32,5 +33,18 @@
           <td ng-repeat="key in keys">{{item[key]}}</td>
         </tr>
       </tbody>
+    </table>
+  </div>
+  <div class="container row" ng-show="data && data.length">
+    <div class="six columns offset-by-three">
+      <form ng-submit="create()">
+        <p>
+          <input type="text" placeholder="Layer name" ng-model="name">
+        </p>
+        <p>
+          <input type="submit" value="Click here to create new layer" />
+        </p>
+      </form>
+    </div>
   </div>
 </div>

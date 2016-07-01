@@ -109,9 +109,36 @@ angular.module('domegis')
       templateUrl: '/views/generate.html'
     })
     .state('derived', {
-      url: '/derived/',
+      url: '/derived/?sql',
       controller: 'DerivedCtrl',
-      templateUrl: '/views/derived.html'
+      templateUrl: '/views/derived.html',
+      resolve: {
+        Data: [
+          '$q',
+          '$http',
+          '$stateParams',
+          function($q, $http, $stateParams) {
+            var deferred = $q.defer();
+            var data = [];
+            if($stateParams.sql) {
+              $http.get('/layers/preview', {
+                params: {
+                  sql: $stateParams.sql
+                }
+              }).then(function(res) {
+                data = res.data[0];
+                deferred.resolve(data);
+              }, function(err) {
+                Message.add(err.message);
+                deferred.resolve(data);
+              });
+            } else {
+              deferred.resolve(data);
+            }
+            return deferred.promise;
+          }
+        ]
+      }
     })
     .state('editContent', {
       url: '/contents/edit/?id',

@@ -542,24 +542,31 @@ angular.module('domegis')
 .controller('DerivedCtrl', [
   '$http',
   '$scope',
-  function($http, $scope) {
-    $scope.sql = '';
-    $scope.err = '';
+  '$state',
+  '$stateParams',
+  'Data',
+  'Server',
+  'MessageService',
+  function($http, $scope, $state, $stateParams, Data, Server, Message) {
+    $scope.data = Data;
+    if($scope.data.length) {
+      $scope.keys = Object.keys($scope.data[0]);
+    }
+    $scope.sql = $stateParams.sql;
+    $scope.name = '';
     $scope.submit = function() {
-      $scope.err = '';
-      $scope.data = [];
-      $http.get('/layers/preview', {
-        params: {
-          sql: $scope.sql
-        }
-      }).then(function(res) {
-        console.log(res);
-        $scope.data = res.data[0];
-        $scope.keys = Object.keys(res.data[0][0]);
-      }, function(err) {
-        $scope.err = err.data.message;
-        console.log(err);
-      });
+      $state.go($state.current.name, {sql: $scope.sql});
     };
+    $scope.create = function() {
+      Server.create(Server.service('layers'), {
+        type: 'derived',
+        name: $scope.name,
+        query: $stateParams.sql
+      }).then(function(data) {
+        console.log(data);
+      }, function(err) {
+        Message.add(err.message);
+      });
+    }
   }
 ]);

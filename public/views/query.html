@@ -41,7 +41,7 @@
               <span class="modified">Modified: {{item.modifiedAt | formatDate}}</span>
             </td>
             <!-- <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link" ng-click="$event.stopPropagation()"></a></td> -->
-            <td ng-show="hasRole('editor')"><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
+            <td ng-show="hasRole('editor')"><a href="javascript:void(0);" ng-click="$event.stopPropagation();toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
           </tr>
           <tr>
             <td class="sub" colspan="6">

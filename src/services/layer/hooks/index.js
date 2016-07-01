@@ -28,10 +28,10 @@ function dropLayer(sequelize, layerId, doneResetLayer) {
 function generateDerivedLayer(hook, doneGenerateDerivedLayer) {
   var sequelize = hook.app.get('sequelize');
   var sequelize_readonly = hook.app.get('sequelize_readonly');
-  var sql = hook.data.sql;
+  var sql = hook.data.query;
 
   // a SQL query must be passed
-  if (!hook.data.sql)
+  if (!hook.data.query)
     return doneGenerateDerivedLayer(new errors.BadRequest('Missing SQL query.'));
   // use read-only client to get non-destructive results
   else
@@ -223,7 +223,7 @@ exports.before = {
                 if (err) return reject(err);
 
                 // set metadata
-                hook.data.query = hook.data.sql;
+                // hook.data.query = hook.data.sql;
 
 
                 resolve();
