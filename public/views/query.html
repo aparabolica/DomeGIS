@@ -22,13 +22,13 @@
   </header>
   <div class="container">
     <div class="twelve columns">
-      <table class="results" ng-controller="ArcGisCtrl">
+      <table class="results">
         <thead>
           <tr>
             <td></td>
             <td>Name</td>
             <td>Date</td>
-            <td>Source</td>
+            <!-- <td>Source</td> -->
             <td ng-show="hasRole('editor')">Remove from collection</td>
           </tr>
         </thead>
@@ -40,7 +40,7 @@
               {{item.createdAt | formatDate}}
               <span class="modified">Modified: {{item.modifiedAt | formatDate}}</span>
             </td>
-            <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link" ng-click="$event.stopPropagation()"></a></td>
+            <!-- <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link" ng-click="$event.stopPropagation()"></a></td> -->
             <td ng-show="hasRole('editor')"><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
           </tr>
           <tr>
