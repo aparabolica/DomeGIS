@@ -360,6 +360,9 @@ table {
     background: @blue;
     border-bottom: 1px solid lighten(@blue, 10%);
     color: #fff;
+    form {
+      margin: 0 0 2rem;
+    }
     input[type=text],
     input[type=email],
     input[type=password],
@@ -370,6 +373,8 @@ table {
       border-radius: 0;
       border: 0;
       box-shadow: 0 0 0 0;
+      margin: 0;
+      // padding: 0;
     }
     h1,
     h2 {
@@ -398,14 +403,23 @@ table {
   .synced-container,
   .results-container {
     margin: 0 -4rem;
-    h2 {
+    .results-header {
       padding: 2rem 4rem;
       margin: -2rem 0 1rem;
-      font-weight: 600;
-      font-size: 1.4em;
       background: #eee;
       color: #333;
       border-bottom: 1px solid #e0e0e0;
+      h2 {
+        margin: 0;
+        padding: 0;
+        font-weight: 600;
+        font-size: 1.4em;
+      }
+      p {
+        margin: 0;
+        padding: 0;
+        color: #666;
+      }
     }
   }
   .checkbox-label {

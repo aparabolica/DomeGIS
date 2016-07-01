@@ -13,15 +13,16 @@
           </select>
         </form>
       </nav>
-      <p>Showing {{content.start}}-{{content.num}} out of {{content.total}} items.</p>
     </div>
   </div>
 </header>
 <section class="synced-container" class="clearfix" ng-show="collection.length">
-  <h2>Collection</h2>
+  <header class="results-header">
+    <h2>Collection</h2>
+  </header>
   <div class="container">
     <div class="twelve columns">
-      <table class="results">
+      <table class="results" ng-controller="ArcGisCtrl">
         <thead>
           <tr>
             <td></td>
@@ -39,7 +40,7 @@
               {{item.createdAt | formatDate}}
               <span class="modified">Modified: {{item.modifiedAt | formatDate}}</span>
             </td>
-            <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link"></a></td>
+            <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link" ng-click="$event.stopPropagation()"></a></td>
             <td ng-show="hasRole('editor')"><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
           </tr>
           <tr>
@@ -53,7 +54,10 @@
   </div>
 </section>
 <section class="results-container" class="clearfix" ng-show="token">
-  <h2>ArcGIS Library</h2>
+  <header class="results-header">
+    <h2>ArcGIS Library</h2>
+    <p>Showing {{content.start}}-{{content.num}} out of {{content.total}} items.</p>
+  </header>
   <div class="container">
     <div class="twelve columns">
       <table class="results" ng-controller="ArcGisCtrl">
@@ -76,7 +80,7 @@
               {{item.created | formatDate}}
               <span class="modified">Modified: {{item.modified | formatDate}}</span>
             </td>
-            <td><a ng-href="{{getArcGisUrl(item)}}" rel="external" target="_blank" class="fa fa-link"></a></td>
+            <td><a ng-href="{{getArcGisUrl(item)}}" ng-click="$event.stopPropagation()" rel="external" target="_blank" class="fa fa-link"></a></td>
             <td ng-show="hasRole('editor')"><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
           </tr>
           <tr ng-show="isSynced(item)">
