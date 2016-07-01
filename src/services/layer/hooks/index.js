@@ -30,6 +30,8 @@ function generateDerivedLayer(hook, doneGenerateDerivedLayer) {
   var sequelize_readonly = hook.app.get('sequelize_readonly');
   var sql = hook.data.query;
 
+
+
   // a SQL query must be passed
   if (!hook.data.query)
     return doneGenerateDerivedLayer(new errors.BadRequest('Missing SQL query.'));
@@ -58,6 +60,9 @@ function generateDerivedLayer(hook, doneGenerateDerivedLayer) {
           else if (geometryFields.length != 1) {
             return doneGenerateDerivedLayer(new errors.BadRequest('Multiple `geometry` fields.'));
           } else {
+
+            // remove trailing semicolon
+            sql = sql.replace(';', '');
 
             // create table with features
             var createTableQuery = 'SELECT * INTO "'+hook.data.id+'" from ('+sql+') as derived';
