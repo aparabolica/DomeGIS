@@ -79,8 +79,15 @@ function generateDerivedLayer(hook, doneGenerateDerivedLayer) {
 
                       // transform description to an array
                       _.each(_.keys(tableDescription), function(key){
-                        tableDescription[key]['name'] = key;
-                        hook.data.fields.push(tableDescription[key]);
+                        if (key != 'geometry') {
+                          tableDescription[key]['name'] = key;
+                          tableDescription[key]['title'] = {
+                            "en": key,
+                            "es": key,
+                            "pt": key
+                          };
+                          hook.data.fields.push(tableDescription[key]);
+                        }
                       });
 
                       doneGenerateDerivedLayer();
