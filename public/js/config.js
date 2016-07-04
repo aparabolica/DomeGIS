@@ -128,7 +128,8 @@ angular.module('domegis')
           '$q',
           '$http',
           '$stateParams',
-          function($q, $http, $stateParams) {
+          'MessageService',
+          function($q, $http, $stateParams, Message) {
             var deferred = $q.defer();
             var data = [];
             if($stateParams.sql) {
