@@ -1,6 +1,8 @@
 // bower components:
 //= require ace-builds/src/ace
 //= require ace-builds/src/mode-css
+//= require ace-builds/src/mode-pgsql
+//= require ace-builds/src/ext-language_tools
 //= require socket.io-client/socket.io
 //= require feathers-client/dist/feathers
 //= require moment/moment

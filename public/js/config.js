@@ -124,6 +124,16 @@ angular.module('domegis')
       controller: 'DerivedCtrl',
       templateUrl: '/views/derived.html',
       resolve: {
+        Layers: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('layers'), {
+              query: {
+                $limit: 100
+              }
+            });
+          }
+        ],
         Data: [
           '$q',
           '$http',

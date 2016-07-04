@@ -570,9 +570,52 @@ angular.module('domegis')
   '$state',
   '$stateParams',
   'Data',
+  'Layers',
   'Server',
   'MessageService',
-  function($http, $scope, $state, $stateParams, Data, Server, Message) {
+  function($http, $scope, $state, $stateParams, Data, Layers, Server, Message) {
+
+    var aceLoaded = function(editor) {
+      var staticWordCompleter = {
+        getCompletions: function(editor, session, pos, prefix, callback) {
+          callback(null, Layers.data.map(function(layer) {
+            return {
+              caption: layer.name,
+              value: layer.name,
+              meta: "layer",
+              _id: layer.id,
+              completer: {
+                insertMatch: function(editor, data) {
+                  if (editor.completer.completions.filterText) {
+                    var ranges = editor.selection.getAllRanges();
+                    for (var i = 0, range; range = ranges[i]; i++) {
+                      range.start.column -= editor.completer.completions.filterText.length;
+                      editor.session.remove(range);
+                    }
+                  }
+                  editor.execCommand("insertstring", '"' + data._id + '"');
+                }
+              }
+            };
+          }));
+        }
+      };
+      editor.completers.push(staticWordCompleter);
+    };
+
+    $scope.aceOptions = {
+      mode: 'pgsql',
+      useWrapMode: false,
+      showGutter: false,
+      theme: 'github',
+      maxLines: Infinity,
+      onLoad: aceLoaded,
+      advanced: {
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+      }
+    };
     $scope.data = Data;
     if($scope.data.length) {
       $scope.keys = Object.keys($scope.data[0]);
