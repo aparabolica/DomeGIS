@@ -569,18 +569,19 @@ angular.module('domegis')
   '$scope',
   '$state',
   '$stateParams',
+  '$filter',
   'Data',
   'Layers',
   'Server',
   'MessageService',
-  function($http, $scope, $state, $stateParams, Data, Layers, Server, Message) {
+  function($http, $scope, $state, $stateParams, $filter, Data, Layers, Server, Message) {
 
     var aceLoaded = function(editor) {
       var staticWordCompleter = {
         getCompletions: function(editor, session, pos, prefix, callback) {
           callback(null, Layers.data.map(function(layer) {
             return {
-              caption: layer.name,
+              caption: $filter('translate')(layer.name),
               value: layer.name,
               meta: "layer",
               _id: layer.id,
@@ -631,7 +632,7 @@ angular.module('domegis')
         name: $scope.name,
         query: $stateParams.sql
       }).then(function(data) {
-        console.log(data);
+        $state.go('editView', {layerId: data.id});
       }, function(err) {
         Message.add(err.message);
       });
