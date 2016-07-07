@@ -614,6 +614,7 @@ table.results {
     padding: 1rem;
     background: #fff;
     margin: 0 0 1rem;
+    position: relative;
     h3 {
       font-size: 1.4em;
       line-height: 1;
@@ -622,6 +623,11 @@ table.results {
       color: #333;
       margin: 0;
       font-weight: 600;
+      width: 85%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -o-text-overflow: ellipsis;
+      white-space: nowrap;
       a {
         color: inherit;
         text-decoration: none;
@@ -631,6 +637,11 @@ table.results {
       margin: 1px 0;
       display: inline-block;
       float: right;
+      background: #fff;
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 1rem;
       button,
       .button {
         background: transparent;
@@ -638,7 +649,7 @@ table.results {
         padding: 0;
         color: #777;
         display: inline-block;
-        margin: 0 0 0 .5rem;
+        margin: 0 0 0 .2rem;
         &:hover {
           color: #333;
         }
