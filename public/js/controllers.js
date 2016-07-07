@@ -624,8 +624,14 @@ angular.module('domegis')
     $scope.sql = $stateParams.sql;
     $scope.name = '';
     $scope.submit = function() {
+      $scope.loading = true;
       $state.go($state.current.name, {sql: $scope.sql});
     };
+    $scope.$on('$stateChangeSuccess', function(ev, toState, toParams) {
+      if(toState == $state.current.name && toParams.sql) {
+        $scope.loading = false;
+      }
+    });
     $scope.create = function() {
       Server.create(Server.service('layers'), {
         type: 'derived',

@@ -15,7 +15,7 @@
           <p>
             <textarea ng-model="sql" ui-ace="aceOptions"></textarea>
           </p>
-          <input type="submit" value="Send query" />
+          <input type="submit" value="{{loading ? 'Obtaining results...' : 'Send query'}}" ng-disabled="loading" />
         </form>
       </div>
     </div>
