@@ -18,6 +18,7 @@ L.Control.DownloadData = L.Control.extend({
     this._container.innerHTML = '<a href="javascript:void(0);"><span class="fa fa-download"></span> Download data</a>';
 
     L.DomEvent.disableClickPropagation(this._container);
+    L.DomEvent.disableScrollPropagation(this._container);
 
     L.DomEvent.addListener(this._container, 'click', function() {
       $(self._map._container).find('.download-box').show();
@@ -64,6 +65,9 @@ L.Control.DownloadData = L.Control.extend({
     $download.hide();
 
     $map.append($download);
+
+    L.DomEvent.disableClickPropagation($download[0]);
+    L.DomEvent.disableScrollPropagation($download[0]);
 
     $download.on('click', '.close', function() {
       $download.hide();

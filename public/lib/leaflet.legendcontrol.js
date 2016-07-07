@@ -13,6 +13,7 @@ L.Control.Legend = L.Control.extend({
     var self = this;
     this._container = L.DomUtil.create('div', 'map-legends wax-legends');
     L.DomEvent.disableClickPropagation(this._container);
+    L.DomEvent.disableScrollPropagation(this._container);
 
     $(map._container).on('click', '.map-legend', function() {
       var layers = self._legends[$(this).html()];
