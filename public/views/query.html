@@ -73,7 +73,7 @@
           <tbody ng-repeat="item in filteredDerived = (derived | filter:search)" ng-class="{active: item.$viewLayers}">
             <tr class="clickable" ng-click="toggleLayers(item)">
               <td></td>
-              <td class="main">{{item.name}}</td>
+              <td class="main">{{item.name | translate}}</td>
               <td>
                 {{item.createdAt | formatDate}}
                 <span class="modified">Updated: {{item.updatedAt | formatDate}}</span>
