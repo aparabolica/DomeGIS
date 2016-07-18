@@ -27,7 +27,7 @@
           <nav id="mastnav">
             <a ui-sref="users" ng-show="hasRole('admin')">Users</a>
             <a ui-sref="generateMap">Generate map</a>
-            <a ui-sref="derived" ng-show="hasRole('admin')">Derived Layers</a>
+            <a ui-sref="derived" ui-sref-opts="{inherit:false,reload:true}" ng-show="hasRole('editor')">Derived Layers</a>
             <a href="javascript:void(0);" ng-click="getLogs()" ng-show="hasRole('admin')">Logs</a>
             <a ui-sref="login" ng-hide="token">Login</a>
             <a href="javascript:void(0);" ng-show="token" ng-click="logout()">Logout</a>
