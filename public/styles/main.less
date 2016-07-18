@@ -264,6 +264,35 @@ table {
   .download-data {
     width: 200px;
   }
+  .map-legend {
+    // padding-left: 20px;
+    position: relative;
+    &:before {
+      float: left;
+      content: '\2713';
+      // margin: 10px;
+      font-size: 1em;
+      line-height: 1;
+      margin: 1.15rem .65rem 0 0;
+      color: green;
+    }
+    &:hover {
+      &:before {
+        content: '\26AC';
+      }
+    }
+    &.concealed {
+      &:before {
+        content: '\26AC';
+        color: #ddd;
+      }
+      &:hover {
+        &:before {
+          content: '\2713';
+        }
+      }
+    }
+  }
   .map-legend,
   .download-data {
     max-height: 150px;
