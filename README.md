@@ -13,18 +13,25 @@ Install VM:
     cd DomeGIS
     vagrant up
 
-The `config` directory contains the following files, which shouldn't be changed unless you need so:
+The `config` directory contains the following files, which shouldn't be changed unless you need to:
 
 - `config.json`: db connection for Sequelize migrations;
 - `default.json`: PostgreSQL, Windshaft and other platform configs.
 
-Install dependencies, migrate database and run app:
+Access the machine via SSH:
 
-    vagrant ssh
+  vagrant ssh
+
+Install dependencies and migrate database:
+
     cd /vagrant
-    sequelize db:migrate    
     npm install
-    npm start    
+    bower install
+    sequelize db:migrate
+
+Then start the application:
+
+    npm start
 
 ## License
 

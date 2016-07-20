@@ -141,5 +141,16 @@ update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 apt-get install -y libmapnik2.2 redis-server node-node-redis
 apt-get install -y libcairo2-dev libpango1.0-dev libjpeg8-dev libgif-dev
 
-# Install sequelize globally
-npm install -g sequelize
+# Change to app directory
+cd /vagrant
+
+# Install Node.js dependencies
+npm install
+
+# Install Sequelize and migrate DB
+npm install -g pg sequelize sequelize-cli
+sequelize db:migrate
+
+# Install Bower components
+npm install -g bower
+bower install
