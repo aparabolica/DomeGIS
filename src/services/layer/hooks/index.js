@@ -223,6 +223,7 @@ exports.before = {
                   }
                   return field;
                 });
+                hook.data.metadata = properties;
                 resolve();
               });
             } else if (hook.data.type == 'derived') {
@@ -277,12 +278,9 @@ exports.after = {
     var sequelize = hook.app.get('sequelize');
     var layerId = hook.data.id;
 
-
-
+    // Emit 'layer created' signal
     Layers.emit('created', hook.data);
     log('layer metadata saved, trying to to sync from arcgis');
-
-
 
     function emitSyncFinishEvent(err, data) {
       var status = 'synced';
@@ -470,7 +468,7 @@ exports.after = {
                     + "GRANT SELECT ON \""+layerId+"\" TO domegis_readonly;";
 
                     sequelize.query(query).then(function(result){
-                      generateShapefile(hook, emitSyncFinishEvent);
+                      generateDatafiles(hook, emitSyncFinishEvent);
                     }).catch(emitSyncFinishEvent);
                   });
                 }).catch(emitSyncFinishEvent);
@@ -490,7 +488,7 @@ exports.after = {
        + "GRANT SELECT ON \""+layerId+"\" TO domegis_readonly;";
 
        sequelize.query(query).then(function(result){
-         generateShapefile(hook, emitSyncFinishEvent);
+         generateDatafiles(hook, emitSyncFinishEvent);
        }).catch(emitSyncFinishEvent);
     }
   }],
@@ -500,26 +498,69 @@ exports.after = {
 };
 
 
-var generateShapefile = function(hook, doneGenerateShapefile) {
-  /*
-  * Generate shapefile from data
-  */
+/*
+* Generate shp and csv
+*/
+
+var generateDatafiles = function(hook, doneGenerateDatafiles) {
 
   var publicDir = hook.app.get('public');
   var layerId = hook.data.id;
   var dbParams = hook.app.get('windshaftOpts').dbParams;
+
+  if (!hook.data.metadata) hook.data.metadata = {};
+
+  var shpDatapackage = {
+    "name": hook.data.name,
+    "title": hook.data.metadata.title || "",
+    "description": hook.data.metadata.description || "",
+    "license": {
+      "copyrightText": hook.data.metadata.copyrightText || ""
+    },
+    "url": hook.data.url,
+    "resources": [
+      {
+        "name": hook.data.id + ".shp",
+        "path": hook.data.id + ".shp",
+        "schema": {
+          "fields": hook.data.fields
+        }
+      }
+    ]
+  }
+
+  var csvDatapackage = {
+    "name": hook.data.name,
+    "title": hook.data.metadata.title || "",
+    "description": hook.data.metadata.description || "",
+    "license": {
+      "copyrightText": hook.data.metadata.copyrightText || ""
+    },
+    "url": hook.data.url,
+    "resources": [
+      {
+        "name": hook.data.id + ".csv",
+        "path": hook.data.id + ".csv",
+        "schema": {
+          "fields": hook.data.fields
+        }
+      }
+    ]
+  }
 
   // command steps
   var cmds = [
     'mkdir -p '+publicDir+'/downloads',
     'mkdir -p /tmp/domegis/shapefiles',
     'ogr2ogr -overwrite -f "ESRI Shapefile" /tmp/domegis/shapefiles/' + hook.data.id + ' PG:"user=domegis dbname=domegis" ' + hook.data.id,
-    'zip -ju '+publicDir+'/downloads/'+hook.data.id+'.shp.zip /tmp/domegis/shapefiles/' + hook.data.id + '/' + hook.data.id + '.*',
+    'echo \''+ JSON.stringify(shpDatapackage, null, '\t') +'\' > /tmp/domegis/shapefiles/' + hook.data.id + '/datapackage.json',
+    'zip -ju '+publicDir+'/downloads/'+hook.data.id+'.shp.zip /tmp/domegis/shapefiles/' + hook.data.id + '/*',
     'rm -rf /tmp/domegis/shapefiles/'+hook.data.id,
-    'mkdir -p /tmp/domegis/csvs',
-    'ogr2ogr -overwrite -f "CSV" /tmp/domegis/csvs/'+hook.data.id+'.csv PG:"user=domegis dbname=domegis" ' + hook.data.id,
-    'zip -ju '+publicDir+'/downloads/'+hook.data.id+'.csv.zip /tmp/domegis/csvs/'+hook.data.id+'.csv',
-    'rm /tmp/domegis/csvs/'+hook.data.id+'.csv'
+    'mkdir -p /tmp/domegis/csvs/' + hook.data.id,
+    'ogr2ogr -overwrite -f "CSV" /tmp/domegis/csvs/'+hook.data.id+'/'+hook.data.id+'.csv PG:"user=domegis dbname=domegis" ' + hook.data.id,
+    'echo \''+ JSON.stringify(csvDatapackage, null, '\t') +'\' > /tmp/domegis/csvs/' + hook.data.id + '/datapackage.json',
+    'zip -ju '+publicDir+'/downloads/'+hook.data.id+'.csv.zip /tmp/domegis/csvs/'+hook.data.id+'/*',
+    'rm -rf /tmp/domegis/csvs/'+hook.data.id
   ]
 
   async.eachSeries(cmds, function(cmd, doneCmd){
@@ -528,8 +569,9 @@ var generateShapefile = function(hook, doneGenerateShapefile) {
       doneCmd();
     });
   }, function(err){
-    if (err) doneGenerateShapefile({message:'could not generate shapefile'});
-    else doneGenerateShapefile();
-    return hook;
+    if (err) {
+      log(err);
+      doneGenerateDatafiles({message:'could not generate shapefile'})
+    } else doneGenerateDatafiles();
   });
 }
