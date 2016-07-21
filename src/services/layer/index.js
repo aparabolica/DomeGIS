@@ -53,23 +53,16 @@ module.exports = function(){
               return (field.name == 'geometry');
             });
 
-            if (geometryFields.length == 0)
-              return res.status(400).json({message: 'Missing `geometry` field.'});
-            else if (geometryFields.length != 1) {
-              return res.status(400).json({message: 'Multiple `geometry` fields.'});
-            } else {
+            // top results;
+            queryResult[0] = _.first(queryResult[0], 50);
 
-              // top results;
-              queryResult[0] = _.first(queryResult[0], 50);
+            // remove geometries
+            queryResult[0] = _.map(queryResult[0], function(row){
+              delete row.geometry;
+              return row;
+            });
 
-              // remove geometries
-              queryResult[0] = _.map(queryResult[0], function(row){
-                delete row.geometry;
-                return row;
-              });
-
-              return res.json(queryResult);
-            }
+            return res.json(queryResult);
           }
         })
         .catch(function(err) {
