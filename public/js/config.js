@@ -152,7 +152,7 @@ angular.module('domegis')
                 deferred.resolve(data);
               }, function(err) {
                 Message.add(err.data.message);
-                deferred.resolve(data);
+                deferred.resolve(err.data);
               });
             } else {
               deferred.resolve(data);

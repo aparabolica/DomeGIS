@@ -617,9 +617,14 @@ angular.module('domegis')
         enableLiveAutocompletion: true
       }
     };
-    $scope.data = Data;
-    if($scope.data.length) {
-      $scope.keys = Object.keys($scope.data[0]);
+    if(_.isArray(Data)) {
+      $scope.data = Data;
+      if($scope.data.length) {
+        $scope.keys = Object.keys($scope.data[0]);
+      }
+      $scope.err = '';
+    } else if(Data.message) {
+      $scope.err = Data.message;
     }
     $scope.sql = $stateParams.sql;
     $scope.name = '';
