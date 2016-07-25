@@ -64,6 +64,17 @@ function generateDerivedLayer(hook, doneGenerateDerivedLayer) {
             // remove trailing semicolon
             sql = sql.replace(';', '');
 
+            // remove domegis_id field or raise error if is passed
+            if (sql.indexOf('*')) {
+              var fieldsString = [];
+              _.each(fields, function(field){
+                if (field.name != 'domegis_id') fieldsString.push('"'+field.name+'"');
+              });
+              sql = sql.replace('*', fieldsString.join(', '));
+            } else if (sql.indexOf('domegis_id')) {
+              return doneGenerateDerivedLayer(new errors.BadRequest('Field name `domegis_id` is forbidden.'));
+            }
+
             // create table with features
             var createTableQuery = 'SELECT * INTO "'+hook.data.id+'" from ('+sql+') as derived';
             sequelize
@@ -483,8 +494,9 @@ exports.after = {
        * Sync derived Layer
        */
 
-       var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = (select count(*) from \""+layerId+"\"), \"geometryType\" = (select GeometryType(geometry) from \""+layerId+"\") WHERE (layers.id =  '"+ layerId +"');"
+      //  var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = (select count(*) from \""+layerId+"\"), \"geometryType\" = (select GeometryType(geometry) from \""+layerId+"\") WHERE (layers.id =  '"+ layerId +"');"
        var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = (select count(*) from \""+layerId+"\"), \"geometryType\" = (select GeometryType(geometry) from \""+layerId+"\" LIMIT 1) WHERE (layers.id =  '"+ layerId +"');"
+       + "ALTER TABLE \""+layerId+"\" ADD COLUMN \"domegis_id\" SERIAL PRIMARY KEY;"
        + "GRANT SELECT ON \""+layerId+"\" TO domegis_readonly;";
 
        sequelize.query(query).then(function(result){
