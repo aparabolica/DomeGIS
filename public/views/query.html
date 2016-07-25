@@ -40,8 +40,8 @@
               <td ng-show="hasRole('editor')">Remove from collection</td>
             </tr>
           </thead>
-          <tbody ng-repeat="item in collection = (synced | filter:search)" ng-class="{active: item.$viewLayers}">
-            <tr class="clickable" ng-click="toggleLayers(item)">
+          <tbody ng-repeat="item in collection = (synced | filter:search)" ng-class="{active: item.$viewLayers, synced: isSynced(item)}">
+            <tr ng-click="toggleLayers(item, hasRole('editor'))" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
               <td></td>
               <td class="main">{{item.title}}</td>
               <td>
@@ -70,8 +70,8 @@
               <td ng-show="hasRole('editor')">Remove derived layer</td>
             </tr>
           </thead>
-          <tbody ng-repeat="item in filteredDerived = (derived | filter:search)" ng-class="{active: item.$viewLayers}">
-            <tr class="clickable" ng-click="toggleLayers(item)">
+          <tbody ng-repeat="item in filteredDerived = (derived | filter:search)" ng-class="{active: item.$viewLayers, synced: isSynced(item)}">
+            <tr ng-click="toggleLayers(item)" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
               <td></td>
               <td class="main">{{item.name | translate}}</td>
               <td>
@@ -112,8 +112,8 @@
             <td ng-show="hasRole('editor')">Add to collection</td>
           </tr>
         </thead>
-        <tbody ng-repeat="item in content.results" ng-class="{active: item.$viewLayers}">
-          <tr class="clickable" ng-click="toggleLayers(item)">
+        <tbody ng-repeat="item in content.results" ng-class="{active: item.$viewLayers, synced: isSynced(item)}">
+          <tr ng-click="toggleLayers(item)" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
             <td class="full">
               <content-thumbnail content="item"></content-thumbnail>
             </td>

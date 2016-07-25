@@ -67,6 +67,11 @@ angular.module('domegis')
       $scope.bodyClass = _.filter($scope.bodyClass, function(c) {
         return c != 'loading';
       });
+      if($scope.user && $scope.user.roles) {
+        $scope.user.roles.forEach(function(role) {
+          $scope.bodyClass.push('user-' + role);
+        });
+      }
       $scope.bodyClass.push('loaded');
     });
 
@@ -269,13 +274,13 @@ angular.module('domegis')
       }
     };
 
-    $scope.toggleLayers = function(item) {
+    $scope.toggleLayers = function(item, isEditor) {
       if(item.$viewLayers) {
         item.$viewLayers = false;
       } else {
         if(item.type && item.type == 'derived') {
           item.$viewLayers = true;
-        } else if(!$scope.isSynced(item) && Server.app.get('token')) {
+        } else if(!$scope.isSynced(item) && isEditor) {
           if(confirm('Would you like to add this content to collection?')) {
             $scope.toggleSync(item);
           }
