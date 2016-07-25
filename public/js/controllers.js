@@ -625,7 +625,7 @@ angular.module('domegis')
     $scope.name = '';
     $scope.submit = function() {
       $scope.loading = true;
-      $state.go($state.current.name, {sql: $scope.sql});
+      $state.go($state.current.name, {sql: $scope.sql}, {reload: true});
     };
     $scope.$on('$stateChangeSuccess', function(ev, toState, toParams) {
       if(toState == $state.current.name && toParams.sql) {
