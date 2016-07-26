@@ -189,7 +189,7 @@ angular.module('domegis')
       var views = [];
       $scope._layers.forEach(function(l) {
         if($scope.map[l.id] && $scope.map[l.id].id)
-          views.push($scope.map[l.id].id + ':' + ($scope.map[l.id].hidden ? 0 : 1));
+          views.unshift($scope.map[l.id].id + ':' + ($scope.map[l.id].hidden ? 0 : 1));
       });
 
       return views.join(',');
