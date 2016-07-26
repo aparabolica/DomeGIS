@@ -83,6 +83,10 @@ exports.before = {
     checkPasswordChange()
   ],
   remove: [
+    // A user can't remove itself
+    hooks.disable(function(hook){
+      return hook.id != hook.params.user.id;
+    })
   ]
 };
 
