@@ -71,7 +71,7 @@
             </tr>
           </thead>
           <tbody ng-repeat="item in filteredDerived = (derived | filter:search)" ng-class="{active: item.$viewLayers, synced: isSynced(item)}">
-            <tr ng-click="toggleLayers(item)" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
+            <tr ng-click="toggleLayers(item, hasRole('editor'))" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
               <td></td>
               <td class="main">{{item.name | translate}}</td>
               <td>
@@ -113,7 +113,7 @@
           </tr>
         </thead>
         <tbody ng-repeat="item in content.results" ng-class="{active: item.$viewLayers, synced: isSynced(item)}">
-          <tr ng-click="toggleLayers(item)" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
+          <tr ng-click="toggleLayers(item, hasRole('editor'))" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
             <td class="full">
               <content-thumbnail content="item"></content-thumbnail>
             </td>
