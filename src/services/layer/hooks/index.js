@@ -453,6 +453,9 @@ exports.after = {
                   // insert features
                   async.eachSeries(geojson.features, function(esriFeature, doneEach){
 
+                    // ignores features with undefined geometries
+                    if (!esriFeature.geometry) return doneEach();
+
                     // set srid on feature (because of PostGIS)
                     esriFeature.geometry.crs = geojson.crs;
 
