@@ -535,20 +535,23 @@ table.results {
   }
   tbody {
     tr.clickable {
-      > * {
-        pointer-events: none;
-      }
+      cursor: pointer;
+      pointer-events: auto;
+      position: relative;
       .fa-link,
       .fa-toggle-on {
         pointer-events: auto;
       }
+      &:hover {
+        z-index: 2;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+        border-radius: 4px;
+      }
     }
     &.active tr.clickable,
     tr.clickable:hover {
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
-      position: relative;
       z-index: 2;
-      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
       border-radius: 4px;
     }
     td.main {

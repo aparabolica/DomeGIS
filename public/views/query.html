@@ -123,7 +123,7 @@
               <span class="modified">Modified: {{item.modified | formatDate}}</span>
             </td>
             <td><a ng-href="{{getArcGisUrl(item)}}" ng-click="$event.stopPropagation()" rel="external" target="_blank" class="fa fa-link"></a></td>
-            <td ng-show="hasRole('editor')"><a href="javascript:void(0);" ng-click="toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
+            <td ng-show="hasRole('editor')"><a href="javascript:void(0);" ng-click="$event.stopPropagation();toggleSync(item)" class="fa" ng-class="{'fa-toggle-on': isSynced(item), 'fa-toggle-off': !isSynced(item)}"></a></td>
           </tr>
           <tr ng-show="isSynced(item)">
             <td class="sub" colspan="6">
