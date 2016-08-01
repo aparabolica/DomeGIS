@@ -14,30 +14,25 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin', 'editor'] }),
+    auth.restrictToRoles({ roles: ['editor'] }),
     function(hook){
       hook.data.createdAt = hook.data.created;
       hook.data.modifiedAt = hook.data.modified;
+      hook.data.syncedBy = hook.params.user.id;
       return hook;
     }
   ],
   update: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin', 'editor'] })
+    hooks.disable()
   ],
   patch: [
-    auth.verifyToken(),
-    auth.populateUser(),
-    auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin', 'editor'] })
+    hooks.disable()
   ],
   remove: [
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin'] }),
+    auth.restrictToOwner({ownerField: 'syncedBy'}),
     function(hook) {
       // remove associated layer tables and shapefiles
       return new Promise(function(resolve, reject){

@@ -16,7 +16,8 @@ module.exports = function(sequelize) {
       }
     },
     tags: { type: Sequelize.ARRAY(Sequelize.TEXT) },
-    modifiedAt: { type: Sequelize.DATE, required: true}
+    modifiedAt: { type: Sequelize.DATE, required: true},
+    syncedBy: { type: Sequelize.STRING }
   }, {
     classMethods: {
       associate: function(models){
