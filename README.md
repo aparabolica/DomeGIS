@@ -33,6 +33,10 @@ Then start the application:
 
     npm start
 
+## API
+
+DomeGIS uses [FeathersJS](http://feathersjs.com) as its web application framework, which exposes a [RESTful interface](http://docs.feathersjs.com/rest/readme.html).
+
 ## License
 
 Copyright (c) 2016
