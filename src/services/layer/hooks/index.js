@@ -443,7 +443,10 @@ exports.after = {
                   timestamps: false,
                   freezeTableName: true
                 });
-                Features.removeAttribute('id');
+
+                // Remove automatically generated id, if not defined in table
+                if (!schema['id']) Features.removeAttribute('id');
+
                 sequelize.sync().then(function(){
 
 
