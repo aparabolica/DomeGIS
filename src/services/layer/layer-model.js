@@ -16,7 +16,8 @@ module.exports = function(sequelize) {
     extents: { type: Sequelize.STRING },
     url: { type: Sequelize.STRING, required: true },
     status: { type: Sequelize.STRING, defaultValue: 'syncing' },
-    metadata: { type: Sequelize.JSON, defaultValue: {} }
+    metadata: { type: Sequelize.JSON, defaultValue: {} },
+    sync: { type: Sequelize.JSON, defaultValue: {} }
   }, {
     classMethods: {
       associate: function(models){
