@@ -94,10 +94,6 @@ angular.module('domegis')
 
             layers.push('http://{s}.tiles.mapbox.com/v3/infoamazonia.AndesAguaAmazonia_relevo_12AmzRaisg,infoamazonia.AndesAguaAmazonia_relevo_11AmzRaisg,infoamazonia.AndesAguaAmazonia_relevo1-10,infoamazonia.naturalEarth_baltimetria,infoamazonia.rivers,infoamazonia.AAA_pois,infoamazonia.osm-brasil/{z}/{x}/{y}.png');
 
-          } else if(scope.base == 'mapquest_satellite') {
-
-            layers.push('http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png');
-
           } else if(scope.base == 'osm') {
 
             layers.push('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
