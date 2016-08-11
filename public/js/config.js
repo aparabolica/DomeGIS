@@ -88,7 +88,11 @@ angular.module('domegis')
           'Auth',
           'Server',
           function(Auth, Server) {
-            return Server.find(Server.service('users'));
+            return Server.find(Server.service('users'), {
+              query: {
+                $limit: 100
+              }
+            });
           }
         ]
       }
