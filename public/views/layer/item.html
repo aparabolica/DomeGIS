@@ -27,5 +27,5 @@
 </td>
 <td>
   <div ng-repeat="view in views" view-item="view" class="view-item"></div>
-  <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="token && layer.status == 'synced'">Create new view</a>
+  <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="token && layer.sync.status == 'finished'">Create new view</a>
 </td>

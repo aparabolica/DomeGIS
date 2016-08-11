@@ -19,7 +19,8 @@ angular.module('domegis')
         if(scope.content) {
           Server.find(layerService, {
             query: {
-              contentId: scope.content.id
+              contentId: scope.content.id,
+              $limit: 200
             }
           }).then(function(res) {
             scope.layers = res.data;
