@@ -14,7 +14,7 @@
     "tests"
   ],
   "dependencies": {
-    "leaflet": "~0.7.7",
+    "leaflet": "~1.0.0",
     "Leaflet.fullscreen": "https://github.com/Leaflet/Leaflet.fullscreen.git",
     "Leaflet.utfgrid": "https://github.com/danzel/Leaflet.utfgrid.git",
     "angular": "~1.5.3",

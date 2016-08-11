@@ -104,12 +104,11 @@ angular.module('domegis')
 
           } else {
 
-            layers.push('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
-
-            // layers.push(L.tileLayer.bing({
-            //   bingMapsKey: 'AqcPFocZWfHGkBoBjZ0e3NlBbKqN9t_lRuRyjVg7xHlc7JXWrGvupqLFYWRVqfv4',
-            //   zIndex: -1
-            // }));
+            layers.push(L.tileLayer.bing({
+              bingMapsKey: 'AqcPFocZWfHGkBoBjZ0e3NlBbKqN9t_lRuRyjVg7xHlc7JXWrGvupqLFYWRVqfv4',
+              imagerySet: 'Aerial',
+              zIndex: -1
+            }));
 
           }
 
@@ -117,7 +116,6 @@ angular.module('domegis')
             if(typeof l == 'string') {
               baseLayers.addLayer(L.tileLayer(l, {zIndex: -1}));
             } else {
-              console.log(l);
               l.addTo(map);
             }
           });
