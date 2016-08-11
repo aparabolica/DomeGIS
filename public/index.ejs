@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="/components/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="/components/Leaflet.fullscreen/dist/leaflet.fullscreen.css" />
     <link rel="stylesheet" href="/styles/main.css" />
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Promise"></script>
   </head>
   <body ng-controller="SiteCtrl" class="{{bodyClass | join:' '}}" style="display:none;">
     <div id="messages" class="message-notification" ng-controller="MessageCtrl" ng-hide="isDialog">

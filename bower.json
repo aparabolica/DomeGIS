@@ -32,6 +32,7 @@
     "fontawesome": "~4.6.1",
     "angular-ui-sortable": "~0.14.0",
     "angular-cookies": "~1.5.5",
-    "chroma-js": "~1.1.1"
+    "chroma-js": "~1.1.1",
+    "leaflet-bing-layer": "gmaclennan/leaflet-bing-layer#^3.0.1"
   }
 }

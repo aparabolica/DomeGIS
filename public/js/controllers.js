@@ -10,6 +10,7 @@ angular.module('domegis')
     Server.auth().then(function() {
       $scope.token = Server.app.get('token');
       $scope.user = Server.app.get('user');
+      $scope.currentUser = $scope.user;
     });
 
     $scope.auth = function(credentials) {
@@ -18,6 +19,7 @@ angular.module('domegis')
       }, credentials)).then(function() {
         $scope.token = Server.app.get('token');
         $scope.user = Server.app.get('user');
+        $scope.currentUser = $scope.user;
         if($state.current.name == 'login')
           $state.go('home');
       }, function(err) {
@@ -28,6 +30,7 @@ angular.module('domegis')
     $scope.logout = function() {
       $scope.token = undefined;
       $scope.user = undefined;
+      $scope.currentUser = undefined;
       Server.app.logout();
     };
 

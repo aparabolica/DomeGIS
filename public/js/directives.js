@@ -98,14 +98,28 @@ angular.module('domegis')
 
             layers.push('http://otile1.mqcdn.com/tiles/1.0.0/sat/{z}/{x}/{y}.png');
 
+          } else if(scope.base == 'osm') {
+
+            layers.push('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+
           } else {
 
             layers.push('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
 
+            // layers.push(L.tileLayer.bing({
+            //   bingMapsKey: 'AqcPFocZWfHGkBoBjZ0e3NlBbKqN9t_lRuRyjVg7xHlc7JXWrGvupqLFYWRVqfv4',
+            //   zIndex: -1
+            // }));
+
           }
 
-          layers.forEach(function(url) {
-            baseLayers.addLayer(L.tileLayer(url, {zIndex: -1}));
+          layers.forEach(function(l) {
+            if(typeof l == 'string') {
+              baseLayers.addLayer(L.tileLayer(l, {zIndex: -1}));
+            } else {
+              console.log(l);
+              l.addTo(map);
+            }
           });
 
         });
