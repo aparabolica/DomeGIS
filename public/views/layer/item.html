@@ -1,15 +1,16 @@
 <td class="status">
-  <p ng-class="{ok: layer.status == 'synced'}">
-    <span class="fa fa-refresh fa-spin" ng-hide="layer.status"></span>
+  <p ng-class="{ok: layer.status == 'synced', err: layer.status == 'failed'}">
+    <span class="fa fa-refresh fa-spin" ng-hide="layer.status == 'synced' || layer.status == 'failed'"></span>
     <span class="fa fa-check-circle" ng-show="layer.status == 'synced'"></span>
-    <span class="layer-progress">{{progress}}</span>
+    <span class="fa fa-times" ng-show="layer.status == 'failed'"></span>
+    <span class="status-text" ng-hide="layer.status == 'synced'">{{layer.status}}</span>
   </p>
 </td>
 <td class="main">
   <h3>{{layer.name | translate}}</h3>
   <p class="actions" ng-show="token && layer.status == 'synced'">
     <a class="button" ui-sref="editLayer({id:layer.id})">Edit layer</a>
-    <a class="button">
+    <a class="button" ng-click="resync()">
       <span class="fa fa-refresh"></span>
       Resync layer
     </a>

@@ -57,6 +57,7 @@ angular.module('domegis')
         });
         Server.on(layerService, 'updated', function(data) {
           if(scope.layer.id == data.id) {
+            console.log('updated');
             scope.layer = data;
           }
         });
@@ -69,6 +70,17 @@ angular.module('domegis')
             return item.id !== data.id;
           });
         });
+
+        scope.resync = function() {
+          console.log('resyncing');
+          Server.patch(layerService, scope.layer.id, {
+            resync: true
+          }).then(function() {
+            console.log('patched', arguments);
+          }, function() {
+            console.log('path err', arguments);
+          });
+        };
 
         scope.remove = function(layer) {
           Server.remove(layerService, layer.id);
