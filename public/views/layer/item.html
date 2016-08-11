@@ -1,9 +1,9 @@
 <td class="status">
-  <p ng-class="{ok: layer.status == 'synced', err: layer.status == 'failed'}">
-    <span class="fa fa-refresh fa-spin" ng-hide="layer.status == 'synced' || layer.status == 'failed'"></span>
-    <span class="fa fa-check-circle" ng-show="layer.status == 'synced'"></span>
-    <span class="fa fa-times" ng-show="layer.status == 'failed'"></span>
-    <span class="status-text" ng-hide="layer.status == 'synced'">{{layer.status}}</span>
+  <p ng-class="{ok: layer.sync.status == 'finished', err: layer.sync.status == 'failed'}">
+    <span class="fa fa-refresh fa-spin" ng-hide="layer.sync.status == 'finished' || layer.sync.status == 'failed'"></span>
+    <span class="fa fa-check-circle" ng-show="layer.sync.status == 'finished'"></span>
+    <span class="fa fa-times" ng-show="layer.sync.status == 'failed'"></span>
+    <span class="status-text" ng-hide="layer.sync.status == 'finished'">{{layer.sync.status}}</span>
   </p>
 </td>
 <td class="main">

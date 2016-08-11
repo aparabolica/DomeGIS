@@ -61,6 +61,12 @@ angular.module('domegis')
             scope.layer = data;
           }
         });
+        Server.on(layerService, 'patched', function(data) {
+          if(scope.layer.id == data.id) {
+            console.log('patched');
+            scope.layer = data;
+          }
+        });
         Server.on(viewService, 'created', function(data) {
           if(data.layerId == scope.layer.id)
             scope.views.push(data);
