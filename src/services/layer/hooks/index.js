@@ -157,6 +157,13 @@ exports.after = {
         var perPage = 100;
         var geojson = {};
 
+        // Set layer status to "fetching"
+        Layers.patch( layerId, {
+          sync: _.extend(syncStatus, {
+            status: 'fetching'
+          })
+        });
+
         // Start iteration
         async.whilst(
           function() { return current < total; },
@@ -205,16 +212,7 @@ exports.after = {
               // Update counter
               current = current + perPage;
 
-              // Update sync status
-              syncStatus = _.extend(syncStatus, {
-                status: 'fetching',
-                featureCount: geojson.features.length
-              });
-
-              // Save changes
-              Layers.patch( layerId, {
-                sync: syncStatus
-              }, doneFeaturesPageRequest);
+              doneFeaturesPageRequest();
 
             })
           },
