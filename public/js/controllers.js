@@ -295,11 +295,12 @@ angular.module('domegis')
 
     $scope.synced = Synced.data;
 
-    Server.on(contentService, 'created', function(data) {
+    $scope.$on('server.contents.created', function(ev, data) {
       if(!$scope.isSynced(data))
         $scope.synced.push(data);
     });
-    Server.on(contentService, 'removed', function(data) {
+
+    $scope.$on('server.contents.removed', function(ev, data) {
       $scope.synced = _.filter($scope.synced, function(item) {
         return item.id !== data.id;
       });
@@ -491,15 +492,14 @@ angular.module('domegis')
       }
     };
 
-    Server.on(userService, 'created', function(data) {
+    $scope.$on('server.users.created', function(ev, data) {
       $scope.users.push(data);
     });
-    Server.on(userService, 'removed', function(data) {
+    $scope.$on('server.users.removed', function(ev, data) {
       $scope.users = _.filter($scope.users, function(user) {
         return user.id !== data.id;
       });
     });
-
 
   }
 ])

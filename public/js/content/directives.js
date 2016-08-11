@@ -27,11 +27,11 @@ angular.module('domegis')
           });
         }
 
-        Server.on(layerService, 'created', function(data) {
+        scope.$on('server.layers.created', function(ev, data) {
           if(scope.content && data.contentId == scope.content.id && !_.find(scope.layers, function(l) { return l.id == data.id; }))
             scope.layers.push(data);
         });
-        Server.on(layerService, 'removed', function(data) {
+        scope.$on('server.layers.removed', function(ev, data) {
           scope.layers = _.filter(scope.layers, function(item) {
             return item.id !== data.id;
           });

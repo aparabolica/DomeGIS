@@ -39,44 +39,27 @@ angular.module('domegis')
         }).then(function(res) {
           scope.views = res.data;
         });
-
-        Server.on(layerService, 'syncFinish', function(layerId) {
-          if(scope.layer.id == layerId) {
-            Server.get(layerService, layerId).then(function(data) {
-              scope.layer = data;
-            })
-          }
-        });
-        Server.on(layerService, 'syncProgress', function(prog) {
-          if(scope.layer.id == prog.layerId) {
-            if(prog.progress == 1)
-              scope.progress = '99%';
-            else
-              scope.progress = parseInt(prog.progress * 100) + '%';
-          }
-        });
-        Server.on(layerService, 'updated', function(data) {
+        scope.$on('server.layers.updated', function(ev, data) {
           if(scope.layer.id == data.id) {
-            console.log('updated');
+            console.log('updated', data.id, data.sync.status);
             scope.layer = data;
           }
         });
-        Server.on(layerService, 'patched', function(data) {
-          console.log('patched', data.id, data.sync.status);
+        scope.$on('server.layers.patched', function(ev, data) {
           if(scope.layer.id == data.id) {
+            console.log('patched', data.id, data.sync.status);
             scope.layer = data;
           }
         });
-        Server.on(viewService, 'created', function(data) {
+        scope.$on('server.views.created', function(ev, data) {
           if(data.layerId == scope.layer.id)
             scope.views.push(data);
         });
-        Server.on(viewService, 'removed', function(data) {
+        scope.$on('server.views.removed', function(ev, data) {
           scope.views = _.filter(scope.views, function(item) {
             return item.id !== data.id;
           });
         });
-
         scope.resync = function() {
           console.log('resyncing');
           Server.patch(layerService, scope.layer.id, {

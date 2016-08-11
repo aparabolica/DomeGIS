@@ -79,4 +79,26 @@ angular.module('domegis')
     //   }
     // };
   }
+])
+
+.run([
+  'Server',
+  '$rootScope',
+  function(Server, $rootScope) {
+    var Services = {};
+    var services = ['layers', 'contents', 'users', 'views', 'previews'];
+    var events = ['created', 'patched', 'updated', 'removed'];
+    services.forEach(function(service) {
+      Services[service] = Server.service(service);
+    });
+    for(var service in Services) {
+      (function(service) {
+        events.forEach(function(ev, i) {
+          Server.on(Services[service], ev, function(data) {
+            $rootScope.$broadcast('server.' + service + '.' + events[i], data);
+          })
+        });
+      })(service);
+    }
+  }
 ]);

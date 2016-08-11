@@ -13,7 +13,11 @@ angular.module('domegis')
 
         var viewService = Server.service('views');
 
-        Server.on(viewService, 'updated', function(data) {
+        scope.$on('server.views.updated', function(ev, data) {
+          if(data.id == scope.view.id)
+            scope.view = data;
+        });
+        scope.$on('server.views.patched', function(ev, data) {
           if(data.id == scope.view.id)
             scope.view = data;
         });

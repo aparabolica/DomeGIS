@@ -8,7 +8,7 @@
 </td>
 <td class="main">
   <h3>{{layer.name | translate}}</h3>
-  <p class="actions" ng-show="token && layer.status == 'synced'">
+  <p class="actions" ng-show="token && layer.sync.status == 'finished'">
     <a class="button" ui-sref="editLayer({id:layer.id})">Edit layer</a>
     <a class="button" ng-click="resync()">
       <span class="fa fa-refresh"></span>
