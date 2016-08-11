@@ -296,20 +296,12 @@ exports.after = {
                     esriFeature[property] = esriFeature.properties[property];
                   });
 
-                  Features.create(esriFeature).then(function(result){
-
-                    // Update sync status
-                    syncStatus.featureCount = syncStatus.featureCount + 1;
-                    // syncStatus = _.extend(syncStatus, {
-                    //   featureCount: syncStatus.featureCount++
-                    // });
-
-                    // Save changes
-                    Layers.patch( layerId, {
-                      sync: syncStatus
-                    }, doneEach);
-
-                  }).catch(handleSyncFinishEvent);
+                  // save feature
+                  Features.create(esriFeature)
+                    .then(function(){
+                      doneEach();
+                    })
+                    .catch(handleSyncFinishEvent);
                 }, function(err){
                   if (err) return handleSyncFinishEvent(err);
 
