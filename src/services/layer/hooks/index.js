@@ -90,7 +90,13 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin', 'editor'] })
+    auth.restrictToRoles({ roles: ['admin', 'editor'] }),
+    function(hook){
+      return new Promise(function(resolve, reject){
+        if (hook.data.resync) syncArcGisLayerFeatures(hook);
+        resolve();
+      });
+    }
   ],
   remove: [
     auth.verifyToken(),
@@ -105,217 +111,16 @@ exports.after = {
   find: [],
   get: [],
   create: [function(hook){
-    var Layers = hook.app.service('layers');
-    var sequelize = hook.app.get('sequelize');
-    var layerId = hook.data.id;
 
-    // Emit 'layer created' signal
-    Layers.emit('created', hook.data);
     log('layer metadata saved, trying to to sync from arcgis');
-
-    var syncStatus = _.clone(hook.data.sync);
-
-    var handleSyncFinishEvent = function(err, data) {
-      if (err) {
-        log(hook.data.id + ' sync error: ' + err.message);
-        syncStatus = _.extend(syncStatus, {
-          status: 'failed',
-          finishedAt: Date.now(),
-          message: err.message
-        });
-      } else {
-        log('success syncing layer ' + hook.data.id);
-        syncStatus = _.extend(syncStatus, {
-          status: 'finished',
-          finishedAt: Date.now()
-        });
-      }
-
-      Layers.patch(layerId, {
-        sync: syncStatus
-      }).catch(function(err){
-        log(hook.data.id + ' error saving sync status');
-      });
-    }
 
     /*
      * Sync ArcGIS Layer
      */
 
-    if (hook.data.type == 'arcgis') {
-
-      log('is ArcGIS layer');
-
-      // Layer should have features
-      if (hook.data.featureCount > 0) {
-
-        // Prepare for iteration
-        log('features were found');
-
-        var total = hook.data.featureCount;
-        var current = 0;
-        var perPage = 100;
-        var geojson = {};
-
-        // Set layer status to "fetching"
-        Layers.patch( layerId, {
-          sync: _.extend(syncStatus, {
-            status: 'fetching'
-          })
-        });
-
-        // Start iteration
-        async.whilst(
-          function() { return current < total; },
-          function(doneFeaturesPageRequest) {
-
-            log('requesting features after index '+ current);
-
-            request({
-              url: hook.data.url + '/query',
-              qs: {
-                returnGeometry: true,
-                where: '1=1',
-                outSR: 4326,
-                resultOffset: current,
-                resultRecordCount: perPage,
-                outFields: '*',
-                f: 'geojson'
-              }
-            }, function(err, res, body) {
-
-              // Check for request errors
-              if (err) {
-                return doneFeaturesPageRequest(err);
-              } else log('success, adding to geojson... ');
-
-              // Parse JSON
-              var data = {};
-              try {
-                data = JSON.parse(body);
-              } catch (e) {
-                return doneFeaturesPageRequest({message: 'invalid json'})
-              }
-
-              // Result should have features
-              if (data.features && data.features.length) {
-
-                if (current == 0)
-                  geojson = data;
-                else
-                  geojson.features = geojson.features.concat(data.features);
-
-              } else {
-                return doneFeaturesPageRequest({message: 'no features were found'})
-              }
-
-              // Update counter
-              current = current + perPage;
-
-              doneFeaturesPageRequest();
-
-            })
-          },
-          function(err) {
-
-            // Check for errors while request data batch
-            if (err) return handleSyncFinishEvent(err);
-
-            log('starting importing geojson to database');
-
-            var postgisType = geojson.features[0]['geometry']['type'];
-
-            switch (postgisType) {
-              case 'Polygon':
-              postgisType = 'MultiPolygon';
-              break;
-              case 'LineString':
-              postgisType = 'MultiLineString';
-              break;
-            }
-
-            var schema = {
-              domegisId: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true, field: 'domegis_id'},
-              geometry: { type: Sequelize.GEOMETRY(postgisType, 4326) }
-            }
-
-            _.each(hook.data.fields, function(field){
-              var fieldType = esriToSequelizeType(field.type);
-              if (fieldType) schema[field.name] = { type: fieldType };
-            });
-
-            // drop table if exists
-            log('drop current table, if exists');
-            sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'\";').then(function(){
-
-
-              // create feature table
-              log('create layer feature table');
-              var Features = sequelize.define(layerId, schema, {
-                timestamps: false,
-                freezeTableName: true
-              });
-
-              // Remove automatically generated id, if not defined in table
-              if (!schema['id']) Features.removeAttribute('id');
-
-              sequelize.sync().then(function(){
-
-                // create feature table
-                log('start feature import');
-
-                // Update layer status
-                Layers.patch( layerId, {
-                  sync: _.extend(syncStatus, {
-                    status: 'importing',
-                    featureCount: 0
-                  })
-                });
-
-                // insert features
-                async.eachSeries(geojson.features, function(esriFeature, doneEach){
-
-                  // ignores features with undefined geometries
-                  if (!esriFeature.geometry) return doneEach();
-
-                  // set srid on feature (because of PostGIS)
-                  esriFeature.geometry.crs = geojson.crs;
-
-                  // create fake MultiPolygon if needed
-                  if (postgisType == 'MultiPolygon' && esriFeature.geometry.type == 'Polygon') {
-                    esriFeature.geometry.type = 'MultiPolygon';
-                    esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
-                  } else if (postgisType == 'MultiLineString' && esriFeature.geometry.type == 'LineString') {
-                    esriFeature.geometry.type = 'MultiLineString';
-                    esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
-                  }
-
-                  _.each(_.keys(esriFeature.properties), function(property){
-                    esriFeature[property] = esriFeature.properties[property];
-                  });
-
-                  // save feature
-                  Features.create(esriFeature)
-                    .then(function(){
-                      doneEach();
-                    })
-                    .catch(handleSyncFinishEvent);
-                }, function(err){
-                  if (err) return handleSyncFinishEvent(err);
-
-                  var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = " + geojson.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
-                  + "GRANT SELECT ON \""+layerId+"\" TO domegis_readonly;";
-
-                  sequelize.query(query).then(function(result){
-                    generateDatafiles(hook, handleSyncFinishEvent);
-                  }).catch(handleSyncFinishEvent);
-                });
-              }).catch(handleSyncFinishEvent);
-            }).catch(handleSyncFinishEvent);
-          }
-        )
-      }
-    } else if (hook.data.type == 'derived') {
+    if (hook.data.type == 'arcgis') syncArcGisLayerFeatures(hook)
+    else if (hook.data.type == 'derived') {
+      var sequelize = hook.app.get('sequelize');
 
       /*
        * Sync derived Layer
@@ -327,7 +132,7 @@ exports.after = {
        + "GRANT SELECT ON \""+layerId+"\" TO domegis_readonly;";
 
        sequelize.query(query).then(function(result){
-         generateDatafiles(hook, handleSyncFinishEvent);
+         generateDatafiles(hook, hook.data, handleSyncFinishEvent);
        }).catch(handleSyncFinishEvent);
     }
   }],
@@ -337,50 +142,81 @@ exports.after = {
 };
 
 /*
-* Generate layer's datapackage
+* General Layer functions
 */
 
-var generateDatafiles = function(hook, doneGenerateDatafiles) {
+function handleSyncFinishEvent(err, hook, layer) {
+  var Layers = hook.app.service('layers');
+  var syncStatus = hook.data.sync || layer.sync;
+  var layerId = hook.data.id || layer.id;
+
+  if (err) {
+    log(layerId + ' sync error: ' + err.message);
+    syncStatus = _.extend(syncStatus, {
+      status: 'failed',
+      finishedAt: Date.now(),
+      message: err.message
+    });
+  } else {
+    log('success syncing layer ' + layerId);
+    syncStatus = _.extend(syncStatus, {
+      status: 'finished',
+      finishedAt: Date.now()
+    });
+  }
+
+  Layers.patch(layerId, {
+    sync: syncStatus
+  }).catch(function(err){
+    log(layerId + ' error saving sync status');
+  });
+}
+
+
+
+var generateDatafiles = function(hook, layer, doneGenerateDatafiles) {
 
   var publicDir = hook.app.get('public');
-  var layerId = hook.data.id;
   var dbParams = hook.app.get('windshaftOpts').dbParams;
+  var layerId = layer.id;
 
-  if (!hook.data.metadata) hook.data.metadata = {};
+  log('will generate datafile for ' + layerId);
+
+  if (!layer.metadata) layer.metadata = {};
 
   var shpDatapackage = {
-    "name": hook.data.name,
-    "title": hook.data.metadata.title || "",
-    "description": hook.data.metadata.description || "",
+    "name": layer.name,
+    "title": layer.metadata.title || "",
+    "description": layer.metadata.description || "",
     "license": {
-      "copyrightText": hook.data.metadata.copyrightText || ""
+      "copyrightText": layer.metadata.copyrightText || ""
     },
-    "url": hook.data.url,
+    "url": layer.url,
     "resources": [
       {
-        "name": hook.data.id + ".shp",
-        "path": hook.data.id + ".shp",
+        "name": layerId + ".shp",
+        "path": layerId + ".shp",
         "schema": {
-          "fields": hook.data.fields
+          "fields": layer.fields
         }
       }
     ]
   }
 
   var csvDatapackage = {
-    "name": hook.data.name,
-    "title": hook.data.metadata.title || "",
-    "description": hook.data.metadata.description || "",
+    "name": layer.name,
+    "title": layer.metadata.title || "",
+    "description": layer.metadata.description || "",
     "license": {
-      "copyrightText": hook.data.metadata.copyrightText || ""
+      "copyrightText": layer.metadata.copyrightText || ""
     },
-    "url": hook.data.url,
+    "url": layer.url,
     "resources": [
       {
-        "name": hook.data.id + ".csv",
-        "path": hook.data.id + ".csv",
+        "name": layerId + ".csv",
+        "path": layerId + ".csv",
         "schema": {
-          "fields": hook.data.fields
+          "fields": layer.fields
         }
       }
     ]
@@ -390,15 +226,15 @@ var generateDatafiles = function(hook, doneGenerateDatafiles) {
   var cmds = [
     'mkdir -p '+publicDir+'/downloads',
     'mkdir -p /tmp/domegis/shapefiles',
-    'ogr2ogr -overwrite -f "ESRI Shapefile" /tmp/domegis/shapefiles/' + hook.data.id + ' PG:"user=domegis dbname=domegis" ' + hook.data.id,
-    'echo \''+ JSON.stringify(shpDatapackage, null, '\t') +'\' > /tmp/domegis/shapefiles/' + hook.data.id + '/datapackage.json',
-    'zip -ju '+publicDir+'/downloads/'+hook.data.id+'.shp.zip /tmp/domegis/shapefiles/' + hook.data.id + '/*',
-    'rm -rf /tmp/domegis/shapefiles/'+hook.data.id,
-    'mkdir -p /tmp/domegis/csvs/' + hook.data.id,
-    'ogr2ogr -overwrite -f "CSV" /tmp/domegis/csvs/'+hook.data.id+'/'+hook.data.id+'.csv PG:"user=domegis dbname=domegis" ' + hook.data.id,
-    'echo \''+ JSON.stringify(csvDatapackage, null, '\t') +'\' > /tmp/domegis/csvs/' + hook.data.id + '/datapackage.json',
-    'zip -ju '+publicDir+'/downloads/'+hook.data.id+'.csv.zip /tmp/domegis/csvs/'+hook.data.id+'/*',
-    'rm -rf /tmp/domegis/csvs/'+hook.data.id
+    'ogr2ogr -overwrite -f "ESRI Shapefile" /tmp/domegis/shapefiles/' + layerId + ' PG:"user=domegis dbname=domegis" ' + layerId,
+    'echo \''+ JSON.stringify(shpDatapackage, null, '\t') +'\' > /tmp/domegis/shapefiles/' + layerId + '/datapackage.json',
+    'zip -ju '+publicDir+'/downloads/'+layerId+'.shp.zip /tmp/domegis/shapefiles/' + layerId + '/*',
+    'rm -rf /tmp/domegis/shapefiles/'+layerId,
+    'mkdir -p /tmp/domegis/csvs/' + layerId,
+    'ogr2ogr -overwrite -f "CSV" /tmp/domegis/csvs/'+layerId+'/'+layerId+'.csv PG:"user=domegis dbname=domegis" ' + layerId,
+    'echo \''+ JSON.stringify(csvDatapackage, null, '\t') +'\' > /tmp/domegis/csvs/' + layerId + '/datapackage.json',
+    'zip -ju '+publicDir+'/downloads/'+layerId+'.csv.zip /tmp/domegis/csvs/'+layerId+'/*',
+    'rm -rf /tmp/domegis/csvs/'+layerId
   ]
 
   async.eachSeries(cmds, function(cmd, doneCmd){
@@ -409,8 +245,8 @@ var generateDatafiles = function(hook, doneGenerateDatafiles) {
   }, function(err){
     if (err) {
       log(err);
-      doneGenerateDatafiles({message:'could not generate shapefile'})
-    } else doneGenerateDatafiles();
+      doneGenerateDatafiles({message:'could not generate shapefile'}, hook, layer)
+    } else doneGenerateDatafiles(null, hook, layer);
   });
 }
 
@@ -422,7 +258,7 @@ function dropLayer(sequelize, layerId, doneResetLayer) {
 }
 
 /*
- * Generate a derived layer
+ * Derived Layer functions
  */
 
 function generateDerivedLayer(hook, doneGenerateDerivedLayer) {
@@ -506,8 +342,7 @@ function generateDerivedLayer(hook, doneGenerateDerivedLayer) {
                     .catch(function(err){
                       return doneGenerateDerivedLayer(new errors.GeneralError('Error getting layer description.'));
                     });
-                })
-                .catch(function(err){
+                })               .catch(function(err){
                   return doneGenerateDerivedLayer(new errors.GeneralError('Error creating derived layer.'));
                 })
           }
@@ -518,7 +353,7 @@ function generateDerivedLayer(hook, doneGenerateDerivedLayer) {
 }
 
 /*
- * Convert ArcGIS types
+ * ArcGIS layer functions
  */
 
 function esriToSequelizeType(esriType) {
@@ -642,5 +477,195 @@ function getArcGisLayerProperties(url, doneGetArcGisLayerProperties) {
   }], function(err, result){
     if (err) doneGetArcGisLayerProperties(err)
     else doneGetArcGisLayerProperties(null, properties);
+  });
+}
+
+function syncArcGisLayerFeatures(hook, doneSyncArcGisLayerFeatures) {
+  var Layers = hook.app.service('layers');
+  var sequelize = hook.app.get('sequelize');
+  var layerId = hook.data.id || hook.id;
+
+  log(layerId + ' is ArcGIS layer');
+
+  Layers.get(layerId, function(err, layer){
+
+    if (err) handleSyncFinishEvent(err, hook, layer);
+
+    // get syncStatus or initiate it, if not defined
+    var syncStatus = layer.dataValues.sync || {
+      status: 'initiated',
+      startedAt: Date.now()
+    };
+
+    // Prepare for iteration
+    log('features were found');
+
+    var total = layer.dataValues.featureCount;
+    var current = 0;
+    var perPage = 100;
+    var geojson = {};
+
+    // Set layer status to "fetching"
+    Layers.patch(layerId, {
+      sync: _.extend(syncStatus, {
+        status: 'fetching'
+      })
+    });
+
+    // Start iteration
+    async.whilst(
+      function() { return current < total; },
+      function(doneFeaturesPageRequest) {
+
+        log('requesting features after index '+ current);
+
+        request({
+          url: layer.dataValues.url + '/query',
+          qs: {
+            returnGeometry: true,
+            where: '1=1',
+            outSR: 4326,
+            resultOffset: current,
+            resultRecordCount: perPage,
+            outFields: '*',
+            f: 'geojson'
+          }
+        }, function(err, res, body) {
+
+          // Check for request errors
+          if (err) {
+            return doneFeaturesPageRequest(err);
+          } else log('success, adding to geojson... ');
+
+          // Parse JSON
+          var data = {};
+          try {
+            data = JSON.parse(body);
+          } catch (e) {
+            return doneFeaturesPageRequest({message: 'invalid json'})
+          }
+
+          // Result should have features
+          if (data.features && data.features.length) {
+
+            if (current == 0)
+              geojson = data;
+            else
+              geojson.features = geojson.features.concat(data.features);
+
+          } else {
+            return doneFeaturesPageRequest({message: 'no features were found'})
+          }
+
+          // Update counter
+          current = current + perPage;
+
+          doneFeaturesPageRequest();
+
+        })
+      },
+      function(err) {
+
+        // Check for errors while request data batch
+        if (err) return handleSyncFinishEvent(err, hook);
+
+        log('starting geojson import to database');
+
+        var postgisType = geojson.features[0]['geometry']['type'];
+
+        switch (postgisType) {
+          case 'Polygon':
+          postgisType = 'MultiPolygon';
+          break;
+          case 'LineString':
+          postgisType = 'MultiLineString';
+          break;
+        }
+
+        var schema = {
+          domegisId: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true, field: 'domegis_id'},
+          geometry: { type: Sequelize.GEOMETRY(postgisType, 4326) }
+        }
+
+        _.each(layer.dataValues.fields, function(field){
+          var fieldType = esriToSequelizeType(field.type);
+          if (fieldType) schema[field.name] = { type: fieldType };
+        });
+
+        // drop table if exists
+        log('drop current table, if exists');
+        sequelize.query('DROP TABLE IF EXISTS \"'+layerId+'\";').then(function(){
+
+          // create feature table
+          log('create layer feature table');
+          var Features = sequelize.define(layerId, schema, {
+            timestamps: false,
+            freezeTableName: true
+          });
+
+          // Remove automatically generated id, if not defined in table
+          if (!schema['id']) Features.removeAttribute('id');
+
+          sequelize.sync().then(function(){
+            // create feature table
+            log('start feature import for ' + layerId);
+
+            // Update layer status
+            Layers.patch( layerId, {
+              sync: _.extend(syncStatus, {
+                status: 'importing',
+                featureCount: 0
+              })
+            });
+
+            // insert features
+            async.eachSeries(geojson.features, function(esriFeature, doneEach){
+
+              // ignores features with undefined geometries
+              if (!esriFeature.geometry) return doneEach();
+
+              // set srid on feature (because of PostGIS)
+              esriFeature.geometry.crs = geojson.crs;
+
+              // create fake MultiPolygon if needed
+              if (postgisType == 'MultiPolygon' && esriFeature.geometry.type == 'Polygon') {
+                esriFeature.geometry.type = 'MultiPolygon';
+                esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
+              } else if (postgisType == 'MultiLineString' && esriFeature.geometry.type == 'LineString') {
+                esriFeature.geometry.type = 'MultiLineString';
+                esriFeature.geometry.coordinates = [esriFeature.geometry.coordinates];
+              }
+
+              _.each(_.keys(esriFeature.properties), function(property){
+                esriFeature[property] = esriFeature.properties[property];
+              });
+
+              // save feature
+              Features.create(esriFeature)
+                .then(function(){
+                  doneEach();
+                }).catch(function(err){
+                  handleSyncFinishEvent(err, hook)
+                });
+            }, function(err){
+              if (err) return handleSyncFinishEvent(err, hook);
+
+              var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = " + geojson.features.length + "  WHERE (layers.id =  '"+ layerId +"');"
+              + "GRANT SELECT ON \""+layerId+"\" TO domegis_readonly;";
+
+              sequelize.query(query).then(function(result){
+                generateDatafiles(hook, layer, handleSyncFinishEvent);
+              }).catch(function(err){
+                handleSyncFinishEvent(err, hook)
+              });
+            });
+          }).catch(function(err){
+            handleSyncFinishEvent(err, hook)
+          });
+        }).catch(function(err){
+          handleSyncFinishEvent(err, hook)
+        });
+      }
+    )
   });
 }
