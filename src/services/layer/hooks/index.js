@@ -147,7 +147,7 @@ exports.after = {
 
 function handleSyncFinishEvent(err, hook, layer) {
   var Layers = hook.app.service('layers');
-  var syncStatus = hook.data.sync || layer.sync;
+  var syncStatus = hook.data.sync || layer.sync || {};
   var layerId = hook.data.id || layer.id;
 
   if (err) {
