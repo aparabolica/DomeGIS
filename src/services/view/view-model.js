@@ -14,7 +14,9 @@ module.exports = function(sequelize) {
   }, {
     classMethods: {
       associate: function(models){
-        view.belongsTo(models.layers);
+        view.belongsTo(models.layers, {
+          constraints: false
+        });
       }
     }
   });
