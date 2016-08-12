@@ -8,6 +8,8 @@
 </td>
 <td class="main">
   <h3>{{layer.name | translate}}</h3>
+  <p class="last-sync">Last sync {{layer.sync.finishedAt | formatDate}}</p>
+  <p class="sync-err" ng-show="layer.sync.message">{{layer.sync.message}}</p>
   <p class="actions" ng-show="hasRole('editor')">
     <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="layer.sync.status == 'finished'">Edit layer</a>
     <a class="button" ng-click="resync()">
