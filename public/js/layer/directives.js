@@ -30,7 +30,13 @@ angular.module('domegis')
         var layerService = Server.service('layers');
         var viewService = Server.service('views');
 
-        scope.token = Server.app.get('token');
+        scope.hasRole = function(role) {
+          var user = Server.app.get('user');
+          if(user)
+            return _.find(user.roles, function(r) { return r == role; });
+          else
+            return false;
+        }
 
         Server.find(viewService, {
           query: {
@@ -41,13 +47,13 @@ angular.module('domegis')
         });
         scope.$on('server.layers.updated', function(ev, data) {
           if(scope.layer.id == data.id) {
-            console.log('updated', data.id, data.sync.status);
+            console.log('updated', data.id, data.sync ? data.sync.status : 'sync property not found');
             scope.layer = data;
           }
         });
         scope.$on('server.layers.patched', function(ev, data) {
           if(scope.layer.id == data.id) {
-            console.log('patched', data.id, data.sync.status);
+            console.log('patched', data.id, data.sync ? data.sync.status : 'sync property not found');
             scope.layer = data;
           }
         });
@@ -61,14 +67,20 @@ angular.module('domegis')
           });
         });
         scope.resync = function() {
-          console.log('resyncing');
-          Server.patch(layerService, scope.layer.id, {
-            resync: true
-          }).then(function() {
-            console.log('patched', arguments);
-          }, function() {
-            console.log('path err', arguments);
-          });
+          var doResync = true;
+
+          if(scope.layer.sync && scope.layer.sync.status !== 'failed')
+            doResync = confirm('Are you sure you\'d like resync this layer data?');
+
+          if(doResync == true) {
+            Server.patch(layerService, scope.layer.id, {
+              resync: true
+            }).then(function() {
+              console.log('patched', arguments);
+            }, function() {
+              console.log('path err', arguments);
+            });
+          }
         };
 
         scope.remove = function(layer) {

@@ -8,8 +8,8 @@
 </td>
 <td class="main">
   <h3>{{layer.name | translate}}</h3>
-  <p class="actions" ng-show="token && layer.sync.status == 'finished'">
-    <a class="button" ui-sref="editLayer({id:layer.id})">Edit layer</a>
+  <p class="actions" ng-show="hasRole('editor')">
+    <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="layer.sync.status == 'finished'">Edit layer</a>
     <a class="button" ng-click="resync()">
       <span class="fa fa-refresh"></span>
       Resync layer
@@ -27,5 +27,5 @@
 </td>
 <td>
   <div ng-repeat="view in views" view-item="view" class="view-item"></div>
-  <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="token && layer.sync.status == 'finished'">Create new view</a>
+  <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="hasRole('editor') && layer.sync.status == 'finished'">Create new view</a>
 </td>
