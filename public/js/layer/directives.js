@@ -70,7 +70,7 @@ angular.module('domegis')
           var doResync = true;
 
           if(scope.layer.sync && scope.layer.sync.status !== 'failed')
-            doResync = confirm('Are you sure you\'d like resync this layer data?');
+            doResync = confirm('Are you sure you\'d like to resync this layer data?');
 
           if(doResync == true) {
             Server.patch(layerService, scope.layer.id, {
