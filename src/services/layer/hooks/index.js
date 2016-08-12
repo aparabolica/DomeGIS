@@ -93,7 +93,7 @@ exports.before = {
     auth.restrictToRoles({ roles: ['admin', 'editor'] }),
     function(hook){
       return new Promise(function(resolve, reject){
-        if (hook.data.resync) syncArcGisLayerFeatures(hook);
+        if (hook.data.resync == true || hook.data.resync == 'force') syncArcGisLayerFeatures(hook);
         resolve();
       });
     }
