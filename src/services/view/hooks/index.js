@@ -28,7 +28,7 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['author'] }),
+    auth.restrictToRoles({ roles: ['editor', 'author'] }),
     setLayergroup,
     function(hook) {
       hook.data.creatorId = hook.params.user.id;
@@ -38,21 +38,21 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerId: 'createdBy' }),
+    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerId: 'creatorId' }),
     setLayergroup
   ],
   patch: [
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerId: 'createdBy' }),
+    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerId: 'creatorId' }),
     setLayergroup
   ],
   remove: [
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerId: 'createdBy' })
+    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerId: 'creatorId' })
   ]
 };
 
