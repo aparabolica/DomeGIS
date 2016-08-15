@@ -22,7 +22,7 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin', 'editor'] }),
+    auth.restrictToRoles({ roles: ['editor'] }),
     function(hook){
       return new Promise(function(resolve, reject){
 
@@ -84,13 +84,13 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin', 'editor'] })
+    auth.restrictToRoles({ roles: ['editor'] })
   ],
   patch: [
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin', 'editor'] }),
+    auth.restrictToRoles({ roles: ['editor'] }),
     function(hook){
       return new Promise(function(resolve, reject){
         if (hook.data.resync == true || hook.data.resync == 'force') syncArcGisLayerFeatures(hook);
@@ -102,7 +102,7 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['admin'] })
+    auth.restrictToRoles({ roles: ['editor'] })
   ]
 };
 
