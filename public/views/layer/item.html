@@ -29,5 +29,5 @@
 </td>
 <td>
   <div ng-repeat="view in views" view-item="view" class="view-item"></div>
-  <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="hasRole('editor') && layer.sync.status == 'finished'">Create new view</a>
+  <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="(hasRole('editor') || hasRole('author')) && layer.sync.status == 'finished'">Create new view</a>
 </td>

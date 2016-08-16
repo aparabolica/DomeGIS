@@ -20,7 +20,7 @@
         </p>
         <p>
           <label>Roles</label>
-          <label class="checkbox-label" for="role_{{role}}_input" ng-repeat="role in ['admin', 'editor']">
+          <label class="checkbox-label" for="role_{{role}}_input" ng-repeat="role in ['admin', 'editor', 'author']">
             <input id="role_{{role}}_input" type="checkbox" type="checkbox" name="userRoles[]" ng-checked="user.roles.indexOf(role) > -1" ng-click="toggleRole(role)" ng-disabled="user.id == 1" />
             {{role}}
           </label>

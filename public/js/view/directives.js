@@ -34,7 +34,7 @@ angular.module('domegis')
 
         scope.canEdit = function(view) {
           if(scope.user) {
-            return scope.user.roles.indexOf('admin') != -1 || scope.user.id == view.creatorId;
+            return scope.user.roles.indexOf('editor') != -1 || scope.user.id == view.creatorId;
           } else {
             return false;
           }
