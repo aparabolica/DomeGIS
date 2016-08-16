@@ -111,9 +111,9 @@ exports.after = {
   find: [],
   get: [],
   create: [function(hook){
-
     log('layer metadata saved, trying to to sync from arcgis');
 
+    var layerId = hook.data.id;
     /*
      * Sync ArcGIS Layer
      */
