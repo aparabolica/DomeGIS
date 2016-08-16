@@ -24,14 +24,6 @@ angular.module('domegis')
 
         scope.user = Server.app.get('user');
 
-        scope.canCreate = function(view) {
-          if(scope.user) {
-            return scope.user.roles.indexOf('editor') != -1;
-          } else {
-            return false;
-          }
-        };
-
         scope.canEdit = function(view) {
           if(scope.user) {
             return scope.user.roles.indexOf('editor') != -1 || scope.user.id == view.creatorId;
