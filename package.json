@@ -31,7 +31,7 @@
     "ejs": "^2.4.2",
     "express-less": "0.0.8",
     "feathers": "^2.0.0",
-    "feathers-authentication": "^0.7.7",
+    "feathers-authentication": "~0.7.9",
     "feathers-configuration": "^0.2.2",
     "feathers-errors": "^2.0.2",
     "feathers-hooks": "~1.5.4",

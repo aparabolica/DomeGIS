@@ -38,21 +38,21 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerId: 'creatorId' }),
+    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerField: 'creatorId', idField: 'id' }),
     setLayergroup
   ],
   patch: [
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerId: 'creatorId' }),
+    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerField: 'creatorId', idField: 'id' }),
     setLayergroup
   ],
   remove: [
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerId: 'creatorId' })
+    auth.restrictToRoles({ roles: ['editor'], owner: true, ownerField: 'creatorId', idField: 'id' })
   ]
 };
 
