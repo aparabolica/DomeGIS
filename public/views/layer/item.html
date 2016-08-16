@@ -1,15 +1,11 @@
 <td class="status">
-  <p ng-class="{ok: layer.sync.status == 'finished', err: layer.sync.status == 'failed'}">
+  <p class="status-icon" ng-class="{ok: layer.sync.status == 'finished', err: layer.sync.status == 'failed'}">
     <span class="fa fa-refresh fa-spin" ng-hide="layer.sync.status == 'finished' || layer.sync.status == 'failed'"></span>
     <span class="fa fa-check-circle" ng-show="layer.sync.status == 'finished'"></span>
     <span class="fa fa-times" ng-show="layer.sync.status == 'failed'"></span>
     <span class="status-text" ng-hide="layer.sync.status == 'finished'">{{layer.sync.status}}</span>
   </p>
-</td>
-<td class="main">
-  <h3>{{layer.name | translate}}</h3>
   <p class="last-sync">Last sync {{layer.sync.finishedAt | formatDate}}</p>
-  <p class="sync-err" ng-show="layer.sync.message">{{layer.sync.message}}</p>
   <p class="actions" ng-show="hasRole('editor')">
     <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="layer.sync.status == 'finished'">Edit layer</a>
     <a class="button" ng-click="resync()">
@@ -17,6 +13,11 @@
       Resync layer
     </a>
   </p>
+  <p class="sync-err" ng-show="layer.sync.message">{{layer.sync.message}}</p>
+  <td class="main">
+    <h3>{{layer.name | translate}}</h3>
+    <p class="item-id"><strong>ID</strong>: {{layer.id}}</p>
+  </td>
 </td>
 <td>
   <p class="tag">{{layer.geometryType}}</p>
