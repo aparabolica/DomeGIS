@@ -111,30 +111,40 @@ exports.after = {
   find: [],
   get: [],
   create: [function(hook){
-    log('layer metadata saved, trying to to sync from arcgis');
+    return new Promise(function(resolve, reject){
 
-    var layerId = hook.data.id;
-    /*
-     * Sync ArcGIS Layer
-     */
+      log('layer metadata saved, trying to to sync from arcgis');
 
-    if (hook.data.type == 'arcgis') syncArcGisLayerFeatures(hook)
-    else if (hook.data.type == 'derived') {
-      var sequelize = hook.app.get('sequelize');
+      var layerId = hook.data.id;
 
       /*
-       * Sync derived Layer
+       * Sync ArcGIS Layer
        */
 
-      //  var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = (select count(*) from \""+layerId+"\"), \"geometryType\" = (select GeometryType(geometry) from \""+layerId+"\") WHERE (layers.id =  '"+ layerId +"');"
-       var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = (select count(*) from \""+layerId+"\"), \"geometryType\" = (select GeometryType(geometry) from \""+layerId+"\" LIMIT 1) WHERE (layers.id =  '"+ layerId +"');"
-       + "ALTER TABLE \""+layerId+"\" ADD COLUMN \"domegis_id\" SERIAL PRIMARY KEY;"
-       + "GRANT SELECT ON \""+layerId+"\" TO domegis_readonly;";
+      if (hook.data.type == 'arcgis') {
+        syncArcGisLayerFeatures(hook)
+        resolve();
+      }
+      /*
+      * Sync derived Layer
+      */
+      else if (hook.data.type == 'derived') {
+        var sequelize = hook.app.get('sequelize');
 
-       sequelize.query(query).then(function(result){
-         generateDatafiles(hook, hook.data, handleSyncFinishEvent);
-       }).catch(handleSyncFinishEvent);
-    }
+        //  var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = (select count(*) from \""+layerId+"\"), \"geometryType\" = (select GeometryType(geometry) from \""+layerId+"\") WHERE (layers.id =  '"+ layerId +"');"
+         var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = (select count(*) from \""+layerId+"\"), \"geometryType\" = (select GeometryType(geometry) from \""+layerId+"\" LIMIT 1) WHERE (layers.id =  '"+ layerId +"');"
+         + "ALTER TABLE \""+layerId+"\" ADD COLUMN \"domegis_id\" SERIAL PRIMARY KEY;"
+         + "GRANT SELECT ON \""+layerId+"\" TO domegis_readonly;";
+
+         sequelize.query(query).then(function(result){
+           generateDatafiles(hook, hook.data, handleSyncFinishEvent);
+           resolve();
+         }).catch(function(err){
+           handleSyncFinishEvent(err);
+           reject(err);
+         });
+      }
+    });
   }],
   update: [],
   patch: [],
