@@ -20,11 +20,14 @@ ArcGIS.prototype.getOrganization = function(cb) {
 ArcGIS.prototype.getContent = function(search, query, params, cb) {
   var self = this;
   this.getOrganization(function(res) {
-    $.get(self.getApiRoot() + '/search', buildSearchQuery(res.id, search, query, params), function(res) {
-      if(typeof cb == 'function') {
-        cb(res);
-      }
-    }, 'json');
+    (function() {
+      var query = buildSearchQuery(res.id, search, query, params);
+      $.get(self.getApiRoot() + '/search', query, function(res) {
+        if(typeof cb == 'function') {
+          cb(res);
+        }
+      }, 'json');
+    })();
   });
 };
 
@@ -57,6 +60,7 @@ function buildSearchQuery(orgId, search, query, params) {
   return _.extend({
     f: 'json',
     num: 20,
+    start: 1,
     q: qString
   }, params);
 }

@@ -3,7 +3,8 @@ angular.module('domegis', [
   'ui.router',
   'ui.sortable',
   'ui.ace',
-  'colorpicker.module'
+  'colorpicker.module',
+  'infinite-scroll'
 ]);
 
 angular.element(document).ready(function() {

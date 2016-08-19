@@ -24,6 +24,7 @@
 //= require angular-ui-ace/ui-ace
 //= require angular-bootstrap-colorpicker/js/bootstrap-colorpicker-module
 //= require angular-ui-sortable/sortable
+//= require ngInfiniteScroll/build/ng-infinite-scroll
 
 // local assets:
 //= require arcgis

@@ -218,13 +218,17 @@ angular.module('domegis')
     $scope.query = {
       type: 'Feature Service'
     };
-    $scope.params = {};
+    $scope.params = {
+      num: 20,
+      start: 1
+    };
 
     $scope.sort = 'modified';
 
     $scope.availableTypes = Esri.getContentTypes();
 
     $scope.doQuery = function() {
+      $scope.params.start = 1;
       $scope.doSort();
       Esri.getContent(
         $scope.search,
@@ -232,8 +236,29 @@ angular.module('domegis')
         $scope.params
       ).then(function(data) {
         $scope.content = data;
+        $scope.params.start = data.nextStart;
+        $scope.params.total = data.total;
       });
     };
+
+    $scope.esriPaging = true;
+    $scope.pageEsri = _.debounce(function() {
+      if($scope.params.total - $scope.params.num > 0 && $scope.esriPaging) {
+        Esri.getContent(
+          $scope.search,
+          $scope.query,
+          $scope.params
+        ).then(function(data) {
+          $scope.content.results = $scope.content.results.concat(data.results);
+          if(data.nextStart < 0) {
+            $scope.esriPaging = false;
+          } else {
+            $scope.params.start = data.nextStart;
+          }
+          $scope.params.total = data.total;
+        });
+      }
+    }, 200);
 
     $scope.$watchGroup(['search', 'query'], _.debounce(function() {
       $scope.doQuery();
