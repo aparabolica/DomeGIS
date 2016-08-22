@@ -1,15 +1,16 @@
 'use strict';
-var Sequelize = require('sequelize');
-var user = require('./user');
-var content = require('./content');
-var layer = require('./layer');
-var view = require('./view');
-var preview = require('./preview');
-var search = require('./search');
-var logging = require('./logging');
 var authentication = require('./authentication');
+var content = require('./content');
 var feathersLogger = require('feathers-logger');
 var Logger = require('../lib/logger');
+var layer = require('./layer');
+var logging = require('./logging');
+var preview = require('./preview');
+var verifyReset = require('./verify-reset');
+var search = require('./search');
+var Sequelize = require('sequelize');
+var user = require('./user');
+var view = require('./view');
 
 module.exports = function() {
   var app = this;
@@ -36,6 +37,7 @@ module.exports = function() {
   app.configure(view);
   app.configure(search);
   app.configure(logging);
+  app.configure(verifyReset);
 
   var logger = new Logger({
     app: app,

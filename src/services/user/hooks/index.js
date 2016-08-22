@@ -24,6 +24,9 @@ var checkPasswordChange =  function(){
       throw new errors.BadRequest('Password should have at least 5 characters.');
     }
 
+    // avoid password check if it is a reset operation
+    if (hook.params.reset) return hook;
+
     // check if currentPassword is included in the request
     var userPassword = hook.data['userPassword'];
     if (userPassword === undefined || userPassword.length == 0) {
