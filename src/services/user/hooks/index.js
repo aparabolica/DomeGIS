@@ -24,8 +24,15 @@ var checkPasswordChange =  function(){
       throw new errors.BadRequest('Password should have at least 5 characters.');
     }
 
+    // generate password hash
+    var salt = bcrypt.genSaltSync(10);
+    var hash = bcrypt.hashSync(newPassword, salt);
+
     // avoid password check if it is a reset operation
-    if (hook.params.reset) return hook;
+    if (hook.params.reset) {
+      hook.data['password'] = hash;
+      return hook;
+    }
 
     // check if currentPassword is included in the request
     var userPassword = hook.data['userPassword'];
@@ -33,32 +40,24 @@ var checkPasswordChange =  function(){
       throw new errors.BadRequest('\'userPassword\' field is missing.');
     }
 
-    // check if current user is populated in the hook
-    if (hook.params.user === undefined) {
-      throw new errors.BadRequest('Current user should be populated at \'checkPasswordChange\'.');
-    } else var user = hook.params.user;
-
-    // check if userPassword is valid
-    // var crypto = hook.app.get('auth').crypto;
+    // check if userPassword is valid and return
     return new Promise(function(resolve, reject){
-      bcrypt.compare(userPassword, user.password, function(error, result) {
-        if (error) return reject(new errors.GeneralError('Error comparing passwords with bcrypt.'));
 
-        if (result) {
-            bcrypt.genSalt(10, function(err, salt) {
-              bcrypt.hash(newPassword, salt, function(err, hash) {
-                if (err) {
-                  return reject(err);
-                }
+      // get user
+      var Users = hook.app.service('users');
+      Users.get(hook.id).then(function(user){
 
-                hook.data['password'] = hash;
-                resolve(hook);
-              });
-            });
-        } else {
-          reject(new errors.BadRequest('\'userPassword\' don\'t match.'));
-        }
-      });
+        // check password
+        bcrypt.compare(userPassword, user.password, function(error, result) {
+          if (error) return reject(new errors.GeneralError('Error comparing passwords with bcrypt.'));
+          else if (result) {
+
+            // success, update password hash
+            hook.data['password'] = hash;
+            return resolve(hook);
+          } else reject(new errors.BadRequest('Current password don\'t match.'));
+        });
+      }).catch(reject);
     });
   };
 }

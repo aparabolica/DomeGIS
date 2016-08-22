@@ -1,5 +1,4 @@
 var crypto = require('crypto');
-var bcrypt = require('bcryptjs');
 var errors = require('feathers-errors');
 var isEmail = require('validator/lib/isEmail');
 
@@ -22,19 +21,19 @@ module.exports = function() {
         if (email && isEmail(email)) {
           Users.find({ query: { email: email }}).then(function(result){
             if (result.data.length == 0)
-              reject(new errors.BadRequest('User does not exist.'));
+              throw new errors.BadRequest('User does not exist.');
             else {
+
               // get user id
               var user = result.data[0];
               var userId = user.id;
 
               // user exists, generate new password for him
               var newPassword = crypto.randomBytes(10).toString('hex');
-              var hash = bcrypt.hashSync(newPassword, 10);
 
               Users
                 .patch(userId, {
-                  password: hash
+                  password: newPassword
                 }, {
                   reset: true
                 })
@@ -50,18 +49,12 @@ module.exports = function() {
 
                   mailgun.messages().send(data, function (err, body) {
                     if (err) reject(err);
-                    else resolve('A new password was sent to your e-mail.');
+                    else resolve({message: 'A new password was sent to your e-mail.'});
                   });
                 })
-                .catch(function(err){
-                  console.log('error updating user');
-                  console.log(err);
-                });
+                .catch(reject);
             }
-          }).catch(function(err){
-            console.log('err');
-            console.log(err);
-          });
+          }).catch(reject);
         } else reject(new errors.BadRequest('Missing or invalid e-mail.'));
       });
     }
