@@ -32,7 +32,7 @@ exports.before = {
     auth.verifyToken(),
     auth.populateUser(),
     auth.restrictToAuthenticated(),
-    auth.restrictToOwner({ownerField: 'syncedBy'}),
+    auth.restrictToRoles({ roles: ['editor'] }),
     function(hook) {
       // remove associated layer tables and shapefiles
       return new Promise(function(resolve, reject){
