@@ -562,6 +562,7 @@ angular.module('domegis')
         delete user.password;
         Server.patch(userService, Edit.id, user).then(function(user) {
           $scope.user = user;
+          Message.add('User updated');
           $state.go('usersEdit', {id: user.id}, {reload: true});
         }, function(err) {
           Message.add(err.message);
@@ -569,6 +570,7 @@ angular.module('domegis')
       } else {
         Server.create(userService, user).then(function(user) {
           $scope.user = user;
+          Message.add('User created');
           $state.go('usersEdit', {id: user.id}, {reload: true});
         }, function(err) {
           Message.add(err.message);
@@ -588,7 +590,7 @@ angular.module('domegis')
           userPassword: pwd.userPassword,
           password: pwd.password
         }).then(function(data) {
-          console.log(data);
+          Message.add('Password changed');
         }, function(err) {
           Message.add(err.message);
         });
