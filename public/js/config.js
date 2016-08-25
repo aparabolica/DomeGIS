@@ -78,6 +78,10 @@ angular.module('domegis')
       url: '/login/',
       templateUrl: '/views/login.html'
     })
+    .state('login.forgot', {
+      url: 'forgot/',
+      templateUrl: '/views/forgotPwd.html'
+    })
     .state('users', {
       url: '/users/',
       templateUrl: '/views/user/index.html',

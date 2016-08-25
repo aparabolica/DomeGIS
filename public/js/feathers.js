@@ -2,8 +2,9 @@ angular.module('domegis')
 
 .factory('Server', [
   '$rootScope',
+  '$http',
   '$q',
-  function($rootScope, $q) {
+  function($rootScope, $http, $q) {
 
     var socket = io();
 
@@ -26,6 +27,11 @@ angular.module('domegis')
       app: app,
       auth: function(credentials) {
         return req(app.authenticate(credentials));
+      },
+      resetPwd: function(credentials) {
+        return $http.get('/reset', {
+          params: credentials
+        });
       },
       service: function(serviceName) {
         return app.service(serviceName);

@@ -27,11 +27,20 @@ angular.module('domegis')
       });
     };
 
+    $scope.resetPwd = function(credentials) {
+      Server.resetPwd(credentials).then(function(res) {
+        Message.add(res.data.message);
+        $state.go('login');
+      }, function(err) {
+      });
+    };
+
     $scope.logout = function() {
       $scope.token = undefined;
       $scope.user = undefined;
       $scope.currentUser = undefined;
       Server.app.logout();
+      $state.go('home');
     };
 
     $scope.hasRole = function(role) {
@@ -224,8 +233,6 @@ angular.module('domegis')
     };
 
     $scope.sort = 'modified';
-
-    $scope.availableTypes = Esri.getContentTypes();
 
     $scope.doQuery = function() {
       $scope.params.start = 1;

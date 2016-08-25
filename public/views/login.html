@@ -5,7 +5,7 @@
     </div>
   </div>
 </header>
-<section id="auth">
+<section id="auth" ui-view>
   <div class="container">
     <div class="six columns offset-by-three">
       <form id="auth_form" ng-submit="auth(credentials)">
@@ -19,6 +19,7 @@
         </p>
         <p><input type="submit" value="Login" /></p>
       </form>
+      <p><a class="button" ui-sref="login.forgot">Forgot my password</a></p>
     </div>
   </div>
 </section>
