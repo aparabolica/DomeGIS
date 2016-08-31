@@ -40,7 +40,8 @@ angular.module('domegis')
 
         Server.find(viewService, {
           query: {
-            layerId: scope.layer.id
+            layerId: scope.layer.id,
+            $limit: 100
           }
         }).then(function(res) {
           scope.views = res.data;
