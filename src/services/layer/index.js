@@ -85,7 +85,7 @@ module.exports = function(){
 
       if (!layer) return res.sendStatus(404);
 
-      var _from = 'FROM \"' + layerId + '\" as t WHERE t.id = ' + parseInt(featureId);
+      var _from = 'FROM \"' + layerId + '\" as t WHERE t.domegis_id = ' + parseInt(featureId);
 
       var select = 'SELECT * ' + _from;
       var extentSelect = 'SELECT ST_Extent(ST_Transform(geometry,4326)) ' + _from;

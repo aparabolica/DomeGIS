@@ -141,10 +141,12 @@ angular.module('domegis')
           scope.feature[1]
         ) {
           $http.get('/layers/' + scope.feature[0] + '/feature/' + scope.feature[1]).then(function(res) {
+            console.log(res);
             featureBounds = res.data.extents;
             map.fitBounds(parseBounds(featureBounds));
             doneFeature.resolve();
           }, function(err) {
+            console.log(err);
             doneFeature.resolve();
           });
         } else {
