@@ -140,7 +140,8 @@ angular.module('domegis')
         $scope._layers.push(layer);
         viewService.find({
           query: {
-            layerId: layer.id
+            layerId: layer.id,
+            $limit: 100
           }
         }).then(function(res) {
           $scope.$apply(function() {
