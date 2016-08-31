@@ -24,6 +24,11 @@
             <input id="role_{{role}}_input" type="checkbox" type="checkbox" name="userRoles[]" ng-checked="user.roles.indexOf(role) > -1" ng-click="toggleRole(role)" ng-disabled="user.id == 1" />
             {{role}}
           </label>
+          <p class="tip">
+            <strong>Author</strong>: can create and edit its own views;<br/>
+            <strong>Editor</strong>: can synchronize, create and edit any content, layer and view;<br/>
+            <strong>Admin</strong>: can download usage reports and manage users.
+          </p>
         </p>
         <p ng-hide="user.id">
           <label for="password_input">Password</label>
