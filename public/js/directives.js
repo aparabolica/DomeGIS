@@ -141,12 +141,10 @@ angular.module('domegis')
           scope.feature[1]
         ) {
           $http.get('/layers/' + scope.feature[0] + '/feature/' + scope.feature[1]).then(function(res) {
-            console.log(res);
             featureBounds = res.data.extents;
             map.fitBounds(parseBounds(featureBounds));
             doneFeature.resolve();
           }, function(err) {
-            console.log(err);
             doneFeature.resolve();
           });
         } else {
@@ -240,7 +238,7 @@ angular.module('domegis')
               if(e.data) {
                 var popup = L.popup()
                   .setLatLng(e.latlng)
-                  .setContent(getTooltipHtml(e.data, e.target._dm_fields))
+                  .setContent(getTooltipHtml(view, e.data, e.target._dm_fields))
                   .openOn(map);
               }
             });
@@ -261,12 +259,15 @@ angular.module('domegis')
           layers.push(layer);
         };
 
-        function getTooltipHtml(data, fields) {
+        function getTooltipHtml(view, data, fields) {
           var html = '<div class="tooltip-content">';
-          for(var key in data) {
-            html += '<h2>' + getLabel(key, fields) + '</h2>';
-            html += '<p>' + data[key] + '</p>';
-          }
+          // console.log(view, data, fields);
+          view.fields.forEach(function(field) {
+            html += '<h2>' + getLabel(field, fields) + '</h2>';
+            html += '<p>' + data[field] + '</p>';
+          });
+          // for(var key in data) {
+          // }
           html += '</div>';
           return html;
         }

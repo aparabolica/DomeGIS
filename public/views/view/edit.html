@@ -15,8 +15,10 @@
           <tr>
             <td>Interactivity</td>
             <td>
-              <div class="field-list">
-                <label for="field-{{field.name}}" ng-repeat="field in layer.fields | parseLayerField">
+              <div class="field-list" ui-sortable ng-model="view.fields">
+                <label for="field-{{field.name}}" ng-repeat="(i,field) in layer.fields | parseLayerField | orderBy:viewSort">
+                  <span class="item-index">{{i+1}}</span>
+                  <span class="fa fa-reorder" title="Drag to reorder"></span>
                   <input id="field-{{field.name}}" type="checkbox" name="viewFields[]" ng-checked="view.fields.indexOf(field.name) > -1" ng-click="toggleField(field)" />
                   {{field.title.en}}
                 </label>

@@ -475,6 +475,10 @@ angular.module('domegis')
       }
     };
 
+    $scope.viewSort = function(field) {
+      return $scope.view.fields.indexOf(field.name)
+    };
+
     $scope.$watch('view.style', _.debounce(function() {
       if($scope.view.id) {
         Server.update(previewService, $scope.view.id, $scope.view).then(function(preview) {
