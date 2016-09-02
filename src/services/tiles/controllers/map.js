@@ -30,7 +30,7 @@ function MapController(app, mapStore, mapBackend, tileBackend, attributesBackend
   self.tileBackend = tileBackend;
   self.attributesBackend = attributesBackend;
 
-  app.get(opts.baseUrl + '/:viewId/:z/:x/:y.(:format)', self.tile.bind(self));
+  app.get(opts.baseUrl + '/:token/:z/:x/:y.(:format)', self.tile.bind(self));
 
   var viewService = app.service('views');
 
@@ -114,51 +114,27 @@ MapController.prototype.layer = function(req, res, next) {
 MapController.prototype.tileOrLayer = function (req, res) {
   var self = this;
 
-  if (req.query.preview) {
-    var previews = self._app.service('previews');
-    previews.get(req.params.viewId).then(getTile).catch(function(err){
-      console.log('error loading view at tileOrLayer');
-      console.log(err);
-    });
-  } else {
-    var views = self._app.service('views');
-    views.get(req.params.viewId).then(getTile).catch(function(err){
-      console.log('error loading view at tileOrLayer');
-      console.log(err);
-    });
-  }
+  var opts = self._app.get('windshaftOpts');
 
-  function getTile(view) {
-    var opts = self._app.get('windshaftOpts');
+  var params = _.extend(req.params, opts.dbParams);
 
-    var params = _.extend(req.params, opts.dbParams);
-
-    params.token = view.layergroupId;
-
-    step(
-      function mapController$getTile(err) {
-        if ( err ) {
-          throw err;
-        }
-        self.tileBackend.getTile(new MapStoreMapConfigProvider(self.mapStore, params), params, this);
-      },
-      function mapController$finalize(err, tile, headers) {
-        self.finalizeGetTileOrGrid(err, req, res, tile, headers);
-        return null;
-      },
-      function finish(err) {
-        if ( err ) {
-          console.error("windshaft.tiles: " + err);
-        }
+  step(
+    function mapController$getTile(err) {
+      if ( err ) {
+        throw err;
       }
-    );
-  }
+      self.tileBackend.getTile(new MapStoreMapConfigProvider(self.mapStore, params), params, this);
+    },
+    function mapController$finalize(err, tile, headers) {
+      self.finalizeGetTileOrGrid(err, req, res, tile, headers);
+    }
+  );
 };
 
 // This function is meant for being called as the very last
 // step by all endpoints serving tiles or grids
 MapController.prototype.finalizeGetTileOrGrid = function(err, req, res, tile, headers) {
-  if (err){
+  if (err) {
     console.log(err);
 
     // See https://github.com/Vizzuality/Windshaft-cartodb/issues/68
@@ -169,9 +145,9 @@ MapController.prototype.finalizeGetTileOrGrid = function(err, req, res, tile, he
     if (matches) {
       errMsg = 'style'+matches[2]+': ' + matches[1];
     }
-
-    this._app.sendError(res, { errors: ['' + errMsg] }, this._app.findStatusCode(err), 'TILE', err);
+    res.status(400).send({ errors: ['' + errMsg] });
   } else {
+    headers['Cache-Control'] = 'max-age=21600'
     for(var header in headers) {
       res.set(header, headers[header]);
     }
