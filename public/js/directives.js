@@ -216,7 +216,6 @@ angular.module('domegis')
         }
 
         function addView(view, i) {
-          console.log(view);
           var layer = {};
           layer.layerId = view.layerId;
           layer.id = view.id;
