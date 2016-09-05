@@ -1,6 +1,7 @@
 {
   "host": "localhost",
   "port": 3030,
+  "subdomains": "a,b,c",
   "public": "../public/",
   "auth": {
     "token": {

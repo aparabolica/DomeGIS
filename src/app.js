@@ -48,8 +48,20 @@ app
   .configure(socketio())
   .configure(function() {
     var app = this;
+
+    // index route
     app.get('/', function(req, res) {
       res.render('index');
+    });
+
+    // settings route
+    app.get('/settings', function(req, res){
+      var settings = {
+        host: process.env.HOST || app.get('host'),
+        port: process.env.PORT || app.get('port'),
+        subdomains: process.env.SUBDOMAINS || app.get('subdomains')
+      }
+      res.json(settings);
     });
   })
   .configure(services)
