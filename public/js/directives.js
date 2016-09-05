@@ -216,11 +216,12 @@ angular.module('domegis')
         }
 
         function addView(view, i) {
+          console.log(view);
           var layer = {};
           layer.layerId = view.layerId;
           layer.id = view.id;
-          var url = '/tiles/' + view.id + '/{z}/{x}/{y}.png';
-          var gridUrl = '/tiles/' + view.id + '/{z}/{x}/{y}.grid.json';
+          var url = '/tiles/' + view.layergroupId + '/{z}/{x}/{y}.png';
+          var gridUrl = '/tiles/' + view.layergroupId + '/{z}/{x}/{y}.grid.json';
           if(scope.preview) {
             url += '?preview=true&time=' + Date.now();
             gridUrl += '?preview=true&time=' + Date.now();
