@@ -10,7 +10,7 @@ APP_DB_READONLY_USER_PWD=domegis
 APP_DB_NAME=$APP_DB_USER
 
 # Edit the following to change the version of PostgreSQL that is installed
-PG_VERSION=9.4
+PG_VERSION=9.5
 
 ###########################################################
 # Changes below this line are probably not necessary
@@ -114,7 +114,7 @@ add-apt-repository ppa:ubuntugis/ppa
 
 # install postgis
 echo "Installing extensions..."
-apt-get -y install "build-essential" "git" "postgresql-$PG_VERSION-postgis-2.2" "gdal-bin" "zip"
+apt-get -y install "build-essential" "git" "postgis" "gdal-bin" "zip"
 
 # install pg_schema_triggers
 git clone https://github.com/CartoDB/pg_schema_triggers.git
