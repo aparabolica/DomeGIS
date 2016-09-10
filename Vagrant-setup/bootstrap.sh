@@ -153,4 +153,4 @@ sequelize db:migrate
 
 # Install Bower components
 npm install -g bower
-bower install
+bower install --allow-root
