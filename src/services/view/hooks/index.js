@@ -6,19 +6,46 @@ var auth = require('feathers-authentication').hooks;
 var errors = require('feathers-errors');
 
 var setLayergroup = function(hook) {
+  var opts = hook.app.get('windshaftOpts');
+
   return new Promise(function(resolve, reject){
     var MapController = hook.app.get('mapController');
-    MapController.getLayerGroupId(hook.data, function(err, layergroupId){
-      if (err) {
-        console.log('error getLayerGroupId');
-        console.log(err);
-        return reject(err);
+    var view = hook.data || hook.result;
+
+    MapController.getLayerGroupId(view, function(err, layergroupId){
+      if (err) return reject(err);
+
+      var expiresAt = Date.now() + opts.layergroup_ttl * 1000;
+
+      // refresh an existing view (via `get` method)
+      if (hook.method == 'get') {
+        var sequelize = hook.app.get('sequelize');
+        var Views = sequelize.models.views;
+
+        Views.update({
+          layergroupId: layergroupId,
+          expiresAt: expiresAt
+        }, {
+          where: { id: hook.id },
+          hooks: false
+        })
+        .then(function(){
+          hook.result.layergroupId = layergroupId;
+          hook.result.expiresAt = expiresAt;
+          resolve();
+        })
+        .catch(reject);
+
+      // set layergroupId for new view
+      } else {
+        hook.data.layergroupId = layergroupId;
+        hook.data.expiresAt = expiresAt;
+        resolve();
       }
-      hook.data.layergroupId = layergroupId;
-      resolve();
     });
   });
 }
+
 
 exports.before = {
   all: [],
@@ -59,7 +86,14 @@ exports.before = {
 exports.after = {
   all: [],
   find: [],
-  get: [],
+  get: [
+    function(hook){
+      var view = hook.result;
+      if (!view.expiresAt || (Date.now() > view.expiresAt )) {
+        return setLayergroup(hook);
+      }
+    }
+  ],
   create: [
     function(hook){
       hook.app.log('info', 'created view "'+hook.data.id, {

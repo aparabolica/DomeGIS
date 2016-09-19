@@ -10,7 +10,8 @@ module.exports = function(sequelize) {
     style: { type: Sequelize.JSON, required: true},
     cartocss: { type: Sequelize.TEXT, required: true},
     layergroupId: { type: Sequelize.STRING },
-    creatorId: { type: Sequelize.INTEGER }
+    creatorId: { type: Sequelize.INTEGER },
+    expiresAt: { type: Sequelize.DATE }
   }, {
     classMethods: {
       associate: function(models){

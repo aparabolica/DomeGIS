@@ -13,7 +13,7 @@
   "sequelize_readonly": "postgres://domegis_readonly:domegis@localhost:5432/domegis",
   "windshaftOpts": {
     "baseUrl": "/tiles",
-    "layergroup_ttl": 31536000,
+    "layergroup_ttl": 604800,
     "dbParams": {
       "dbuser": "domegis",
       "dbname": "domegis",
