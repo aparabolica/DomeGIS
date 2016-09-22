@@ -1,7 +1,10 @@
 {
   "host": "localhost",
   "port": 3030,
-  "subdomains": "a,b,c",
+  "tiles": {
+    "subdomains": "a,b,c",
+    "urlTemplate": "http://{s}.localhost:3030/tiles/{layergrouId}/{z}/{x}/{y}.png"
+  },
   "public": "../public/",
   "auth": {
     "token": {

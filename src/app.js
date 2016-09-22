@@ -59,7 +59,7 @@ app
       var settings = {
         host: process.env.HOST || app.get('host'),
         port: process.env.PORT || app.get('port'),
-        subdomains: process.env.SUBDOMAINS || app.get('subdomains')
+        tiles: app.get('tiles')        
       }
       res.json(settings);
     });
