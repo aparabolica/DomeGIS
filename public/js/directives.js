@@ -76,10 +76,11 @@ angular.module('domegis')
         var legendControl = L.control.legend();
         map.addControl(legendControl);
 
-
-        map.on('move', _.debounce(function() {
-          $state.go($state.current.name, {loc: getLocStr()}, {notify: false})
-        }, 400));
+        if(self == top) {
+          map.on('move', _.debounce(function() {
+            $state.go($state.current.name, {loc: getLocStr()}, {notify: false})
+          }, 400));
+        }
 
         var baseLayers = L.layerGroup();
 
