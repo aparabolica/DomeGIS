@@ -463,6 +463,9 @@ angular.module('domegis')
 
     $scope.view = angular.copy(Edit);
 
+    if(!$scope.view.fields)
+      $scope.view.fields = [];
+
     $scope.toggleField = function(field) {
       var idx = $scope.view.fields.indexOf(field.name);
       // is currently selected
@@ -476,7 +479,7 @@ angular.module('domegis')
     };
 
     $scope.viewSort = function(field) {
-      return $scope.view.fields.indexOf(field.name)
+      return $scope.view.fields.indexOf(field.name);
     };
 
     $scope.$watch('view.style', _.debounce(function() {
@@ -493,6 +496,7 @@ angular.module('domegis')
     }, 400), true);
 
     $scope.save = function(view) {
+      view.fields = _.compact(view.fields);
       if(Edit.id) {
         Server.patch(viewService, Edit.id, view).then(function(view) {
           $scope.view = view;

@@ -17,6 +17,15 @@ var AuthDep = [
 ];
 
 angular.module('domegis')
+.run([
+  '$http',
+  '$window',
+  function($http, $window) {
+    $http.get('/settings').then(function(res) {
+      $window.domegis = res.data;
+    });
+  }
+])
 .config([
   '$stateProvider',
   '$urlRouterProvider',

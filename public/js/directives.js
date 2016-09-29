@@ -11,7 +11,7 @@ angular.module('domegis')
       template: '<img class="thumbnail" ng-src="{{src}}" />',
       link: function(scope, element, attrs) {
         scope.$watch('content', function(content) {
-          if(content) {
+          if(content && content.data && content.data.thumbnail) {
             scope.src = arcgis.getApiRoot() + '/content/items/' + (content.id || content._id) + '/info/' + (content.data ? content.data.thumbnail : content.thumbnail);
           }
         }, true);
@@ -23,11 +23,12 @@ angular.module('domegis')
 .directive('domeMap', [
   '$q',
   '$http',
+  '$window',
   '$state',
   '$filter',
   'Server',
   'Lang',
-  function($q, $http, $state, $filter, Server, Lang) {
+  function($q, $http, $window, $state, $filter, Server, Lang) {
     return {
       restrict: 'A',
       scope: {
@@ -219,19 +220,21 @@ angular.module('domegis')
           var layer = {};
           layer.layerId = view.layerId;
           layer.id = view.id;
-          var url = '/tiles/' + view.layergroupId + '/{z}/{x}/{y}.png';
-          var gridUrl = '/tiles/' + view.layergroupId + '/{z}/{x}/{y}.grid.json';
+          var tileBase = $window.domegis.tiles.urlTemplates.tile;
+          var gridBase = $window.domegis.tiles.urlTemplates.grid;
           if(scope.preview) {
-            url += '?preview=true&time=' + Date.now();
-            gridUrl += '?preview=true&time=' + Date.now();
+            tileBase += '?preview=true&time=' + Date.now();
+            gridBase += '?preview=true&time=' + Date.now();
           }
-          layer.tile = L.tileLayer(url, {
+          layer.tile = L.tileLayer(tileBase, {
+            layergroupId: view.layergroupId,
             zIndex: (i+1)*10
           });
           if(!view.hidden)
             mapLayers.addLayer(layer.tile);
           if(view.fields && view.fields.length) {
-            layer.grid = new L.UtfGrid(gridUrl, {
+            layer.grid = new L.UtfGrid(gridBase, {
+              layergroupId: view.layergroupId,
               useJsonP: false
             });
             layer.grid.on('click', function(e) {

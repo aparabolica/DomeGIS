@@ -3,7 +3,10 @@
   "port": 3030,
   "tiles": {
     "subdomains": "a,b,c",
-    "urlTemplate": "http://{s}.localhost:3030/tiles/{layergrouId}/{z}/{x}/{y}.png"
+    "urlTemplates": {
+      "tile": "http://{s}.localhost:3030/tiles/{layergroupId}/{z}/{x}/{y}.png",
+      "grid": "http://{s}.localhost:3030/tiles/{layergroupId}/{z}/{x}/{y}.grid.json"
+    }
   },
   "public": "../public/",
   "auth": {
