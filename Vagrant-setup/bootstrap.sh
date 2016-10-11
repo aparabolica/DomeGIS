@@ -114,7 +114,7 @@ add-apt-repository ppa:ubuntugis/ppa
 
 # install postgis
 echo "Installing extensions..."
-apt-get -y install "build-essential" "git" "postgis" "gdal-bin" "zip"
+apt-get -y install "build-essential" "git" "gdal-bin" "zip" "postgresql-$PG_VERSION-postgis-2.3"
 
 # install pg_schema_triggers
 git clone https://github.com/CartoDB/pg_schema_triggers.git
