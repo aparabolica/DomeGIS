@@ -34,7 +34,7 @@
     "angular-cookies": "~1.5.5",
     "chroma-js": "~1.1.1",
     "leaflet-bing-layer": "gmaclennan/leaflet-bing-layer#^3.0.1",
-    "ngInfiniteScroll": "sroze/ngInfiniteScroll#^1.3.0"
+    "ngInfiniteScroll": "ng-infinite-scroll/ng-infinite-scroll-bower#^1.3.1"
   },
   "resolutions": {
     "leaflet": "~1.0.0"
