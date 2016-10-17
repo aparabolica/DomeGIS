@@ -35,13 +35,15 @@ app
   .set('views', 'public')
   .configure(function() {
     var app = this;
-    app.use(assets({
-      paths: [
-        'public/js',
-        'public/lib',
-        'bower_components'
-      ]
-    }));
+    if (process.env.NODE_ENV != 'test') {
+      app.use(assets({
+        paths: [
+          'public/js',
+          'public/lib',
+          'bower_components'
+        ]
+      }));
+    }
   })
   .configure(hooks())
   .configure(rest())
