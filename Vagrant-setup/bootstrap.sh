@@ -141,10 +141,8 @@ update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
 apt-get install -y libmapnik2.2 redis-server node-node-redis
 apt-get install -y libcairo2-dev libpango1.0-dev libjpeg8-dev libgif-dev
 
-# Change to app directory
-cd /vagrant
-
 # Install Node.js dependencies
+cd /vagrant
 npm install
 
 # Install Sequelize and migrate DB
