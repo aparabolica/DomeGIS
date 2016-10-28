@@ -1,16 +1,5 @@
 'use strict';
-var authentication = require('./authentication');
-var content = require('./content');
-var feathersLogger = require('feathers-logger');
-var Logger = require('../lib/logger');
-var layer = require('./layer');
-var logging = require('./logging');
-var preview = require('./preview');
-var verifyReset = require('./verify-reset');
-var search = require('./search');
 var Sequelize = require('sequelize');
-var user = require('./user');
-var view = require('./view');
 
 module.exports = function() {
   var app = this;
@@ -29,21 +18,29 @@ module.exports = function() {
   });
   app.set('sequelize_readonly', sequelize_readonly);
 
-  app.configure(authentication);
-  app.configure(user);
-  app.configure(content);
-  app.configure(layer);
-  app.configure(preview);
-  app.configure(view);
-  app.configure(search);
-  app.configure(logging);
-  app.configure(verifyReset);
+  app.configure(require('./authentication'));
+  app.configure(require('./user'));
 
-  var logger = new Logger({
-    app: app,
-    sequelize: sequelize
-  });
-  app.configure(feathersLogger(logger));
+  // services after this point are avoided to speed up tests
+  if (process.env.NODE_ENV != 'test') {
+    app.configure(require('./content'));
+    app.configure(require('./layer'));
+    app.configure(require('./preview'));
+    app.configure(require('./view'));
+    app.configure(require('./search'));
+    app.configure(require('./logging'));
+    app.configure(require('./verify-reset'));
+    app.configure(require('./tiles'));
+
+    var feathersLogger = require('feathers-logger');
+    var Logger = require('../lib/logger');
+    var logger = new Logger({
+      app: app,
+      sequelize: sequelize
+    });
+    app.configure(feathersLogger(logger));
+  }
+
 
 
   // Setup relationships
@@ -53,6 +50,7 @@ module.exports = function() {
    .filter(function(model) { return model.associate })
    .forEach(function(model) { return  model.associate(models) } );
 
+  // Bootstrap DB
   sequelize.sync().then(function(){
 
     // init admin user
@@ -77,11 +75,4 @@ module.exports = function() {
       console.log(err);
     });
   });
-
-
-
-  // disable windshaft when testing
-  if (process.env.NODE_ENV != 'test') {
-    app.configure(require('./tiles'));
-  }
 };
