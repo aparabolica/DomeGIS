@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "node src/",
-    "test": "NODE_ENV=test mocha test/services/content",
+    "test": "NODE_ENV=test mocha test/services/upload",
     "jshint": "jshint src/. test/. --config"
   },
   "dependencies": {
@@ -54,13 +54,18 @@
     "underscore": "^1.8.3",
     "windshaft": "^1.16.1",
     "validator": "~5.5.0",
-    "mailgun-js": "~0.7.12"
+    "mailgun-js": "~0.7.12",
+    "fs-blob-store": "~5.2.1",
+    "multer": "~1.2.0",
+    "dauria": "~1.1.4"
   },
   "devDependencies": {
     "jshint": "^2.9.1",
     "mocha": "^2.4.5",
     "request": "^2.69.0",
     "should": "^8.3.0",
-    "replay": "~2.0.6"
+    "replay": "~2.0.6",
+    "chai": "~3.5.0",
+    "chai-http": "~3.0.0"
   }
 }

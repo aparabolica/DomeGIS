@@ -20,6 +20,7 @@ module.exports = function() {
 
   app.configure(require('./authentication'));
   app.configure(require('./user'));
+  app.configure(require('./uploads'));
 
   // services after this point are avoided to speed up tests
   if (process.env.NODE_ENV != 'test') {
@@ -40,8 +41,6 @@ module.exports = function() {
     });
     app.configure(feathersLogger(logger));
   }
-
-
 
   // Setup relationships
   var models = sequelize.models;

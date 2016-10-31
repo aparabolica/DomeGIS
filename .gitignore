@@ -39,3 +39,6 @@ public/downloads
 
 # OSX system files
 .DS_Store
+
+# uploads
+uploads/*
