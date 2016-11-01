@@ -1,6 +1,7 @@
 'use strict';
 
 var dauria = require('dauria');
+var hooks = require('feathers-hooks-common');
 
 exports.before = {
   create: [
@@ -11,5 +12,11 @@ exports.before = {
         hook.data = {uri: uri};
       }
     }
+  ]
+}
+
+exports.after = {
+  create: [
+    hooks.pluck('id', 'size')
   ]
 }

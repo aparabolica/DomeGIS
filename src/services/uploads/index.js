@@ -16,10 +16,10 @@ module.exports = function(){
   var app = this;
 
   app.use('/uploads',
-    multipartMiddleware.single('uri'),
+    multipartMiddleware.single('file'),
     function (req,res,next){
-        req.feathers.file = req.file;
-        next();
+      req.feathers.file = req.file;
+      next();
     },
     blobService({Model: blobStorage})
   );
@@ -29,4 +29,7 @@ module.exports = function(){
 
   // Set up our before hooks
   uploadService.before(hooks.before);
+
+  // Set up our after hooks
+  uploadService.after(hooks.after);
 };
