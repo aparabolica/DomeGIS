@@ -40,7 +40,7 @@ exports.before = {
           },
           function(doneStep){
 
-            if (hook.data.type == 'arcgis'){
+            if (hook.data.source == 'arcgis'){
               getArcGisLayerProperties(hook.data.url, function(err, properties){
                 if (err) return reject(err);
                 hook.data.geometryType = properties.geometryType;
@@ -61,7 +61,7 @@ exports.before = {
                 }
                 resolve();
               });
-            } else if (hook.data.type == 'derived') {
+            } else if (hook.data.source == 'derived') {
 
               // generate random layer id
               hook.data.id = crypto.randomBytes(20).toString('hex');
@@ -121,14 +121,14 @@ exports.after = {
        * Sync ArcGIS Layer
        */
 
-      if (hook.data.type == 'arcgis') {
+      if (hook.data.source == 'arcgis') {
         syncArcGisLayerFeatures(hook)
         resolve();
       }
       /*
       * Sync derived Layer
       */
-      else if (hook.data.type == 'derived') {
+      else if (hook.data.source == 'derived') {
         var sequelize = hook.app.get('sequelize');
 
         //  var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = (select count(*) from \""+layerId+"\"), \"geometryType\" = (select GeometryType(geometry) from \""+layerId+"\") WHERE (layers.id =  '"+ layerId +"');"

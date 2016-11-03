@@ -111,7 +111,7 @@ exports.after = {
 
         async.eachSeries(layers, function(layer, doneLayer){
           // set content id
-          layer.type = 'arcgis';
+          layer.source = 'arcgis';
           layer.contentId = hook.data.id;
           layer.index = layer.id;
           layer.url = hook.data.url + '/' + + layer.id;
