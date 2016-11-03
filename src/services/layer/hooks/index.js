@@ -72,6 +72,8 @@ exports.before = {
 
                 resolve();
               });
+            } else if (hook.data.source == 'uploaded') {
+                resolve();
             } else {
               reject(new errors.GeneralError('Missing SQL query.'));
             }
@@ -143,7 +145,7 @@ exports.after = {
            handleSyncFinishEvent(err);
            reject(err);
          });
-      }
+      } else resolve();
     });
   }],
   update: [],

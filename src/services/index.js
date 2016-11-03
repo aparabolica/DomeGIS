@@ -21,13 +21,13 @@ module.exports = function() {
   app.configure(require('./authentication'));
   app.configure(require('./user'));
   app.configure(require('./uploads'));
+  app.configure(require('./layer'));
+  app.configure(require('./content'));
+  app.configure(require('./preview'));
+  app.configure(require('./view'));
 
   // services after this point are avoided to speed up tests
   if (process.env.NODE_ENV != 'test') {
-    app.configure(require('./content'));
-    app.configure(require('./layer'));
-    app.configure(require('./preview'));
-    app.configure(require('./view'));
     app.configure(require('./search'));
     app.configure(require('./logging'));
     app.configure(require('./verify-reset'));

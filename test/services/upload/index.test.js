@@ -44,13 +44,21 @@ describe('files service', function () {
       .post('/uploads')
       .set('Accept', 'application/json')
       .set('Authorization', 'Bearer '.concat(token))
+      .field('name', 'Uploaded layer')
       .attach('file', fs.readFileSync(__dirname + '/../../../fixtures/uploads/sample.tiff'), 'sample.tif')
       .end(function (err, res) {
         should.not.exist(err);
-        res.body.should.have.property('id');
-        res.body.id.should.equal('8b791d2ef3366fbdc30cdcafaf808778b2aa0e090475d43028a8dd2909a7f944.tiff');
+
+        res.body.should.not.have.property('id');
         res.body.should.not.have.property('uri');
-        res.body.should.have.property('size', 4009155);
+        res.body.should.not.have.property('size');
+        res.body.should.have.property('layer');
+
+        var layer = res.body.layer;
+        layer.should.have.property('name', 'Uploaded layer');
+        layer.should.have.property('source', 'uploaded');
+        layer.should.have.property('type', 'raster');
+
         done();
       });
   });
