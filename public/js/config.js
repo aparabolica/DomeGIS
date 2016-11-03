@@ -136,6 +136,11 @@ angular.module('domegis')
       controller: 'GenerateCtrl',
       templateUrl: '/views/generate.html'
     })
+    .state('upload', {
+      url: '/upload/',
+      controller: 'UploadCtrl',
+      templateUrl: '/views/upload.html'
+    })
     .state('derived', {
       url: '/derived/?sql',
       controller: 'DerivedCtrl',

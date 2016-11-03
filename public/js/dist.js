@@ -19,6 +19,7 @@
 //= require leaflet.download
 
 //= require angular/angular
+//= require ng-file-upload/ng-file-upload
 //= require angular-cookies/angular-cookies
 //= require angular-ui-router/release/angular-ui-router
 //= require angular-ui-ace/ui-ace

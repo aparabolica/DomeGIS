@@ -370,6 +370,65 @@ angular.module('domegis')
   }
 ])
 
+.controller('UploadCtrl', [
+  '$scope',
+  '$state',
+  'Upload',
+  '$q',
+  function($scope, $state, Upload, $q) {
+
+    var uploadUrl = '/uploads';
+
+    $scope.progress = {};
+
+    $scope.uploaded = [];
+
+    var upload = function(file) {
+      return Upload.upload({
+        url: uploadUrl,
+        file: file
+      }).then(function(res) {
+        console.log(res);
+        $scope.uploaded.push(res.data);
+      }, function(err) {
+        console.log(err);
+      }, function(evt) {
+        $scope.progress[file.name] = [evt.loaded, evt.total];
+      });
+    }
+
+    $scope.uploadFiles = function(files) {
+      if(files && files.length) {
+        var promises = [];
+        for(var i = 0; i < files.length; i++) {
+          promises.push(upload(files[i]));
+        }
+        $q.all(promises).then(function(files) {
+          console.log(files);
+          $scope.progress = {};
+          // $state.go($state.current, {}, {reload:true});
+        });
+      }
+    };
+
+    $scope.getProgress = function() {
+      var prog = [0,0];
+      if(!_.isEmpty($scope.progress)) {
+        for(var key in $scope.progress) {
+          if($scope.progress[key][1]) {
+            prog[0] += $scope.progress[key][0];
+            prog[1] += $scope.progress[key][1];
+          }
+        }
+      }
+      if(prog[0])
+        return (100.0 * prog[0] / prog[1]).toFixed(2);
+      else
+        return 0;
+    }
+  }
+])
+
 .controller('LayerEditCtrl', [
   '$scope',
   'Server',

@@ -1,0 +1,40 @@
+<header id="inner-header" class="form-header">
+  <div class="container">
+    <div class="six columns offset-by-three">
+      <h2>Upload</h2>
+      <p>Create layers from shapefile or raster (.tiff) data.</p>
+    </div>
+  </div>
+</header>
+<div id="upload">
+  <div class="container row">
+    <div class="six columns offset-by-three">
+      <form class="main-form">
+        <div class="dropbox" ngf-drop="uploadFiles($files)" ngf-select="uploadFiles($files)" ngf-multiple="true" ngf-drag-over-class="'dragover'" ng-model="files" ng-disabled="getProgress()">
+          <span class="fa fa-upload"></span>
+          Arraste arquivos aqui ou clique para selecionar
+          <span class="progress-bar" ng-show="getProgress()" ng-style="{'width': getProgress() + '%' }">
+            <span class="progress-label" ng-show="getProgress()"> {{getProgress()}}%</span>
+          </span>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="container row">
+    <div class="eight columns offset-by-two">
+      <table ng-show="uploaded.length">
+        <thead>
+          <tr>
+            <th>File name</th>
+            <th>Size</th>
+        </thead>
+        <tbody>
+          <tr ng-repeat="file in uploaded">
+            <td>{{file.id}}</td>
+            <td>{{file.size}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

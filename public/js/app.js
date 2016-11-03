@@ -1,6 +1,7 @@
 angular.module('domegis', [
   'ngCookies',
   'ui.router',
+  'ngFileUpload',
   'ui.sortable',
   'ui.ace',
   'colorpicker.module',

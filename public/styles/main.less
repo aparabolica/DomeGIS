@@ -401,14 +401,28 @@ table {
     float: right;
     a {
       text-transform: uppercase;
+      text-decoration: none;
       font-size: .8em;
       font-weight: 600;
       color: #fff;
       background: rgba(255,255,255, 0.07);
       padding: 1rem;
+      display: inline-block;
       &:hover {
         background: rgba(255,255,255,0.1);
         text-decoration: none;
+      }
+      &.primary {
+        background: @blue;
+        &:hover {
+          background: darken(@blue, 5%);
+        }
+      }
+      .fa {
+        margin-right: .5rem;
+        font-size: .9em;
+        background: rgba(0,0,0,0.1);
+        padding: .3rem;
       }
     }
   }
@@ -1292,5 +1306,43 @@ form {
     color: #fff;
     background: lighten(red, 20%);
     border: 1px solid lighten(red, 10%);
+  }
+}
+
+#upload {
+  .dropbox {
+    text-align: center;
+    background: #f8f8f8;
+    padding: 40px 0;
+    border: 2px dashed #ddd;
+    margin: 0 0 20px;
+    color: #666;
+    font-style: italic;
+    position: relative;
+    cursor: pointer;
+    &:hover,
+    &.dragover {
+      background: #ddd;
+      border-color: #aaa;
+    }
+    .fa {
+      margin-right: 1rem;
+    }
+    .progress-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      border: 5px solid #f8f8f8;
+      background: rgba(0,0,0,0.1);
+      text-align: right;
+      padding-top: 70px;
+      overflow: hidden;
+      .progress-label {
+        color: #666;
+        font-size: 90%;
+        margin-right: 5px;
+      }
+    }
   }
 }
