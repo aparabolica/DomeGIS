@@ -75,7 +75,18 @@ angular.module('domegis')
           function(Server) {
             return Server.find(Server.service('layers'), {
               query: {
-                type: 'derived',
+                source: 'derived',
+                $limit: 100
+              }
+            });
+          }
+        ],
+        Uploaded: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('layers'), {
+              query: {
+                source: 'uploaded',
                 $limit: 100
               }
             });

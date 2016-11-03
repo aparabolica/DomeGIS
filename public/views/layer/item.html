@@ -1,13 +1,13 @@
 <td class="status">
-  <p class="status-icon" ng-class="{ok: layer.sync.status == 'finished', err: layer.sync.status == 'failed'}">
-    <span class="fa fa-refresh fa-spin" ng-hide="layer.sync.status == 'finished' || layer.sync.status == 'failed'"></span>
-    <span class="fa fa-check-circle" ng-show="layer.sync.status == 'finished'"></span>
+  <p class="status-icon" ng-class="{ok: layer.sync.status == 'finished' || !layer.status, err: layer.sync.status == 'failed'}">
+    <span class="fa fa-refresh fa-spin" ng-hide="layer.sync.status == 'finished' || layer.sync.status == 'failed' || !layer.status"></span>
+    <span class="fa fa-check-circle" ng-show="layer.sync.status == 'finished' || !layer.status"></span>
     <span class="fa fa-times" ng-show="layer.sync.status == 'failed'"></span>
     <span class="status-text" ng-hide="layer.sync.status == 'finished'">{{layer.sync.status}}</span>
   </p>
   <p class="last-sync">Last sync {{layer.sync.finishedAt | formatDate}}</p>
   <p class="actions" ng-show="hasRole('editor')">
-    <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="layer.sync.status == 'finished'">Edit layer</a>
+    <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="layer.sync.status == 'finished' || !layer.status">Edit layer</a>
     <a class="button" ng-click="resync()">
       <span class="fa fa-refresh"></span>
       Resync layer
@@ -15,7 +15,7 @@
   </p>
   <p class="sync-err" ng-show="layer.sync.message">{{layer.sync.message}}</p>
   <td class="main">
-    <h3>{{layer.name | translate}}</h3>
+    <h3>{{layer.name || '' | translate}}</h3>
     <p class="item-id"><strong>ID</strong>: {{layer.id}}</p>
   </td>
 </td>
@@ -30,5 +30,5 @@
 </td>
 <td>
   <div ng-repeat="view in views" view-item="view" class="view-item"></div>
-  <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="(hasRole('editor') || hasRole('author')) && layer.sync.status == 'finished'">Create new view</a>
+  <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="(hasRole('editor') || hasRole('author')) && (layer.sync.status == 'finished' || !layer.status)">Create new view</a>
 </td>

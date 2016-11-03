@@ -215,10 +215,11 @@ angular.module('domegis')
   'Content',
   'Synced',
   'Derived',
+  'Uploaded',
   'Server',
   'esriService',
   'MessageService',
-  function($scope, Content, Synced, Derived, Server, Esri, Message) {
+  function($scope, Content, Synced, Derived, Uploaded, Server, Esri, Message) {
 
     var contentService = Server.service('contents');
 
@@ -340,7 +341,7 @@ angular.module('domegis')
     });
 
     $scope.isSynced = function(item) {
-      if(item.source && item.source == 'derived') {
+      if(item.source && (item.source == 'derived' || item.source == 'uploaded')) {
         return item;
       } else {
         return _.find($scope.synced, function(s) {
@@ -360,6 +361,9 @@ angular.module('domegis')
         });
       }
     };
+
+    $scope.uploaded = Uploaded.data;
+    console.log(Uploaded);
 
     $scope.collectionSource = 'arcgis';
 
