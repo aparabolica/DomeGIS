@@ -388,9 +388,13 @@ angular.module('domegis')
     $scope.uploaded = [];
 
     var upload = function(file) {
+      console.log(file);
       return Upload.upload({
         url: uploadUrl,
-        file: file
+        data: {
+          file: file,
+          name: file.name
+        }
       }).then(function(res) {
         console.log(res);
         $scope.uploaded.push(res.data);

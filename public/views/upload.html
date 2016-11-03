@@ -26,12 +26,12 @@
         <thead>
           <tr>
             <th>File name</th>
-            <th>Size</th>
+            <th>Type</th>
         </thead>
         <tbody>
           <tr ng-repeat="file in uploaded">
-            <td>{{file.id}}</td>
-            <td>{{file.size}}</td>
+            <td>{{file.layer.name}}</td>
+            <td>{{file.layer.type}}</td>
           </tr>
         </tbody>
       </table>

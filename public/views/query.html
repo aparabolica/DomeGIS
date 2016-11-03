@@ -92,7 +92,7 @@
         </table>
       </div>
       <div class="uploaded-layers" ng-show="collectionSource == 'uploaded'">
-        <p class="info" ng-hide="derived.length">There are no uploaded layers. <a ui-sref="upload" ng-show="hasRole('editor')">Click here to upload your first.</a></p>
+        <p class="info" ng-hide="uploaded.length">There are no uploaded layers. <a ui-sref="upload" ng-show="hasRole('editor')">Click here to upload your first.</a></p>
         <table class="results" ng-show="filteredUploaded.length && uploaded.length">
           <thead>
             <tr>
