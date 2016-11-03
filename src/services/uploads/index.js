@@ -3,7 +3,7 @@
 // feathers-blob service
 var blobService = require('feathers-blob');
 var fs = require('fs-blob-store');
-var blobStorage = fs(__dirname + '/../../../uploads');
+var blobStorage = fs('/tmp/domegis/uploads');
 
 // multi-part middleware
 var multer = require('multer');
