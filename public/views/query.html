@@ -21,14 +21,14 @@
     <div class="clearfix">
       <h2>Collection</h2>
       <nav>
-        <a href="javascript:void(0);" ng-click="setCollection('arcgis')" ng-class="{active:collectionType == 'arcgis'}">ArcGIS Content</a>
-        <a href="javascript:void(0);" ng-click="setCollection('derived')" ng-class="{active:collectionType == 'derived'}">Derived Layers</a>
+        <a href="javascript:void(0);" ng-click="setCollection('arcgis')" ng-class="{active:collectionSource == 'arcgis'}">ArcGIS Content</a>
+        <a href="javascript:void(0);" ng-click="setCollection('derived')" ng-class="{active:collectionSource == 'derived'}">Derived Layers</a>
       </nav>
     </div>
   </header>
   <div class="container">
     <div class="twelve columns">
-      <div class="arcgis-content" ng-show="collectionType == 'arcgis'">
+      <div class="arcgis-content" ng-show="collectionSource == 'arcgis'">
         <p class="info" ng-hide="synced.length">There are no synchronized ArcGIS content on the database. <span ng-show="hasRole('editor')">Click on the contents below to start synchronizing.</span></p>
         <table class="results" ng-show="collection.length && synced.length">
           <thead>
@@ -59,7 +59,7 @@
           </tbody>
         </table>
       </div>
-      <div class="derived-layers" ng-show="collectionType == 'derived'">
+      <div class="derived-layers" ng-show="collectionSource == 'derived'">
         <p class="info" ng-hide="derived.length">There are no derived layers on the database. <a ui-sref="derived" ng-show="hasRole('editor')">Click here to create your first.</a></p>
         <table class="results" ng-show="filteredDerived.length && derived.length">
           <thead>

@@ -314,7 +314,7 @@ angular.module('domegis')
       if(item.$viewLayers) {
         item.$viewLayers = false;
       } else {
-        if(item.type && item.type == 'derived') {
+        if(item.source && item.source == 'derived') {
           item.$viewLayers = true;
         } else if(!$scope.isSynced(item) && isEditor) {
           if(confirm('Would you like to add this content to collection?')) {
@@ -340,7 +340,7 @@ angular.module('domegis')
     });
 
     $scope.isSynced = function(item) {
-      if(item.type && item.type == 'derived') {
+      if(item.source && item.source == 'derived') {
         return item;
       } else {
         return _.find($scope.synced, function(s) {
@@ -361,10 +361,10 @@ angular.module('domegis')
       }
     };
 
-    $scope.collectionType = 'arcgis';
+    $scope.collectionSource = 'arcgis';
 
-    $scope.setCollection = function(type) {
-      $scope.collectionType = type;
+    $scope.setCollection = function(source) {
+      $scope.collectionSource = source;
     };
 
   }
@@ -749,7 +749,7 @@ angular.module('domegis')
     });
     $scope.create = function() {
       Server.create(Server.service('layers'), {
-        type: 'derived',
+        source: 'derived',
         name: $scope.name,
         query: $stateParams.sql
       }).then(function(data) {
