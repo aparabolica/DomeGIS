@@ -252,7 +252,10 @@ angular.module('domegis')
           'Layer',
           '$http',
           function(layer, $http) {
-            return $http.get('/layers/' + layer.id + '/values');
+            if(layer.type == 'raster')
+              return [];
+            else
+              return $http.get('/layers/' + layer.id + '/values');
           }
         ]
       }
