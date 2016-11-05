@@ -1,13 +1,7 @@
 'use strict';
 
-// feathers-blob service
-var blobService = require('feathers-blob');
-var fs = require('fs-blob-store');
-var blobStorage = fs('/tmp/domegis/uploads');
-
-// multi-part middleware
-var multer = require('multer');
-var multipartMiddleware = multer();
+var service = require('feathers-memory');
+var formidable = require('formidable');
 
 // hooks
 var hooks = require('./hooks');
@@ -15,14 +9,25 @@ var hooks = require('./hooks');
 module.exports = function(){
   var app = this;
 
-  app.use('/uploads',
-    multipartMiddleware.single('file'),
-    function (req,res,next){
-      req.feathers.file = req.file;
+  var form = new formidable.IncomingForm();
+  form.encoding = 'utf-8';
+
+  app.use('/uploads', function (req, res, next) {
+    form.parse(req, function (err, fields, files) {
+      if (err) {
+        console.log('err');
+        console.log(err);
+        next(err);
+        return;
+      }
+
+      req.feathers.file = files.file;
+      req.feathers.name = fields.name;
+
       next();
-    },
-    blobService({Model: blobStorage})
-  );
+    });
+  }, service()
+);
 
   // Get our initialize service to that we can bind hooks
   var uploadService = app.service('/uploads');

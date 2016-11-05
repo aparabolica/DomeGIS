@@ -47,6 +47,7 @@ describe('files service', function () {
       .field('name', 'Uploaded layer')
       .attach('file', fs.readFileSync(__dirname + '/../../../fixtures/uploads/sample.tiff'), 'sample.tif')
       .end(function (err, res) {
+
         should.not.exist(err);
 
         res.body.should.not.have.property('id');
