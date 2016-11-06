@@ -2,7 +2,11 @@
 
 var exec = require('child_process').exec;
 var hooks = require('feathers-hooks-common');
+var errors = require('feathers-errors');
 var crypto = require('crypto');
+
+var debug = require('debug');
+var log = debug('domegis:service:uploads');
 
 exports.before = {
   create: []
@@ -11,6 +15,9 @@ exports.before = {
 exports.after = {
   create: [
     function(hook){
+
+      var Layers = hook.app.service('layers');
+      
       return new Promise(function(resolve, reject){
 
         // file upload is a tiff
@@ -18,22 +25,27 @@ exports.after = {
 
           var filePath = hook.params.file.path;
           var layerId = crypto.randomBytes(20).toString('hex');
+          hook.result.layer = {
+            id: layerId,
+            source: 'uploaded',
+            type: 'raster',
+            status: 'importing',
+            name: hook.params.name
+          }
 
-          var cmd = 'raster2pgsql -d -s 4618 -F -t "auto" ' + filePath + ' public.' + layerId + ' | psql -d domegis -U domegis';
-
+          var cmd = 'raster2pgsql -d -Y -t "auto" ' + filePath + ' public.' + layerId + ' | psql -d domegis -U domegis';
           exec(cmd, function (err) {
-            if (err) {
-              reject('could not import raster');
-            } else {
-              hook.result.layer = {
-                id: layerId,
-                source: 'uploaded',
-                type: 'raster',
-                name: hook.params.name
-              }
-              resolve();
-            }
+            var status = err ? 'error' : 'imported';
+
+            Layers.patch(layerId, {
+              status: status
+            }).catch(function(err){
+              log(layerId + ' error saving raster import status');
+            });
+
           });
+
+          resolve();
         }
       });
     },

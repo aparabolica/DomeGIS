@@ -39,7 +39,11 @@ describe('files service', function () {
     assert.ok(app.service('uploads'));
   });
 
+  var sampleRasterLayerId;
+
   it('should post a file', function(done) {
+    this.timeout(5000);
+
     chai.request(app)
       .post('/uploads')
       .set('Accept', 'application/json')
@@ -57,10 +61,33 @@ describe('files service', function () {
 
         var layer = res.body.layer;
         layer.should.have.property('name', 'Uploaded layer');
-        layer.should.have.property('source', 'uploaded');
         layer.should.have.property('type', 'raster');
+        layer.should.have.property('status', 'importing');
+        layer.should.have.property('source', 'uploaded');
+
+        sampleRasterLayerId = layer.id;
+
+        setTimeout(done, 3000);
+      });
+  });
+
+  it('should change layer status whem import is finished', function(done){
+    chai.request(app)
+      .get('/layers/' + sampleRasterLayerId)
+      .set('Accept', 'application/json')
+      .set('Authorization', 'Bearer '.concat(token))
+      .end(function (err, res) {
+
+        should.not.exist(err);
+
+        var layer = res.body;
+        layer.should.have.property('name', 'Uploaded layer');
+        layer.should.have.property('type', 'raster');
+        layer.should.have.property('status', 'imported');
+        layer.should.have.property('source', 'uploaded');
 
         done();
       });
   });
+
 });
