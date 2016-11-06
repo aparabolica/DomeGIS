@@ -577,7 +577,7 @@ angular.module('domegis')
         scope.addStop = function() {
           scope.stops.push({
             pos: 0,
-            color: 'rgba(0,0,0,1)'
+            color: '#ffffff'
           });
         };
         scope.$watch('stops', function() {

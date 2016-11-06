@@ -1,7 +1,7 @@
 <span class="raster-stops-container">
   <a class="button" ng-click="addStop()">Add new stop</a>
-  <span class="raster-stop clearfix" ng-repeat="stop in stops">
-    <input class="spinner" ui-spinner step="5" min="0" type="text" ng-model="stop.pos" placeholder="Position" />
+  <span class="raster-stop clearfix" ng-repeat="(i,stop) in stops">
     <input class="colorpicker-input" colorpicker ng-model="stop.color" type="text" ng-style="{'background-color': stop.color || '#fff', 'color': getContrastYIQ(stop.color)}" />
+    <input class="spinner" ui-spinner step="5" min="0" type="text" ng-model="stop.pos" placeholder="Position" />
   </span>
 </span>

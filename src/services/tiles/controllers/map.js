@@ -61,7 +61,7 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
 
   if (view.type == 'vector') {
 
-    var defaultCartoCSS = "#style{ polygon-fill: blue;  line-color: red; marker-width:8; marker-fill: red; }";
+    var defaultCartoCSS = "#style { polygon-fill: blue;  line-color: red; marker-width:8; marker-fill: red; }";
 
     var fields = view.fields || [];
 
@@ -83,7 +83,7 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
     mapnikLayer.options = {
       sql: 'select domegis_id, geometry '+ fieldsStr +' from "' + view.layerId + '"',
       geom_column: "geometry",
-      cartocss_version: "2.0.0",
+      cartocss_version: "2.0.1",
       interactivity: view.fields,
       cartocss: view.cartocss || defaultCartoCSS
     }
@@ -94,8 +94,8 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
       sql: 'select * from "' + view.layerId + '"',
       geom_column: "rast",
       geom_type: "raster",
-      cartocss: view.cartocss || "#style{ raster-opacity: 1;}",
-      cartocss_version: "2.0.0"
+      cartocss: view.cartocss || "#style { raster-opacity: 1; }",
+      cartocss_version: "2.0.1"
     }
   }
 

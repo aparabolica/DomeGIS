@@ -213,7 +213,8 @@ angular.module('domegis')
                   mapBounds = bounds;
               }
             });
-            map.fitBounds(mapBounds);
+            if(mapBounds.isValid())
+              map.fitBounds(mapBounds);
           }
         }
 
