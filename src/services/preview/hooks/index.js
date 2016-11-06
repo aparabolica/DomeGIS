@@ -1,7 +1,7 @@
 'use strict';
 
 var _ = require('underscore');
-var hooks = require('feathers-hooks');
+var hooks = require('feathers-hooks-common');
 var auth = require('feathers-authentication').hooks;
 
 var setLayergroup = function(hook) {
@@ -28,6 +28,18 @@ exports.before = {
     auth.populateUser(),
     auth.restrictToAuthenticated(),
     auth.restrictToRoles({ roles: ['editor', 'author'] }),
+    function(hook) {
+      return new Promise(function(resolve, reject){
+        var Layers = hook.app.service('layers');
+
+        hook.data.creatorId = hook.params.user.id;
+
+        Layers.get(hook.data.layerId).then(function(layer){
+          hook.data.type = layer.type;
+          resolve();
+        }).catch(reject);
+      });
+    },
     setLayergroup
   ],
   update: [

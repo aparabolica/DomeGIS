@@ -6,7 +6,7 @@ module.exports = function(sequelize) {
   var layer = sequelize.define('layers', {
     id: { type: Sequelize.STRING, primaryKey: true},
     source: { type: Sequelize.ENUM('arcgis', 'derived', 'uploaded'), required: true},
-    type: { type: Sequelize.ENUM('vector', 'raster'), required: true, default: 'vector'},
+    type: { type: Sequelize.ENUM('vector', 'raster'), required: true, defaultValue: 'vector'},
     query: { type: Sequelize.TEXT},
     contentId: { type: Sequelize.STRING },
     featureCount: { type: Sequelize.INTEGER},

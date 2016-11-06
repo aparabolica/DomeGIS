@@ -53,33 +53,49 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
 
   var dbParams = opts.dbParams;
 
-  var defaultCartoCSS = "#style{ polygon-fill: blue;  line-color: red; marker-width:8; marker-fill: red; }";
-
-  var fields = view.fields || [];
-
-  // clone fields property
-  var selectedFields = JSON.parse(JSON.stringify(fields));
-
-  // add field selected for category/cloropeth
-  if (view.style.column) {
-    selectedFields.push(view.style.column.name);
-    selectedFields = _.uniq(selectedFields);
-  }
-
-  // merge then as a string
-  var fieldsStr = '';
-  if (selectedFields.length > 0) {
-    fieldsStr = ',' + _.map(selectedFields, function(f){ return '"'+f+'"' }).join(',');
-  }
 
   var mapnikLayer = {
     type: 'mapnik',
-    options: {
+    options: {}
+  }
+
+  if (view.type == 'vector') {
+
+    var defaultCartoCSS = "#style{ polygon-fill: blue;  line-color: red; marker-width:8; marker-fill: red; }";
+
+    var fields = view.fields || [];
+
+    // clone fields property
+    var selectedFields = JSON.parse(JSON.stringify(fields));
+
+    // add field selected for category/cloropeth
+    if (view.style.column) {
+      selectedFields.push(view.style.column.name);
+      selectedFields = _.uniq(selectedFields);
+    }
+
+    // merge then as a string
+    var fieldsStr = '';
+    if (selectedFields.length > 0) {
+      fieldsStr = ',' + _.map(selectedFields, function(f){ return '"'+f+'"' }).join(',');
+    }
+
+    mapnikLayer.options = {
       sql: 'select domegis_id, geometry '+ fieldsStr +' from "' + view.layerId + '"',
       geom_column: "geometry",
       cartocss_version: "2.0.0",
       interactivity: view.fields,
       cartocss: view.cartocss || defaultCartoCSS
+    }
+
+  // raster
+  } else {
+    mapnikLayer.options = {
+      sql: 'select * from "' + view.layerId + '"',
+      geom_column: "rast",
+      geom_type: "raster",
+      cartocss: view.cartocss || "#style{ raster-opacity: 1;}",
+      cartocss_version: "2.0.0"
     }
   }
 
