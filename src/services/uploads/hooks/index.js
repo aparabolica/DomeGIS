@@ -40,7 +40,7 @@ exports.after = {
           hook.result.layer.sync = syncStatus;
 
 
-          var cmd = 'raster2pgsql -d -Y -t "auto" ' + filePath + ' public.' + layerId + ' | psql -d domegis -U domegis';
+          var cmd = 'raster2pgsql -d -C -Y -t "auto" ' + filePath + ' public.' + layerId + ' | psql -d domegis -U domegis';
           exec(cmd, function (err) {
 
             syncStatus = _.extend(syncStatus, {
