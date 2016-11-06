@@ -117,7 +117,6 @@ angular.module('domegis')
               var g = parseInt(rgba[1].trim());
               var b = parseInt(rgba[2].trim());
               var alpha = parseFloat(rgba[3].trim());
-              console.log(alpha);
               if(alpha <= .5) {
                 return 'black';
               }
