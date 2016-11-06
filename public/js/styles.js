@@ -50,7 +50,9 @@ angular.module('domegis')
         '$compile',
         function($scope, $compile) {
 
-          if($scope.layer)
+          console.log($scope.layer);
+
+          if($scope.layer && $scope.layer.geometryType)
             $scope.types = $scope.layer.geometryType.toLowerCase();
 
           $scope.table = {
@@ -78,7 +80,10 @@ angular.module('domegis')
           }
 
           $scope.isType = function(type) {
-            return $scope.types.indexOf(type) !== -1;
+            if($scope.types)
+              return $scope.types.indexOf(type) !== -1;
+            else
+              return false;
           };
 
           $scope.cartocss = $scope.cartocss || '';
