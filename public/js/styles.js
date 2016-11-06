@@ -27,6 +27,13 @@ var mapCarto = {
     'line-width': 'fill.width',
     'line-opacity': 'fill.opacity',
     'line-comp-op': 'composite'
+  },
+  'raster': {
+    'raster-opacity': 'opacity',
+    'raster-filter-factor': 'filterFactor',
+    'raster-scaling': 'scaling',
+    'raster-mesh-size': 'meshSize',
+    'raster-colorizer-default-mode': 'colorizerMode'
   }
 };
 
@@ -52,8 +59,12 @@ angular.module('domegis')
 
           console.log($scope.layer);
 
-          if($scope.layer && $scope.layer.geometryType)
-            $scope.types = $scope.layer.geometryType.toLowerCase();
+          if($scope.layer) {
+            if($scope.layer.geometryType)
+              $scope.types = $scope.layer.geometryType.toLowerCase();
+            else if($scope.layer.type == 'raster')
+              $scope.types = 'raster';
+          }
 
           $scope.table = {
             title: 'table'
@@ -69,6 +80,33 @@ angular.module('domegis')
             'color-dodge': 'Color dodge',
             'color-burn': 'Color burn'
           };
+
+          $scope.scaling = [
+            'near',
+            'fast',
+            'bilinear',
+            'bicubic',
+            'spline16',
+            'spline36',
+            'hanning',
+            'hamming',
+            'hermite',
+            'kaiser',
+            'quadric',
+            'catrom',
+            'gaussian',
+            'bessel',
+            'mitchell',
+            'sinc',
+            'lanczos',
+            'blackman'
+          ];
+
+          $scope.colorizerMode = [
+            'discrete',
+            'linear',
+            'exact'
+          ];
 
           $scope.getContrastYIQ = function(hexcolor){
             hexcolor = hexcolor.replace('#', '');
@@ -125,6 +163,13 @@ angular.module('domegis')
                 color: '#70ff00',
                 opacity: .8
               }
+            },
+            raster: {
+              opacity: 1,
+              filterFactor: -1,
+              scaling: 'near',
+              meshSize: 16,
+              colorizerMode: 'linear'
             }
           };
 

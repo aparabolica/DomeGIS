@@ -1,135 +1,175 @@
 <div class="cartocss-wizard">
-  <ul class="type-selector" ng-show="columns.length">
-    <li ng-class="{active:styles.type=='simple'}">
-      <a href="javascript:void(0);" ng-click="setMapType('simple')">Simple</a>
-    </li>
-    <li ng-class="{active:styles.type=='choropleth'}" ng-show="columns.length">
-      <a href="javascript:void(0);" ng-click="setMapType('choropleth')">Choropleth</a>
-    </li>
-    <li ng-class="{active:styles.type=='category'}" ng-show="columns.length">
-      <a href="javascript:void(0);" ng-click="setMapType('category')">Category</a>
-    </li>
-  </ul>
-  <table ng-show="styles.type == 'choropleth' || styles.type == 'category'">
-    <tbody>
-      <tr>
-        <td>
-          <label for="category_column">Select column</label>
-        </td>
-        <td>
-          <select ng-options="column.name for column in (columns | parseLayerField | mapType:styles.type) track by column.name" ng-model="styles.column" ng-change="selectColumn(column.name, '{{styles.column.name}}')">
-            <option value=''>Select a column</option>
-          </select>
-        </td>
-      </tr>
-      <tr ng-show="categories && styles.type != 'choropleth'" ng-repeat="category in categories">
-        <td>
-          <label for="color_input_{{category}}">{{category}}</label>
-        </td>
-        <td>
-          <span class="input-ctn">
-            <span class="input-lbl on-hover">
-              <label for="color_input_{{category}}">Select color:</label>
+  <div class="raster-styles" ng-show="layer.type == 'raster'">
+    <table>
+      <tbody>
+        <tr>
+          <td>
+            <label for="raster_opacity">Opacity</label>
+          </td>
+          <td>
+            <input id="raster_opacity" class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.raster.opacity" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="raster_filterFactor">Filter factor</label>
+          </td>
+          <td>
+            <input id="raster_filterFactor" class="spinner" ui-spinner step="1" min="-1" type="text" ng-model="styles.raster.filterFactor" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="raster_scaling">Scaling</label>
+          </td>
+          <td>
+            <select id="raster_scaling" ng-options="value as value for (key, value) in scaling" ng-model="styles.raster.scaling"></select>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="raster_colorizer_default_mode">Colorizer default mode</label>
+          </td>
+          <td>
+            <select id="raster_colorizer_default_mode" ng-options="value as value for (key, value) in colorizerMode" ng-model="styles.raster.colorizerMode"></select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="vector-styles" ng-hide="layer.type == 'raster'">
+    <ul class="type-selector" ng-show="columns.length">
+      <li ng-class="{active:styles.type=='simple'}">
+        <a href="javascript:void(0);" ng-click="setMapType('simple')">Simple</a>
+      </li>
+      <li ng-class="{active:styles.type=='choropleth'}" ng-show="columns.length">
+        <a href="javascript:void(0);" ng-click="setMapType('choropleth')">Choropleth</a>
+      </li>
+      <li ng-class="{active:styles.type=='category'}" ng-show="columns.length">
+        <a href="javascript:void(0);" ng-click="setMapType('category')">Category</a>
+      </li>
+    </ul>
+    <table ng-show="styles.type == 'choropleth' || styles.type == 'category'">
+      <tbody>
+        <tr>
+          <td>
+            <label for="category_column">Select column</label>
+          </td>
+          <td>
+            <select ng-options="column.name for column in (columns | parseLayerField | mapType:styles.type) track by column.name" ng-model="styles.column" ng-change="selectColumn(column.name, '{{styles.column.name}}')">
+              <option value=''>Select a column</option>
+            </select>
+          </td>
+        </tr>
+        <tr ng-show="categories && styles.type != 'choropleth'" ng-repeat="category in categories">
+          <td>
+            <label for="color_input_{{category}}">{{category}}</label>
+          </td>
+          <td>
+            <span class="input-ctn">
+              <span class="input-lbl on-hover">
+                <label for="color_input_{{category}}">Select color:</label>
+              </span>
+              <input id="color_input_{{category}}" class="colorpicker-input" colorpicker ng-style="{'background-color': styles.category[styles.column.name][category] || '#ffffff', 'color': getContrastYIQ(styles.category[styles.column.name][category] || '#ffffff')}" ng-model="styles.category[styles.column.name][category]" type="text" placeholder="#" />
             </span>
-            <input id="color_input_{{category}}" class="colorpicker-input" colorpicker ng-style="{'background-color': styles.category[styles.column.name][category] || '#ffffff', 'color': getContrastYIQ(styles.category[styles.column.name][category] || '#ffffff')}" ng-model="styles.category[styles.column.name][category]" type="text" placeholder="#" />
-          </span>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <table class="choropleth_settings" ng-show="styles.type == 'choropleth' && styles.column">
-    <tbody>
-      <tr>
-        <td>Bucket size</td>
-        <td>
-          <select ng-model="styles.choropleth[styles.column.name].bucket_size" ng-options="size as size for size in [3,5,7] track by size"></select>
-        </td>
-      </tr>
-      <tr>
-        <td>Color ramp</td>
-        <td>
-          <span class="input-ctn">
-            <span class="input-lbl">To:</span>
-            <input class="colorpicker-input" colorpicker ng-model="styles.choropleth[styles.column.name].scale[1]" type="text" ng-style="{'background-color': styles.choropleth[styles.column.name].scale[1] || '#000000', 'color': getContrastYIQ(styles.choropleth[styles.column.name].scale[1] || '#000000')}" />
-          </span>
-          <span class="input-ctn">
-            <span class="input-lbl">From:</span>
-            <input class="colorpicker-input" colorpicker ng-model="styles.choropleth[styles.column.name].scale[0]" type="text" ng-style="{'background-color': styles.choropleth[styles.column.name].scale[0] || '#ffffff', 'color': getContrastYIQ(styles.choropleth[styles.column.name].scale[0] || '#ffffff')}" />
-          </span>
-          <!-- <select ng-model="styles.choropleth[column.name].color_ramp">
-          </select> -->
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <table class="default_styles">
-    <tbody>
-      <tr ng-show="isType('polygon') && styles.type == 'simple'">
-        <td>Polygon fill</td>
-        <td>
-          <input class="colorpicker-input" colorpicker ng-model="styles.polygon.fill.color" type="text" ng-style="{'background-color': styles.polygon.fill.color || '#fff', 'color': getContrastYIQ(styles.polygon.fill.color)}" />
-          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.polygon.fill.opacity" />
-        </td>
-      </tr>
-      <tr ng-show="isType('polygon')">
-        <td>Polygon stroke</td>
-        <td>
-          <input class="colorpicker-input" colorpicker ng-model="styles.polygon.stroke.color" type="text" ng-style="{'background-color': styles.polygon.stroke.color || '#fff', 'color': getContrastYIQ(styles.polygon.stroke.color)}" />
-          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.polygon.stroke.opacity" />
-          <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.polygon.stroke.width" />
-        </td>
-      </tr>
-      <tr ng-show="isType('polygon')">
-        <td>Polygon composite operation</td>
-        <td>
-          <select ng-options="key as value for (key, value) in composites" ng-model="styles.polygon.composite"></select>
-        </td>
-      </tr>
-      <tr ng-show="isType('point')">
-        <td>Marker fill</td>
-        <td>
-          <input ng-show="styles.type == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.point.fill.color" type="text" ng-style="{'background-color': styles.point.fill.color || '#fff', 'color': getContrastYIQ(styles.point.fill.color)}" />
-          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.point.fill.opacity" />
-          <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.point.fill.width" />
-        </td>
-      </tr>
-      <tr ng-show="isType('point')">
-        <td>Marker stroke</td>
-        <td>
-          <input class="colorpicker-input" colorpicker ng-model="styles.point.stroke.color" type="text" ng-style="{'background-color': styles.point.stroke.color || '#fff', 'color': getContrastYIQ(styles.point.stroke.color)}" />
-          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.point.stroke.opacity" />
-          <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.point.stroke.width" />
-        </td>
-      </tr>
-      <tr ng-show="isType('point')">
-        <td>Marker composite operation</td>
-        <td>
-          <select ng-options="key as value for (key, value) in composites" ng-model="styles.point.composite"></select>
-        </td>
-      </tr>
-      <tr ng-show="isType('point')">
-        <td>
-          <label for="marker_allowoverlap_input">Allow marker overlap</label>
-        </td>
-        <td>
-          <input id="marker_allowoverlap_input" type="checkbox" ng-model="styles.point.allowOverlap">
-        </td>
-      </tr>
-      <tr ng-show="isType('linestring')">
-        <td>Line fill</td>
-        <td>
-          <input ng-show="styles.type == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.linestring.fill.color" type="text" ng-style="{'background-color': styles.linestring.fill.color || '#fff', 'color': getContrastYIQ(styles.linestring.fill.color)}" />
-          <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.linestring.fill.opacity" />
-          <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.linestring.fill.width" />
-        </td>
-      </tr>
-      <tr ng-show="isType('linestring')">
-        <td>Composite operation</td>
-        <td>
-          <select ng-options="key as value for (key, value) in composites" ng-model="styles.linestring.composite"></select>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <!-- <pre carto-editor="styles" group="table.title" ng-model="cartocss">{{cartocss}}</pre> -->
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="choropleth_settings" ng-show="styles.type == 'choropleth' && styles.column">
+      <tbody>
+        <tr>
+          <td>Bucket size</td>
+          <td>
+            <select ng-model="styles.choropleth[styles.column.name].bucket_size" ng-options="size as size for size in [3,5,7] track by size"></select>
+          </td>
+        </tr>
+        <tr>
+          <td>Color ramp</td>
+          <td>
+            <span class="input-ctn">
+              <span class="input-lbl">To:</span>
+              <input class="colorpicker-input" colorpicker ng-model="styles.choropleth[styles.column.name].scale[1]" type="text" ng-style="{'background-color': styles.choropleth[styles.column.name].scale[1] || '#000000', 'color': getContrastYIQ(styles.choropleth[styles.column.name].scale[1] || '#000000')}" />
+            </span>
+            <span class="input-ctn">
+              <span class="input-lbl">From:</span>
+              <input class="colorpicker-input" colorpicker ng-model="styles.choropleth[styles.column.name].scale[0]" type="text" ng-style="{'background-color': styles.choropleth[styles.column.name].scale[0] || '#ffffff', 'color': getContrastYIQ(styles.choropleth[styles.column.name].scale[0] || '#ffffff')}" />
+            </span>
+            <!-- <select ng-model="styles.choropleth[column.name].color_ramp">
+            </select> -->
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="default_styles">
+      <tbody>
+        <tr ng-show="isType('polygon') && styles.type == 'simple'">
+          <td>Polygon fill</td>
+          <td>
+            <input class="colorpicker-input" colorpicker ng-model="styles.polygon.fill.color" type="text" ng-style="{'background-color': styles.polygon.fill.color || '#fff', 'color': getContrastYIQ(styles.polygon.fill.color)}" />
+            <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.polygon.fill.opacity" />
+          </td>
+        </tr>
+        <tr ng-show="isType('polygon')">
+          <td>Polygon stroke</td>
+          <td>
+            <input class="colorpicker-input" colorpicker ng-model="styles.polygon.stroke.color" type="text" ng-style="{'background-color': styles.polygon.stroke.color || '#fff', 'color': getContrastYIQ(styles.polygon.stroke.color)}" />
+            <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.polygon.stroke.opacity" />
+            <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.polygon.stroke.width" />
+          </td>
+        </tr>
+        <tr ng-show="isType('polygon')">
+          <td>Polygon composite operation</td>
+          <td>
+            <select ng-options="key as value for (key, value) in composites" ng-model="styles.polygon.composite"></select>
+          </td>
+        </tr>
+        <tr ng-show="isType('point')">
+          <td>Marker fill</td>
+          <td>
+            <input ng-show="styles.type == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.point.fill.color" type="text" ng-style="{'background-color': styles.point.fill.color || '#fff', 'color': getContrastYIQ(styles.point.fill.color)}" />
+            <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.point.fill.opacity" />
+            <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.point.fill.width" />
+          </td>
+        </tr>
+        <tr ng-show="isType('point')">
+          <td>Marker stroke</td>
+          <td>
+            <input class="colorpicker-input" colorpicker ng-model="styles.point.stroke.color" type="text" ng-style="{'background-color': styles.point.stroke.color || '#fff', 'color': getContrastYIQ(styles.point.stroke.color)}" />
+            <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.point.stroke.opacity" />
+            <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.point.stroke.width" />
+          </td>
+        </tr>
+        <tr ng-show="isType('point')">
+          <td>Marker composite operation</td>
+          <td>
+            <select ng-options="key as value for (key, value) in composites" ng-model="styles.point.composite"></select>
+          </td>
+        </tr>
+        <tr ng-show="isType('point')">
+          <td>
+            <label for="marker_allowoverlap_input">Allow marker overlap</label>
+          </td>
+          <td>
+            <input id="marker_allowoverlap_input" type="checkbox" ng-model="styles.point.allowOverlap">
+          </td>
+        </tr>
+        <tr ng-show="isType('linestring')">
+          <td>Line fill</td>
+          <td>
+            <input ng-show="styles.type == 'simple'" class="colorpicker-input" colorpicker ng-model="styles.linestring.fill.color" type="text" ng-style="{'background-color': styles.linestring.fill.color || '#fff', 'color': getContrastYIQ(styles.linestring.fill.color)}" />
+            <input class="spinner opacity" ui-spinner step=".1" max="1" min="0" type="text" ng-model="styles.linestring.fill.opacity" />
+            <input class="spinner width" ui-spinner step=".5" min="0" type="text" ng-model="styles.linestring.fill.width" />
+          </td>
+        </tr>
+        <tr ng-show="isType('linestring')">
+          <td>Composite operation</td>
+          <td>
+            <select ng-options="key as value for (key, value) in composites" ng-model="styles.linestring.composite"></select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <pre carto-editor="styles" group="table.title" ng-model="cartocss">{{cartocss}}</pre>
 </div>
