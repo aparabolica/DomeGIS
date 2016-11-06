@@ -45,6 +45,20 @@
             <input id="raster_colorizer_default_color" class="colorpicker-input colorpicker-rgba" colorpicker="rgba" ng-model="styles.raster.colorizerColor" type="text" ng-style="{'background-color': styles.raster.colorizerColor || '#fff', 'color': getContrastYIQ(styles.raster.colorizerColor, true)}" />
           </td>
         </tr>
+        <tr>
+          <td>
+            <label for="raster_colorizer_stops">Stops</label>
+          </td>
+          <td>
+            <span raster-stops ng-model="styles.raster.colorizerStops"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>Composite operation</td>
+          <td>
+            <select ng-options="key as value for (key, value) in composites" ng-model="styles.raster.composite"></select>
+          </td>
+        </tr>
       </tbody>
     </table>
   </div>
@@ -182,5 +196,5 @@
       </tbody>
     </table>
   </div>
-  <!-- <pre carto-editor="styles" group="table.title" ng-model="cartocss">{{cartocss}}</pre> -->
+  <pre carto-editor="styles" group="table.title" ng-model="cartocss">{{cartocss}}</pre>
 </div>

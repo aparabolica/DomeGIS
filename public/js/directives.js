@@ -291,15 +291,22 @@ angular.module('domegis')
 
         function getViewLegend(view, layer) {
 
+          if(layer.type == 'raster')
+            return '';
+
           var layerType;
 
           var name = $filter('translate')(layer.name);
 
           var style = _.find(view.style, function(style, type) {
-            var isStyle = layer.geometryType.toLowerCase().indexOf(type) !== -1;
-            if(isStyle) {
-              layerType = type;
-              return true;
+            if(layer.geometryType) {
+              var isStyle = layer.geometryType.toLowerCase().indexOf(type) !== -1;
+              if(isStyle) {
+                layerType = type;
+                return true;
+              } else {
+                return false;
+              }
             } else {
               return false;
             }

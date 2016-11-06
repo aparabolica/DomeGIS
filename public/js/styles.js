@@ -34,7 +34,9 @@ var mapCarto = {
     'raster-scaling': 'scaling',
     'raster-mesh-size': 'meshSize',
     'raster-colorizer-default-mode': 'colorizerMode',
-    'raster-colorizer-default-color': 'colorizerColor'
+    'raster-colorizer-default-color': 'colorizerColor',
+    'raster-colorizer-stops': 'colorizerStops',
+    'raster-comp-op': 'composite'
   }
 };
 
@@ -183,7 +185,9 @@ angular.module('domegis')
               scaling: 'near',
               meshSize: 16,
               colorizerMode: 'linear',
-              colorizerColor: 'rgba(0,0,0,0)'
+              colorizerColor: 'rgba(0,0,0,0)',
+              colorizerStops: 'stop(0, rgba(237,28,28,1)) stop(30, rgba(209,20,190,1))',
+              composite: ''
             }
           };
 
@@ -554,6 +558,37 @@ angular.module('domegis')
         //     }
         //   }
         // });
+      }
+    }
+  }
+])
+
+.directive('rasterStops', [
+  function() {
+    return {
+      restrict: 'EA',
+      scope: {
+        stopCss: '=ngModel'
+      },
+      require: 'ngModel',
+      templateUrl: '/views/view/raster-stops.html',
+      link: function(scope, element, attrs) {
+        scope.stops = [];
+        scope.addStop = function() {
+          scope.stops.push({
+            pos: 0,
+            color: 'rgba(0,0,0,1)'
+          });
+        };
+        scope.$watch('stops', function() {
+          console.log('updated stops');
+          var css = '';
+          scope.stops.forEach(function(stop) {
+            css += 'stop(' + stop.pos + ', ' + stop.color + ') ';
+          });
+          css = css.trim();
+          scope.stopCss = css;
+        }, true);
       }
     }
   }
