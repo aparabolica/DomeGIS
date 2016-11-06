@@ -27,11 +27,22 @@
           </td>
         </tr>
         <tr>
+          <td colspan="2"><strong>Colorizer</strong></td>
+        </tr>
+        <tr>
           <td>
-            <label for="raster_colorizer_default_mode">Colorizer default mode</label>
+            <label for="raster_colorizer_default_mode">Default mode</label>
           </td>
           <td>
             <select id="raster_colorizer_default_mode" ng-options="value as value for (key, value) in colorizerMode" ng-model="styles.raster.colorizerMode"></select>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <label for="raster_colorizer_default_color">Default color</label>
+          </td>
+          <td>
+            <input id="raster_colorizer_default_color" class="colorpicker-input colorpicker-rgba" colorpicker="rgba" ng-model="styles.raster.colorizerColor" type="text" ng-style="{'background-color': styles.raster.colorizerColor || '#fff', 'color': getContrastYIQ(styles.raster.colorizerColor, true)}" />
           </td>
         </tr>
       </tbody>

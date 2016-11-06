@@ -966,13 +966,14 @@ form {
     padding-bottom: 8px;
     border-bottom: 1px solid #eee;
   }
+  td:last-child {
+    text-align: right;
+  }
   td:first-child {
     font-weight: 600;
     font-size: .8em;
     width: 33.3333%;
-  }
-  td:last-child {
-    text-align: right;
+    text-align: left;
   }
   select,
   input,
@@ -1042,6 +1043,9 @@ form {
       left: 3px;
     }
   }
+  strong {
+    font-size: 1.2em;
+  }
   input[type="email"],
   input[type="number"],
   input[type="search"],
@@ -1061,6 +1065,11 @@ form {
     text-transform: uppercase;
     border: 0;
     padding: 4px 6px;
+    &.colorpicker-rgba {
+      width: 170px;
+      text-transform: none;
+      // background-image: url('/img/alpha_bkg.png');
+    }
   }
   .field-list {
     display: flex;

@@ -33,7 +33,8 @@ var mapCarto = {
     'raster-filter-factor': 'filterFactor',
     'raster-scaling': 'scaling',
     'raster-mesh-size': 'meshSize',
-    'raster-colorizer-default-mode': 'colorizerMode'
+    'raster-colorizer-default-mode': 'colorizerMode',
+    'raster-colorizer-default-color': 'colorizerColor'
   }
 };
 
@@ -108,11 +109,24 @@ angular.module('domegis')
             'exact'
           ];
 
-          $scope.getContrastYIQ = function(hexcolor){
-            hexcolor = hexcolor.replace('#', '');
-            var r = parseInt(hexcolor.substr(0,2),16);
-            var g = parseInt(hexcolor.substr(2,2),16);
-            var b = parseInt(hexcolor.substr(4,2),16);
+          $scope.getContrastYIQ = function(hexcolor, rgba){
+            if(rgba == true) {
+              hexcolor = hexcolor.replace('rgba(', '').replace(')', '');
+              var rgba = hexcolor.split(',');
+              var r = parseInt(rgba[0].trim());
+              var g = parseInt(rgba[1].trim());
+              var b = parseInt(rgba[2].trim());
+              var alpha = parseFloat(rgba[3].trim());
+              console.log(alpha);
+              if(alpha <= .5) {
+                return 'black';
+              }
+            } else {
+              hexcolor = hexcolor.replace('#', '');
+              var r = parseInt(hexcolor.substr(0,2),16);
+              var g = parseInt(hexcolor.substr(2,2),16);
+              var b = parseInt(hexcolor.substr(4,2),16);
+            }
             var yiq = ((r*299)+(g*587)+(b*114))/1000;
             return (yiq >= 128) ? 'black' : 'white';
           }
@@ -169,7 +183,8 @@ angular.module('domegis')
               filterFactor: -1,
               scaling: 'near',
               meshSize: 16,
-              colorizerMode: 'linear'
+              colorizerMode: 'linear',
+              colorizerColor: 'rgba(0,0,0,0)'
             }
           };
 
