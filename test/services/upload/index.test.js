@@ -62,8 +62,13 @@ describe('files service', function () {
         var layer = res.body.layer;
         layer.should.have.property('name', 'Uploaded layer');
         layer.should.have.property('type', 'raster');
-        layer.should.have.property('status', 'importing');
         layer.should.have.property('source', 'uploaded');
+
+        layer.should.have.property('sync');
+        var sync = layer.sync;
+        sync.should.have.property('status', 'importing');
+        sync.should.have.property('startedAt');
+        sync.should.not.have.property('finishedAt');
 
         sampleRasterLayerId = layer.id;
 
@@ -83,8 +88,14 @@ describe('files service', function () {
         var layer = res.body;
         layer.should.have.property('name', 'Uploaded layer');
         layer.should.have.property('type', 'raster');
-        layer.should.have.property('status', 'imported');
         layer.should.have.property('source', 'uploaded');
+
+        layer.should.have.property('sync');
+        var sync = layer.sync;
+        sync.should.have.property('status', 'imported');
+        sync.should.have.property('startedAt');
+        sync.should.have.property('finishedAt');
+
 
         done();
       });

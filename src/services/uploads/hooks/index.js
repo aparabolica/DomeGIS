@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('underscore');
 var exec = require('child_process').exec;
 var hooks = require('feathers-hooks-common');
 var errors = require('feathers-errors');
@@ -17,7 +18,7 @@ exports.after = {
     function(hook){
 
       var Layers = hook.app.service('layers');
-      
+
       return new Promise(function(resolve, reject){
 
         // file upload is a tiff
@@ -29,16 +30,28 @@ exports.after = {
             id: layerId,
             source: 'uploaded',
             type: 'raster',
-            status: 'importing',
             name: hook.params.name
           }
 
+          var syncStatus = {
+            status: 'importing',
+            startedAt: Date.now()
+          }
+          hook.result.layer.sync = syncStatus;
+
+
           var cmd = 'raster2pgsql -d -Y -t "auto" ' + filePath + ' public.' + layerId + ' | psql -d domegis -U domegis';
           exec(cmd, function (err) {
-            var status = err ? 'error' : 'imported';
+
+            syncStatus = _.extend(syncStatus, {
+              status: (err ? 'error' : 'imported'),
+              finishedAt: Date.now(),
+              message: (err ? err.message : '')
+            });
+
 
             Layers.patch(layerId, {
-              status: status
+              sync: syncStatus
             }).catch(function(err){
               log(layerId + ' error saving raster import status');
             });
