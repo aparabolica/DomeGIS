@@ -61,7 +61,7 @@ app
       var settings = {
         host: process.env.HOST || app.get('host'),
         port: process.env.PORT || app.get('port'),
-        tiles: app.get('tiles')        
+        tiles: process.env.TILES_URL || app.get('tiles')        
       }
       res.json(settings);
     });
