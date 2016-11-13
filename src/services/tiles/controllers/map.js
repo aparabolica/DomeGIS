@@ -92,7 +92,7 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
   } else {
     mapnikLayer.options = {
       sql: 'select * from "' + view.layerId + '"',
-      geom_column: "rast",
+      geom_column: "the_raster_webmercator",
       geom_type: "raster",
       cartocss: view.cartocss || "#style { raster-opacity: 1; }",
       cartocss_version: "2.0.1"

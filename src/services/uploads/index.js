@@ -15,8 +15,6 @@ module.exports = function(){
   app.use('/uploads', function (req, res, next) {
     form.parse(req, function (err, fields, files) {
       if (err) {
-        console.log('err');
-        console.log(err);
         next(err);
         return;
       }

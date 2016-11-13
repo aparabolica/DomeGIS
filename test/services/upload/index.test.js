@@ -42,15 +42,16 @@ describe('files service', function () {
   var sampleRasterLayerId;
 
   it('should post a file', function(done) {
-    this.timeout(5000);
+    this.timeout(20000);
 
     chai.request(app)
       .post('/uploads')
       .set('Accept', 'application/json')
       .set('Authorization', 'Bearer '.concat(token))
       .field('name', 'Uploaded layer')
-      .attach('file', fs.readFileSync(__dirname + '/../../../fixtures/uploads/sample.tiff'), 'sample.tif')
+      .attach('file', fs.readFileSync(__dirname + '/../../../fixtures/raster_simple.tif'), 'sample.tif')
       .end(function (err, res) {
+        if (err) console.log(err);
 
         should.not.exist(err);
 
@@ -72,7 +73,7 @@ describe('files service', function () {
 
         sampleRasterLayerId = layer.id;
 
-        setTimeout(done, 3000);
+        setTimeout(done, 10000);
       });
   });
 
@@ -82,6 +83,8 @@ describe('files service', function () {
       .set('Accept', 'application/json')
       .set('Authorization', 'Bearer '.concat(token))
       .end(function (err, res) {
+
+        if (err) console.log(err);
 
         should.not.exist(err);
 
@@ -95,7 +98,6 @@ describe('files service', function () {
         sync.should.have.property('status', 'imported');
         sync.should.have.property('startedAt');
         sync.should.have.property('finishedAt');
-
 
         done();
       });

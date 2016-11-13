@@ -10,7 +10,7 @@ APP_DB_READONLY_USER_PWD=domegis
 APP_DB_NAME=$APP_DB_USER
 
 # Edit the following to change the version of PostgreSQL that is installed
-PG_VERSION=9.5
+PG_VERSION=9.6
 
 ###########################################################
 # Changes below this line are probably not necessary
@@ -114,7 +114,7 @@ add-apt-repository ppa:ubuntugis/ppa
 
 # install postgis
 echo "Installing extensions..."
-apt-get -y install "build-essential" "git" "gdal-bin" "zip" "postgresql-$PG_VERSION-postgis-2.3"
+apt-get -y install "build-essential" "git" "gdal-bin" "zip" "postgis"
 
 # install pg_schema_triggers
 git clone https://github.com/CartoDB/pg_schema_triggers.git
@@ -136,8 +136,8 @@ sudo -u postgres psql -d domegis -c "CREATE EXTENSION plpythonu;"
 sudo -u postgres psql -d domegis -c "CREATE EXTENSION cartodb;"
 
 # Install Node.js, Mapnik, Redis
-apt-get install -y nodejs npm
-update-alternatives --install /usr/bin/node node /usr/bin/nodejs 10
+curl -sL https://deb.nodesource.com/setup_0.10 | sudo -E bash -
+apt-get install -y nodejs
 apt-get install -y libmapnik2.2 redis-server node-node-redis
 apt-get install -y libcairo2-dev libpango1.0-dev libjpeg8-dev libgif-dev
 
