@@ -40,6 +40,7 @@ module.exports = function(hook) {
     .then(alignRaster)
     .then(importAlignedRaster)
     .then(createBaseOverview)
+    .then(dropBaseTable)
     .then(importOriginalRaster)
     .then(updateLayerStatus)
     .catch(updateLayerStatus);
@@ -109,8 +110,20 @@ module.exports = function(hook) {
     });
   }
 
+  function dropBaseTable(){
+    return new Promise(function(resolve, reject){
+      var sequelize = hook.app.get('sequelize');
+      var query = "DROP TABLE \"" + layer.id + "\";";
+      sequelize.query(query)
+        .then(function(){
+          resolve();
+        })
+        .catch(reject);
+    });
+  }
+
   function importOriginalRaster(){
-    var cmd = 'export PGCLIENTENCODING=UTF8; raster2pgsql -d -t ' + BLOCKSIZE + ' -d -C -x -Y -f ' + RASTER_COLUMN_NAME + ' ' + filePath + ' public.' + layer.id+ ' | psql -d domegis -U domegis';
+    var cmd = 'export PGCLIENTENCODING=UTF8; raster2pgsql -t ' + BLOCKSIZE + ' -C -x -Y -f ' + RASTER_COLUMN_NAME + ' ' + filePath + ' public.' + layer.id+ ' | psql -d domegis -U domegis';
     return promiseFromChildProcess(exec(cmd));
   }
 
