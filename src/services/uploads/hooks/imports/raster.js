@@ -19,12 +19,13 @@ function promiseFromChildProcess(child) {
 var GDALWARP_COMMON_OPTIONS = '-co "COMPRESS=LZW" -co "BIGTIFF=IF_SAFER"';
 var PROJECTION              = 3857;
 var BLOCKSIZE               = '128x128';
-var RASTER_COLUMN_NAME      = 'the_raster_webmercator';
+var RASTER_COLUMN_NAME      = 'the_geom';
 var MAX_REDUCTED_SIZE       = 256;
 
 module.exports = function(hook) {
 
   var filePath = hook.params.file.path;
+  var downsampledFilePath;
   var mercatorFilePath = filePath + "_webmercator.tif";
   var alignedFilePath = filePath + "_aligned_webmercator.tif";
   var scale;
@@ -39,21 +40,43 @@ module.exports = function(hook) {
     .then(getMetadata)
     .then(alignRaster)
     .then(importAlignedRaster)
-    .then(createBaseOverview)
-    .then(dropBaseTable)
-    .then(importOriginalRaster)
+    // .then(createBaseOverview)
+    // .then(dropBaseTable)
+    // .then(importOriginalRaster)
     .then(updateLayerStatus)
     .catch(updateLayerStatus);
 
   // TODO scale non-Byte bands to Byte
   function downsample(){
-    return new Promise(function(resolve, reject){
-      resolve();
+    return new Promise(function(resolve,reject){
+      var dataset = gdal.open(filePath);
+      var bands = [];
+      var cmd;
+
+      for (var i = 1; i <= dataset.bands.count(); i++) {
+        var type = dataset.bands.get(i).dataType;
+        if (type != 'Byte') {
+          downsampledFilePath = filePath + "_downsampled.tif";
+          cmd = 'gdal_translate -scale -ot Byte ' + GDALWARP_COMMON_OPTIONS + ' ' + filePath + ' ' + downsampledFilePath;
+          break;
+        }
+      }
+
+      if (cmd) {
+        exec(cmd)
+          .addListener("error", reject)
+          .addListener("exit", resolve);
+      } else resolve();
+
     });
   }
 
   function reproject(){
-    var cmd = 'gdalwarp ' + GDALWARP_COMMON_OPTIONS + ' -t_srs EPSG:'+ PROJECTION +' '+ filePath + ' ' + mercatorFilePath;
+    var sourceFile = downsampledFilePath || filePath;
+
+    var cmd = 'gdalwarp ' + GDALWARP_COMMON_OPTIONS + ' -t_srs EPSG:'+ PROJECTION +' '+ sourceFile + ' ' + mercatorFilePath;
+
+    console.log(cmd);
     return promiseFromChildProcess(exec(cmd));
   }
 
@@ -80,7 +103,6 @@ module.exports = function(hook) {
       var range = _.range(1, maxPower + 2);
       overviewsList = _.map(range, function(x) { return Math.pow(2, x); })
       overviewsList = _.select(overviewsList, function(x) { return x < 1000; });
-
       resolve();
     });
   }

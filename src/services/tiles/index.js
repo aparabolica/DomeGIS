@@ -30,12 +30,22 @@ module.exports = function() {
 
   // set mapnik version in runtime
   opts.grainstore = {
+    map: {
+      srid: 3857
+    },
     mapnik_version: mapnik.versions.mapnik,
-    datasource: { srid: 4326 }
+    datasource: {
+      use_overviews: true,
+      srid: 3857
+    }
   }
 
   // set global needed by windshaft
   global = opts.global;
+
+  global.environment.postgres = {
+    use_overviews: true
+  };
 
   /*
    * Register fonts for Mapnik
@@ -59,7 +69,11 @@ module.exports = function() {
 
   var rendererFactory = new windshaft.renderer.Factory({
    mapnik: {
-     grainstore: opts.grainstore
+     grainstore: opts.grainstore,
+     bufferSize: 0,
+     poolSize: 8,
+     metatile: 2,
+     snapToGrid: false
    }
   });
   var rendererCache = new windshaft.cache.RendererCache(rendererFactory, opts.rendererCache);

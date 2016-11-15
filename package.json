@@ -46,7 +46,7 @@
     "formidable": "~1.0.17",
     "gdal": "^0.9.3",
     "mailgun-js": "~0.7.12",
-    "mapnik": "https://github.com/CartoDB/node-mapnik/tarball/1.4.15-cdb6",
+    "mapnik": "https://s3.amazonaws.com/cartodb-node-binary/mapnik/v1.4.15-cdb10/1.4.15-cdb10.tgz",
     "moment-timezone": "~0.5.4",
     "ogr2ogr": "~0.5.1",
     "passport": "^0.3.2",
@@ -60,7 +60,7 @@
     "step": "0.0.6",
     "underscore": "^1.8.3",
     "validator": "~5.5.0",
-    "windshaft": "~2.6.0"
+    "windshaft": "~2.6.2"
   },
   "devDependencies": {
     "jshint": "^2.9.1",

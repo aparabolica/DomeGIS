@@ -83,7 +83,7 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
     mapnikLayer.options = {
       sql: 'select domegis_id, geometry '+ fieldsStr +' from "' + view.layerId + '"',
       geom_column: "geometry",
-      cartocss_version: "2.0.1",
+      cartocss_version: "2.3.0",
       interactivity: view.fields,
       cartocss: view.cartocss || defaultCartoCSS
     }
@@ -92,10 +92,10 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
   } else {
     mapnikLayer.options = {
       sql: 'select * from "' + view.layerId + '"',
-      geom_column: "the_raster_webmercator",
+      geom_column: "the_geom",
       geom_type: "raster",
       cartocss: view.cartocss || "#style { raster-opacity: 1; }",
-      cartocss_version: "2.0.1"
+      cartocss_version: "2.3.0"
     }
   }
 
