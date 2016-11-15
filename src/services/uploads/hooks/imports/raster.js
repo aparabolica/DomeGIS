@@ -73,10 +73,7 @@ module.exports = function(hook) {
 
   function reproject(){
     var sourceFile = downsampledFilePath || filePath;
-
     var cmd = 'gdalwarp ' + GDALWARP_COMMON_OPTIONS + ' -t_srs EPSG:'+ PROJECTION +' '+ sourceFile + ' ' + mercatorFilePath;
-
-    console.log(cmd);
     return promiseFromChildProcess(exec(cmd));
   }
 
@@ -103,6 +100,17 @@ module.exports = function(hook) {
       var range = _.range(1, maxPower + 2);
       overviewsList = _.map(range, function(x) { return Math.pow(2, x); })
       overviewsList = _.select(overviewsList, function(x) { return x < 1000; });
+
+      // get bands
+      var bands = [];
+      for (var i = 1; i <= dataset.bands.count(); i++) {
+        bands.push(dataset.bands.get(i));
+      }
+
+      layer.metadata = {
+        bands: bands
+      }
+
       resolve();
     });
   }
@@ -161,6 +169,7 @@ module.exports = function(hook) {
 
     // update layer
     Layers.patch(layer.id, {
+      metadata: layer.metadata,
       sync: layer.sync
     }).catch(function(err){
       log(layerId + ' error saving raster import status');
