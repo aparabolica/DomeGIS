@@ -1,7 +1,7 @@
 <div class="cartocss-wizard">
   <div class="raster-styles" ng-show="layer.type == 'raster'">
     <table>
-      <tbody ng-show="layer.metadata.bands.length >= 2">
+      <tbody>
         <tr>
           <td>
             <label for="raster_band">Raster band</label>
@@ -14,7 +14,7 @@
           </td>
         </tr>
       </tbody>
-      <tbody ng-show="styles.raster.band !== '0'">
+      <tbody>
         <tr>
           <td>
             <label for="raster_opacity">Opacity</label>
@@ -39,6 +39,8 @@
             <select id="raster_scaling" ng-options="value as value for (key, value) in scaling" ng-model="styles.raster.scaling"></select>
           </td>
         </tr>
+      </tbody>
+      <tbody ng-show="styles.raster.band !== '0'">
         <tr>
           <td colspan="2"><strong>Colorizer</strong></td>
         </tr>

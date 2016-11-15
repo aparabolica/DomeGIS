@@ -180,27 +180,17 @@ angular.module('domegis')
               }
             },
             raster: {
-              band: 1,
+              band: '0',
               opacity: 1,
               filterFactor: -1,
               scaling: 'near',
               meshSize: 16,
               colorizerMode: 'linear',
               colorizerColor: 'rgba(0,0,0,0)',
-              colorizerStops: 'stop(0, rgba(237,28,28,1)) stop(30, rgba(209,20,190,1))',
+              colorizerStops: '',
               composite: ''
             }
           };
-
-          if($scope.layer && $scope.layer.metadata) {
-            if($scope.layer.metadata.bands) {
-              if($scope.layer.metadata.bands.length && $scope.layer.metadata.bands.length == 1) {
-                defaultStyles.raster.band = 0;
-              }
-            }
-          }
-
-          console.log($scope.styles);
 
           $scope.styles = $scope.styles || defaultStyles;
 
@@ -236,8 +226,14 @@ angular.module('domegis')
                     var val = getProp(type, prop);
                     if(propMatch != null) {
                       var rep = '';
-                      if(val !== '')
-                        rep = '\t' + prop + ': ' + val + ';\n';
+                      if(val !== '') {
+                        // avoid colorizer css if band is 0
+                        if(prop.indexOf('colorizer') == -1 || styles.raster.band != '0') {
+                          rep = '\t' + prop + ': ' + val + ';\n';
+                        } else {
+                          cartocss = cartocss.replace(propRegex, rep);
+                        }
+                      }
                       if(propMatch[1].trim().toLowerCase() != val) {
                         cartocss = cartocss.replace(propRegex, rep);
                       }
@@ -585,6 +581,27 @@ angular.module('domegis')
       templateUrl: '/views/view/raster-stops.html',
       link: function(scope, element, attrs) {
         scope.stops = [];
+        var internal = false;
+        scope.$watch('stopCss', function() {
+          if(internal)
+            return internal = false;
+          if(scope.stopCss) {
+            var stops = scope.stopCss
+              .replace(/stop\(/g, '')
+              .replace(/\)/g, '')
+              .split(' ');
+            scope.stops = [];
+            stops.forEach(function(stop) {
+              stop = stop.split(',');
+              scope.stops.push({
+                pos: stop[0],
+                color: stop[1]
+              });
+            });
+          } else {
+            scope.stops = [];
+          }
+        });
         scope.addStop = function() {
           scope.stops.push({
             pos: 0,
@@ -592,10 +609,10 @@ angular.module('domegis')
           });
         };
         scope.$watch('stops', function() {
-          console.log('updated stops');
+          internal = true;
           var css = '';
           scope.stops.forEach(function(stop) {
-            css += 'stop(' + stop.pos + ', ' + stop.color + ') ';
+            css += 'stop(' + stop.pos + ',' + stop.color + ') ';
           });
           css = css.trim();
           scope.stopCss = css;
