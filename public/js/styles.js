@@ -180,6 +180,7 @@ angular.module('domegis')
               }
             },
             raster: {
+              band: 1,
               opacity: 1,
               filterFactor: -1,
               scaling: 'near',
@@ -190,6 +191,16 @@ angular.module('domegis')
               composite: ''
             }
           };
+
+          if($scope.layer && $scope.layer.metadata) {
+            if($scope.layer.metadata.bands) {
+              if($scope.layer.metadata.bands.length && $scope.layer.metadata.bands.length == 1) {
+                defaultStyles.raster.band = 0;
+              }
+            }
+          }
+
+          console.log($scope.styles);
 
           $scope.styles = $scope.styles || defaultStyles;
 

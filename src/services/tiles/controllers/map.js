@@ -94,6 +94,7 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
       sql: 'select * from "' + view.layerId + '"',
       geom_column: "the_geom",
       geom_type: "raster",
+      raster_band: view.style.raster.band,
       cartocss: view.cartocss || "#style { raster-opacity: 1; }",
       cartocss_version: "2.3.0"
     }

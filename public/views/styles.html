@@ -1,7 +1,20 @@
 <div class="cartocss-wizard">
   <div class="raster-styles" ng-show="layer.type == 'raster'">
     <table>
-      <tbody>
+      <tbody ng-show="layer.metadata.bands.length >= 2">
+        <tr>
+          <td>
+            <label for="raster_band">Raster band</label>
+          </td>
+          <td>
+            <select id="raster_band" ng-model="styles.raster.band">
+              <option value="0">Auto</option>
+              <option ng-repeat="band in layer.metadata.bands" ng-value="{{band.id}}">{{band.id}}</option>
+            </select>
+          </td>
+        </tr>
+      </tbody>
+      <tbody ng-show="styles.raster.band !== '0'">
         <tr>
           <td>
             <label for="raster_opacity">Opacity</label>
