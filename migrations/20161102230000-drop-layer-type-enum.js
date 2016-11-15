@@ -6,6 +6,6 @@ module.exports = {
   },
 
   down: function (queryInterface, Sequelize) {
-    return queryInterface.sequelize.query("CREATE TYPE \"enum_layers_type\" AS ENUM ('arcgis', 'derived');");
+    // return queryInterface.sequelize.query("CREATE TYPE IF NOT EXISTS \"enum_layers_type\" AS ENUM ('arcgis', 'derived');");
   }
 };
