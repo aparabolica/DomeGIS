@@ -536,7 +536,7 @@ function syncArcGisLayerFeatures(hook, doneSyncArcGisLayerFeatures) {
           qs: {
             returnGeometry: true,
             where: '1=1',
-            outSR: 4326,
+            outSR: 3857,
             resultOffset: current,
             resultRecordCount: perPage,
             outFields: '*',
@@ -596,7 +596,7 @@ function syncArcGisLayerFeatures(hook, doneSyncArcGisLayerFeatures) {
 
         var schema = {
           domegisId: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true, field: 'domegis_id'},
-          geometry: { type: Sequelize.GEOMETRY(postgisType, 4326) }
+          geometry: { type: Sequelize.GEOMETRY(postgisType, 3857) }
         }
 
         _.each(layer.dataValues.fields, function(field){
