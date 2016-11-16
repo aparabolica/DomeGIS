@@ -16,7 +16,7 @@ function promiseFromChildProcess(child) {
 }
 
 // Constants
-var GDALWARP_COMPRESS_OPTIONS = '-co "COMPRESS=JPEG"'; // use -co "PHOTOMETRIC=YCBCR" if 3 bands
+var GDALWARP_COMPRESS_OPTIONS = '-co "COMPRESS=JPEG"'; // should use -co "PHOTOMETRIC=YCBCR" if multibands (multicolor)
 var GDALWARP_COMMON_OPTIONS   = '-co "BIGTIFF=IF_SAFER"';
 var PROJECTION                = 3857;
 var BLOCKSIZE                 = '128x128';
@@ -86,14 +86,6 @@ module.exports = function(hook) {
   function reproject(){
     var cmd = 'gdalwarp -t_srs EPSG:'+ PROJECTION +' '+ compressedFilePath + ' ' + mercatorFilePath;
     return promiseFromChildProcess(exec(cmd));
-    // return new Promise(function(resolve,reject){
-    //   exec(cmd)
-    //     .addListener("error", function(err) {
-    //       console.log('err reprojecting', err);
-    //       reject(err);
-    //     })
-    //     .addListener("exit", resolve);
-    // });
   }
 
   function getMetadata(){
