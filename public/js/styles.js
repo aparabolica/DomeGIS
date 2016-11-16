@@ -582,6 +582,9 @@ angular.module('domegis')
       link: function(scope, element, attrs) {
         scope.stops = [];
         var internal = false;
+        scope.deleteStop = function(i) {
+          scope.stops.splice(i, 1);
+        };
         scope.$watch('stopCss', function() {
           if(internal)
             return internal = false;
