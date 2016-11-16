@@ -16,7 +16,7 @@ function promiseFromChildProcess(child) {
 }
 
 // Constants
-var GDALWARP_COMPRESS_OPTIONS = '-co "COMPRESS=JPEG"'; // should use -co "PHOTOMETRIC=YCBCR" if multibands (multicolor)
+var GDAL_COMPRESS_OPTIONS = '-co "COMPRESS=JPEG"'; // should use -co "PHOTOMETRIC=YCBCR" if multibands (multicolor)
 var GDALWARP_COMMON_OPTIONS   = '-co "BIGTIFF=IF_SAFER"';
 var PROJECTION                = 3857;
 var BLOCKSIZE                 = '128x128';
@@ -79,7 +79,7 @@ module.exports = function(hook) {
 
   function compress() {
     var sourceFile = downsampledFilePath || filePath;
-    var cmd = 'gdal_translate ' + GDALWARP_COMPRESS_OPTIONS + ' ' + sourceFile + ' ' + compressedFilePath;
+    var cmd = 'gdal_translate ' + GDAL_COMPRESS_OPTIONS + ' ' + sourceFile + ' ' + compressedFilePath;
     return promiseFromChildProcess(exec(cmd));
   }
 
