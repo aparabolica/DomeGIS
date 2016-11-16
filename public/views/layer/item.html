@@ -20,12 +20,12 @@
   </td>
 </td>
 <td>
-  <p class="tag">{{layer.geometryType}}</p>
+  <p class="tag">{{layer.geometryType || layer.type}}</p>
 </td>
-<td>
+<td ng-hide="layer.type == 'raster'">
   <p>{{layer.featureCount}} features</p>
 </td>
-<td>
+<td ng-hide="layer.type == 'raster'">
   <p>{{(layer.fields | parseLayerField | map:'name').join(', ')}}</p>
 </td>
 <td>
