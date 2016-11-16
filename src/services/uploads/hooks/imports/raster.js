@@ -17,7 +17,7 @@ function promiseFromChildProcess(child) {
 
 // Constants
 var GDAL_COMPRESS_OPTIONS = '-co "COMPRESS=JPEG"'; // should use -co "PHOTOMETRIC=YCBCR" if multibands (multicolor)
-var GDALWARP_COMMON_OPTIONS   = '-co "BIGTIFF=IF_SAFER"';
+var GDALWARP_COMMON_OPTIONS   = '-co "COMPRESS=LZW" -co "BIGTIFF=IF_SAFER"';
 var PROJECTION                = 3857;
 var BLOCKSIZE                 = '128x128';
 var RASTER_COLUMN_NAME        = 'the_geom';
