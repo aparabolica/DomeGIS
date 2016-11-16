@@ -16,16 +16,18 @@ function promiseFromChildProcess(child) {
 }
 
 // Constants
-var GDALWARP_COMMON_OPTIONS = '-co "COMPRESS=LZW" -co "BIGTIFF=IF_SAFER"';
-var PROJECTION              = 3857;
-var BLOCKSIZE               = '128x128';
-var RASTER_COLUMN_NAME      = 'the_geom';
-var MAX_REDUCTED_SIZE       = 256;
+var GDALWARP_COMPRESS_OPTIONS = '-co "COMPRESS=JPEG"'; // use -co "PHOTOMETRIC=YCBCR" if 3 bands
+var GDALWARP_COMMON_OPTIONS   = '-co "BIGTIFF=IF_SAFER"';
+var PROJECTION                = 3857;
+var BLOCKSIZE                 = '128x128';
+var RASTER_COLUMN_NAME        = 'the_geom';
+var MAX_REDUCTED_SIZE         = 256;
 
 module.exports = function(hook) {
 
   var filePath = hook.params.file.path;
   var downsampledFilePath;
+  var compressedFilePath = filePath + "_jpeg.tif";
   var mercatorFilePath = filePath + "_webmercator.tif";
   var alignedFilePath = filePath + "_aligned_webmercator.tif";
   var scale;
@@ -36,13 +38,14 @@ module.exports = function(hook) {
   var Layers = hook.app.service('layers');
 
   downsample()
+    .then(compress)
     .then(reproject)
     .then(getMetadata)
     .then(alignRaster)
     .then(importAlignedRaster)
     // .then(createBaseOverview)
-    // .then(dropBaseTable)
-    // .then(importOriginalRaster)
+    .then(dropBaseTable)
+    .then(importOriginalRaster)
     .then(updateLayerStatus)
     .catch(updateLayerStatus);
 
@@ -64,17 +67,33 @@ module.exports = function(hook) {
 
       if (cmd) {
         exec(cmd)
-          .addListener("error", reject)
+          .addListener("error", function(err) {
+            console.log('err downsampling', err);
+            reject(err);
+          })
           .addListener("exit", resolve);
       } else resolve();
 
     });
   }
 
-  function reproject(){
+  function compress() {
     var sourceFile = downsampledFilePath || filePath;
-    var cmd = 'gdalwarp ' + GDALWARP_COMMON_OPTIONS + ' -t_srs EPSG:'+ PROJECTION +' '+ sourceFile + ' ' + mercatorFilePath;
+    var cmd = 'gdal_translate ' + GDALWARP_COMPRESS_OPTIONS + ' ' + sourceFile + ' ' + compressedFilePath;
     return promiseFromChildProcess(exec(cmd));
+  }
+
+  function reproject(){
+    var cmd = 'gdalwarp -t_srs EPSG:'+ PROJECTION +' '+ compressedFilePath + ' ' + mercatorFilePath;
+    return promiseFromChildProcess(exec(cmd));
+    // return new Promise(function(resolve,reject){
+    //   exec(cmd)
+    //     .addListener("error", function(err) {
+    //       console.log('err reprojecting', err);
+    //       reject(err);
+    //     })
+    //     .addListener("exit", resolve);
+    // });
   }
 
   function getMetadata(){
@@ -159,6 +178,7 @@ module.exports = function(hook) {
 
   function updateLayerStatus(err){
     if (err) {
+      console.log(err);
       layer.sync.status = 'error';
       layer.sync.message = err.message;
     } else {
