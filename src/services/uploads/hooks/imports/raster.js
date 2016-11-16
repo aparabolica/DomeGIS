@@ -41,7 +41,7 @@ module.exports = function(hook) {
     .then(reproject)
     .then(getMetadata)
     .then(alignRaster)
-    // .then(compress) // temporarily disabled until we dig into the counter-effects
+    // .then(compress) // temporarily disabled until we dig into the side-effects
     .then(importAlignedRaster)
     // .then(createBaseOverview)
     .then(dropBaseTable)
