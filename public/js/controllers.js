@@ -363,7 +363,12 @@ angular.module('domegis')
     };
 
     $scope.uploaded = Uploaded.data;
-    console.log(Uploaded);
+
+    $scope.$on('server.layers.removed', function(ev, data) {
+      $scope.uploaded = _.filter($scope.uploaded, function(item) {
+        return item.id !== data.id;
+      });
+    });
 
     $scope.collectionSource = 'arcgis';
 
