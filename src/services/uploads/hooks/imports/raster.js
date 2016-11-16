@@ -38,10 +38,10 @@ module.exports = function(hook) {
   var Layers = hook.app.service('layers');
 
   downsample()
-    .then(compress)
     .then(reproject)
     .then(getMetadata)
     .then(alignRaster)
+    // .then(compress) // temporarily disabled until we dig into the counter-effects
     .then(importAlignedRaster)
     // .then(createBaseOverview)
     .then(dropBaseTable)
@@ -67,24 +67,16 @@ module.exports = function(hook) {
 
       if (cmd) {
         exec(cmd)
-          .addListener("error", function(err) {
-            console.log('err downsampling', err);
-            reject(err);
-          })
+          .addListener("error", reject)
           .addListener("exit", resolve);
       } else resolve();
 
     });
   }
 
-  function compress() {
-    var sourceFile = downsampledFilePath || filePath;
-    var cmd = 'gdal_translate ' + GDAL_COMPRESS_OPTIONS + ' ' + sourceFile + ' ' + compressedFilePath;
-    return promiseFromChildProcess(exec(cmd));
-  }
-
   function reproject(){
-    var cmd = 'gdalwarp -t_srs EPSG:'+ PROJECTION +' '+ compressedFilePath + ' ' + mercatorFilePath;
+    var sourceFile = downsampledFilePath || filePath;
+    var cmd = 'gdalwarp -t_srs EPSG:' + PROJECTION + ' ' + sourceFile + ' ' + mercatorFilePath;
     return promiseFromChildProcess(exec(cmd));
   }
 
@@ -128,6 +120,11 @@ module.exports = function(hook) {
 
   function alignRaster(){
     var cmd = 'gdalwarp ' + GDALWARP_COMMON_OPTIONS + ' -tr ' + scale + ' -' + scale + ' ' + mercatorFilePath + ' ' + alignedFilePath;
+    return promiseFromChildProcess(exec(cmd));
+  }
+
+  function compress() {
+    var cmd = 'gdal_translate ' + GDAL_COMPRESS_OPTIONS + ' ' + alignedFilePath + ' ' + compressedFilePath;
     return promiseFromChildProcess(exec(cmd));
   }
 
