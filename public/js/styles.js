@@ -60,8 +60,6 @@ angular.module('domegis')
         '$compile',
         function($scope, $compile) {
 
-          console.log($scope.layer);
-
           if($scope.layer) {
             if($scope.layer.geometryType)
               $scope.types = $scope.layer.geometryType.toLowerCase();
