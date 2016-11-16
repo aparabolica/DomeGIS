@@ -56,10 +56,19 @@ exports.before = {
     auth.populateUser(),
     auth.restrictToAuthenticated(),
     auth.restrictToRoles({ roles: ['editor', 'author'] }),
-    setLayergroup,
     function(hook) {
-      hook.data.creatorId = hook.params.user.id;
-    }
+      return new Promise(function(resolve, reject){
+        var Layers = hook.app.service('layers');
+
+        hook.data.creatorId = hook.params.user.id;
+
+        Layers.get(hook.data.layerId).then(function(layer){
+          hook.data.type = layer.type;
+          resolve();
+        }).catch(reject);
+      });
+    },
+    setLayergroup
   ],
   update: [
     auth.verifyToken(),

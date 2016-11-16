@@ -89,7 +89,7 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
     }
 
   // raster
-  } else {
+} else if (view.type == 'raster') {
     mapnikLayer.options = {
       sql: 'select * from "' + view.layerId + '"',
       geom_column: "the_geom",
@@ -98,7 +98,7 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
       cartocss: view.cartocss || "#style { raster-opacity: 1; }",
       cartocss_version: "2.3.0"
     }
-  }
+  } else return doneGetLayerGroupId({message: 'Layer type undefined'});
 
   var mapConfig = MapConfig.create({
     version: '1.2.0',
