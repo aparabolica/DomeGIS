@@ -43,7 +43,7 @@ module.exports = function(hook) {
     .then(alignRaster)
     // .then(compress) // temporarily disabled until we dig into the side-effects
     .then(importAlignedRaster)
-    // .then(createBaseOverview)
+    .then(createBaseOverview)
     .then(dropBaseTable)
     .then(importOriginalRaster)
     .then(updateLayerStatus)
@@ -138,10 +138,12 @@ module.exports = function(hook) {
 
       var sequelize = hook.app.get('sequelize');
       var overviewTableName = 'o_1_' + layer.id;
+      // var query = "CREATE TABLE public.\"" + overviewTableName + "\" AS SELECT * FROM public.\"" + layer.id + "\";\n" +
+      //             "CREATE INDEX ON public.\"" +  overviewTableName + "\" USING gist (st_convexhull(\"" + RASTER_COLUMN_NAME + "\"));\n" +
+      //             "SELECT AddRasterConstraints('public', '" + overviewTableName + "', '" + RASTER_COLUMN_NAME + "',TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE);\n" +
+      //             "SELECT AddOverviewConstraints('public', '" + overviewTableName + "'::name, '" + RASTER_COLUMN_NAME + "'::name, 'public', '" + layer.id + "'::name, '" + RASTER_COLUMN_NAME + "'::name, 1)";
       var query = "CREATE TABLE public.\"" + overviewTableName + "\" AS SELECT * FROM public.\"" + layer.id + "\";\n" +
-                  "CREATE INDEX ON public.\"" +  overviewTableName + "\" USING gist (st_convexhull(\"" + RASTER_COLUMN_NAME + "\"));\n" +
-                  "SELECT AddRasterConstraints('public', '" + overviewTableName + "', '" + RASTER_COLUMN_NAME + "',TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,TRUE,TRUE,FALSE);\n" +
-                  "SELECT AddOverviewConstraints('public', '" + overviewTableName + "'::name, '" + RASTER_COLUMN_NAME + "'::name, 'public', '" + layer.id + "'::name, '" + RASTER_COLUMN_NAME + "'::name, 1)";
+                  "CREATE INDEX ON public.\"" +  overviewTableName + "\" USING gist (st_convexhull(\"" + RASTER_COLUMN_NAME + "\"));\n";
       sequelize.query(query).then(function(result){
         resolve();
       }).catch(reject);
@@ -161,7 +163,7 @@ module.exports = function(hook) {
   }
 
   function importOriginalRaster(){
-    var cmd = 'export PGCLIENTENCODING=UTF8; raster2pgsql -t ' + BLOCKSIZE + ' -C -x -Y -f ' + RASTER_COLUMN_NAME + ' ' + filePath + ' public.' + layer.id+ ' | psql -d domegis -U domegis';
+    var cmd = 'export PGCLIENTENCODING=UTF8; raster2pgsql -t ' + BLOCKSIZE + ' -C -I -x -Y -f ' + RASTER_COLUMN_NAME + ' ' + filePath + ' public.' + layer.id+ ' | psql -d domegis -U domegis';
     return promiseFromChildProcess(exec(cmd));
   }
 
