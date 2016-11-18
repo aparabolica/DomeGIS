@@ -11,9 +11,13 @@ Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/trusty64"
 
   config.vm.provider "virtualbox" do |v|
-    v.customize ["modifyvm", :id, "--nictype1", "virtio"]
+
+    # memory and cpus
     v.memory = 2048
     v.cpus = 2
+
+    # increase up/down speed with host
+    v.customize ["modifyvm", :id, "--nictype1", "virtio"]
   end
 
   if Vagrant.has_plugin?("vagrant-cachier")
