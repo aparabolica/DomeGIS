@@ -9,10 +9,10 @@ var hooks = require('./hooks');
 module.exports = function(){
   var app = this;
 
-  var form = new formidable.IncomingForm();
-  form.encoding = 'utf-8';
-
   app.use('/uploads', function (req, res, next) {
+    var form = new formidable.IncomingForm();
+    form.encoding = 'utf-8';
+
     form.parse(req, function (err, fields, files) {
       if (err) {
         next(err);

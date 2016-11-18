@@ -26,9 +26,7 @@ module.exports.init = function(hook) {
     hook.result.layer.type = 'raster';
 
     // init raster import job
-    raster2pgsql(hook);
-
-    return hook;
+    return raster2pgsql(hook);
 
   // invalid or non-supported file
   } else {

@@ -49,6 +49,8 @@ module.exports = function(hook) {
     .then(updateLayerStatus)
     .catch(updateLayerStatus);
 
+  return hook;
+
   // TODO scale non-Byte bands to Byte
   function downsample(){
     return new Promise(function(resolve,reject){

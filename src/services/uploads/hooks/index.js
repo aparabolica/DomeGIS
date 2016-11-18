@@ -11,7 +11,8 @@ var debug = require('debug');
 var log = debug('domegis:service:uploads');
 
 exports.before = {
-  create: []
+  create: [
+  ]
 }
 
 exports.after = {
@@ -26,7 +27,7 @@ exports.after = {
         Layers
           .create(layer)
           .then( function(result) {
-            resolve();
+            resolve(hook);
           })
           .catch(reject);
       });
