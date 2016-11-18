@@ -772,4 +772,13 @@ angular.module('domegis')
       });
     }
   }
+])
+
+.controller('AnalysisCtrl', [
+  '$scope',
+  'Analysis',
+  function($scope, Analysis) {
+    $scope.analysis = Analysis;
+    console.log(Analysis);
+  }
 ]);
