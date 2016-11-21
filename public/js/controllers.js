@@ -794,11 +794,12 @@ angular.module('domegis')
 .controller('AnalysisEditCtrl', [
   '$scope',
   '$state',
+  '$filter',
   'Layers',
   'Server',
   'Edit',
   'MessageService',
-  function($scope, $state, Layers, Server, Edit, Message) {
+  function($scope, $state, $filter, Layers, Server, Edit, Message) {
 
     var aceLoaded = function(editor) {
       var staticWordCompleter = {
