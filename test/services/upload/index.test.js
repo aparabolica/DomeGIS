@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+var async = require('async');
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var assert = require('assert');
@@ -105,13 +106,30 @@ describe('files service', function () {
       });
   });
 
-  it('table is accessible by sequelize_readonly', function(done){
+  it('table and overview are accessible by sequelize_readonly', function(done){
     this.timeout(20000);
+
     var sequelizeReadonly = app.get('sequelize_readonly');
-    sequelizeReadonly.query('select rid from ' + sampleRaster1LayerId)
+
+    // generate table names
+    var tableNames = [sampleRaster1LayerId];
+    for (var i = 0; i < 4; i++) {
+      tableNames.push('o_' + Math.pow(2,i) + '_' + sampleRaster1LayerId);
+    }
+
+    // for each table
+    async.eachSeries(tableNames, function(tableName, doneEach){
+
+      // run simple query
+      sequelizeReadonly.query('select rid from "' + tableName + '";')
       .then(function(results){
-        done();
+        doneEach();
       }).catch(done);
+
+    }, function(err){
+      should.not.exist(err);
+      done()
+    });
   });
 
   it('repost of same file creates a another table', function(done) {

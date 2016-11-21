@@ -2,6 +2,7 @@
 
 // dependencies
 var _ = require('underscore');
+var async = require('async');
 var gdal = require('gdal');
 
 var Promise = require('bluebird');
@@ -171,12 +172,29 @@ module.exports = function(hook) {
   }
 
   function grantReadOnlyAccess(){
+    var sequelize = hook.app.get('sequelize');
+
     return new Promise(function(resolve, reject){
-      var query = "GRANT SELECT ON \""+layer.id+"\" TO domegis_readonly;"
-      var sequelize = hook.app.get('sequelize');
-      sequelize.query(query).then(function(){
+
+      // generate table names
+      var tableNames = [layer.id];
+      for (var i = 0; i < overviewsList.length; i++) {
+        tableNames.push('o_' + Math.pow(2,i) + '_' + layer.id);
+      }
+
+      // for each table
+      async.eachSeries(tableNames, function(tableName, doneEach){
+
+        // run grant access
+        var query = "GRANT SELECT ON \""+tableName+"\" TO domegis_readonly;"
+        sequelize.query(query).then(function(){
+          doneEach();
+        }).catch(doneEach);
+        
+      }, function(err){
+        if (err) return reject(err);
         resolve();
-      }).catch(reject);
+      });
     });
   }
 
