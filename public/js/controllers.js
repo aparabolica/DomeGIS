@@ -779,6 +779,7 @@ angular.module('domegis')
   'Analyses',
   function($scope, Analyses) {
     $scope.analyses = Analyses.data;
+    console.log(Analyses);
   }
 ])
 

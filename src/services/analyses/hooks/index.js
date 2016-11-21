@@ -26,7 +26,6 @@ exports.before = {
     auth.populateUser(),
     auth.restrictToAuthenticated(),
     auth.restrictToRoles({ roles: ['editor'] }),
-    hooks.pluck(), // remove all data sent by user
     runQuery
   ],
   remove: [

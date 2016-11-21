@@ -35,7 +35,8 @@
     "chroma-js": "~1.1.1",
     "leaflet-bing-layer": "gmaclennan/leaflet-bing-layer#^3.0.1",
     "ngInfiniteScroll": "ng-infinite-scroll/ng-infinite-scroll-bower#^1.3.1",
-    "ng-file-upload": "^12.2.12"
+    "ng-file-upload": "^12.2.12",
+    "mustache.js": "mustache#^2.3.0"
   },
   "resolutions": {
     "leaflet": "~1.0.0"

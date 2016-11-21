@@ -1,5 +1,21 @@
 angular.module('domegis')
 
+.filter('dataTemplate', function() {
+  return _.memoize(function(input, template) {
+    var output = '';
+    if(input && input.length) {
+      if(input.length == 1) {
+        output = Mustache.render(template, input[0]);
+      } else {
+        output = Mustache.render(template, input);
+      }
+    }
+    return output;
+  }, function() {
+    return JSON.stringify(arguments);
+  })
+})
+
 .filter('join', function() {
   return function(input, splitChar) {
     return input.join(splitChar);

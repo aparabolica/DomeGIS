@@ -10,6 +10,7 @@
 //= require jquery/dist/jquery
 //= require jquery-ui/jquery-ui
 //= require chroma-js/chroma
+//= require mustache.js/mustache
 
 //= require leaflet/dist/leaflet-src
 //= require leaflet-bing-layer/leaflet-bing-layer
