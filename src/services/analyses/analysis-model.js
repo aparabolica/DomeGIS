@@ -20,6 +20,9 @@ module.exports = function(sequelize) {
       type: Sequelize.TEXT,
       allowNull: false
     },
+    dataTemplate: {
+      type: Sequelize.TEXT
+    },
     results: {
       type: Sequelize.JSON
     }
