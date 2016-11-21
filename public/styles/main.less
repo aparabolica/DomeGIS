@@ -849,7 +849,8 @@ form {
   }
 }
 
-.edit-view {
+.edit-view,
+.edit-map {
   margin: -4rem;
   position: relative;
   height: 600px;
@@ -919,9 +920,63 @@ form {
         border-radius: 0;
       }
     }
+    ul.setting-selector {
+      margin: 0 -2rem 2rem;
+      padding: 0;
+      list-style: none;
+      display: table;
+      border-top: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+      li {
+        width: 1%;
+        display: table-cell;
+        text-align: center;
+        a {
+          padding: 1rem 0;
+          display: block;
+          border-left: 1px solid #ccc;
+          text-decoration: none;
+          text-transform: uppercase;
+          letter-spacing: .15rem;
+          font-size: .7em;
+          outline: 0;
+          font-weight: 500;
+          &:focus,
+          &:hover {
+            background: lighten(@blue, 10%);
+            color: #fff;
+          }
+        }
+        &.active {
+          a {
+            background: @blue;
+            color: #fff;
+          }
+        }
+        &:first-child {
+          a {
+            border-left: 0;
+          }
+        }
+      }
+    }
+  }
+  .item-search {
+    input[type=text] {
+      margin-bottom: 2rem;
+    }
+    .result-list {
+      list-style: none;
+      .result-item {
+        cursor: pointer;
+        h3 {
+          color: #444;
+        }
+      }
+    }
   }
   .cartocss-wizard {
-    ul.type-selector {
+    ul.setting-selector {
       margin-left: -2rem;
       margin-right: -2rem;
     }
@@ -1179,6 +1234,41 @@ form {
   }
 }
 
+.widgets-editor {
+  .button.add-new {
+    display: block;
+  }
+  .widget-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    .widget-item {
+      margin: 0 0 1rem;
+      background: #f0f0f0;
+      position: relative;
+      .remove-widget {
+        float: right;
+        color: #666;
+        line-height:1;
+        margin: 1rem;
+      }
+      .widget-type-selector {
+        padding: 1rem;
+        background: #e7e7e7;
+        p,
+        label {
+          display: inline-block;
+          margin-right: 1rem;
+        }
+      }
+      .widget-content-editor {
+        margin: 1rem;
+        padding-bottom: 1rem;
+      }
+    }
+  }
+}
+
 #map {
   width: 100%;
   height: 100%;
@@ -1186,9 +1276,6 @@ form {
 }
 
 #generate_map {
-  .main-form {
-    margin: 4rem 0;
-  }
   .layer-list {
     list-style: none;
     .layer-item {
@@ -1199,42 +1286,46 @@ form {
     }
   }
   .selected-layers {
-    margin: 0 -4rem;
-    padding: 6rem 0;
-    background: @blue;
-    color: #fff;
     code {
-      background: darken(@blue, 10%);
-      border-color: darken(@blue, 15%);
-      color: #fff;
+      background: darken(#fff, 10%);
+      border-color: darken(#fff, 15%);
+      color: #333;
     }
     .layer-item {
-      background: darken(@blue, 5%);
+      background: darken(#fff, 5%);
       padding: 2rem 2rem 2rem 50px;
       margin: 0 0 1px;
       position: relative;
       cursor: default;
+      input {
+        width: auto;
+      }
       .sort {
         position: absolute;
         top: 1px;
         left: 1px;
         bottom: 1px;
         width: 30px;
-        background: darken(@blue, 7%);
+        background: darken(#fff, 7%);
         font-size: 1.2em;
         padding-top: 2rem;
         text-align: center;
         cursor: move;
+        color: #999;
       }
       h3,
       a {
-        color: #fff;
+        color: #333;
       }
       .actions {
         float: right;
+        color: #999;
+        a {
+          color: inherit;
+        }
       }
       h3 {
-        font-size: 1.5em;
+        font-size: 1.2em;
         letter-spacing: 0;
       }
       .views {
@@ -1242,7 +1333,7 @@ form {
         span {
           float: left;
           font-weight: 600;
-          color: rgba(255,255,255,0.4);
+          color: #666;
           margin-right: 2.5rem;
         }
         label {
@@ -1252,37 +1343,32 @@ form {
         }
       }
     }
-    .baselayer-selector {
-      select,
-      select option {
-        width: 100%;
-        color: #333;
-      }
+  }
+  .baselayer-selector,
+  .scrollwheelzoom,
+  .language-selector {
+    margin: 0 0 2rem;
+    p {
+      margin: 0 0 2rem;
     }
-    .language-selector {
-      h3 {
-        font-size: 1.8em;
-      }
-      label {
-        float: left;
-        text-transform: uppercase;
-        margin-right: 1.5rem;
-        font-size: .8em;
-      }
+    input {
+      width: auto;
+    }
+    select,
+    select option {
+      width: 100%;
+      color: #333;
+    }
+  }
+  .language-selector {
+    label {
+      float: left;
+      text-transform: uppercase;
+      margin-right: 1.5rem;
+      font-size: .8em;
     }
   }
   .output {
-    margin: 0 -4rem -4rem;
-    padding: 6rem 0;
-    background: #333;
-    color: #fff;
-    .fa-hand-o-down {
-      font-size: 3em;
-      display: block;
-      text-align: center;
-      margin-top: -7rem;
-      margin-bottom: 6rem;
-    }
     h3 {
       font-size: 2em;
       span {
@@ -1292,16 +1378,9 @@ form {
       }
     }
     textarea {
-      background: #111;
-      border-color: #555;
       width: 100%;
       height: 100px;
     }
-  }
-  .output-map {
-    margin-top: 2rem;
-    width: 100%;
-    height: 400px;
   }
 }
 

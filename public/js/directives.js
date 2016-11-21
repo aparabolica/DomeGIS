@@ -42,6 +42,39 @@ angular.module('domegis')
   }
 ])
 
+.directive('widgetsEditor', [
+  function() {
+    return {
+      restrict: 'EA',
+      scope: {
+        'analyses': '=',
+        'widgets': '=ngModel'
+      },
+      require: 'ngModel',
+      templateUrl: '/views/parts/widgets-editor.html',
+      link: function(scope, element, attrs) {
+
+        var defaults = {
+          type: 'text'
+        };
+
+        scope.types = {
+          'text': 'Text',
+          'analysis': 'Analysis'
+        };
+
+        scope.widgets = scope.widgets || [];
+        scope.addWidget = function() {
+          scope.widgets.push(_.clone(defaults));
+        };
+        scope.removeWidget = function(i) {
+          scope.widgets.splice(i, 1);
+        };
+      }
+    }
+  }
+])
+
 .directive('domeMap', [
   '$q',
   '$http',

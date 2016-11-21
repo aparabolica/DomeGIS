@@ -1,29 +1,3 @@
-var sql =   'SELECT ROUND(\n' +
-            '	CAST(100.00 * SUM((\n' +
-            '		ST_Area(\n' +
-            '			ST_Multi(geom)\n' +
-            '		) /\n' +
-            '		ST_Area(\n' +
-            '			ST_Multi(geometry)\n' +
-            '		)\n' +
-            '	)) as numeric), 20\n' +
-            ') as percentage\n' +
-            'FROM (\n' +
-            '	SELECT (ST_DumpAsPolygons(ST_Clip(the_geom,geometry, 20))).*\n' +
-            '	FROM\n' +
-            '		"280602038a86471681476bd801e66bc3_0",\n' +
-            '		"o_1_82e10826e07bf7055a00c9a4185857e11bc7e298"\n' +
-            '	WHERE ST_Intersects(geometry,the_geom)\n' +
-            ') As foo,\n' +
-            '"280602038a86471681476bd801e66bc3_0"\n' +
-            'where val between 4 and 6;';
-
-var analysisEg = {
-  title: 'Testing Analysis',
-  description: 'Lorem ipsum dolor sit amet',
-  sql: sql
-};
-
 var AuthDep = [
   '$q',
   'Server',
@@ -171,7 +145,19 @@ angular.module('domegis')
     .state('generateMap', {
       url: '/generate/',
       controller: 'GenerateCtrl',
-      templateUrl: '/views/generate.html'
+      templateUrl: '/views/generate.html',
+      resolve: {
+        Analyses: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('analyses'), {
+              query: {
+                $limit: 100
+              }
+            });
+          }
+        ]
+      }
     })
     .state('upload', {
       url: '/upload/',

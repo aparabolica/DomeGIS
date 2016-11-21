@@ -1,0 +1,39 @@
+<div class="widgets-editor">
+  <a class="button add-new" href="javascript:void(0);" ng-click="addWidget()">New widget</a>
+  <ul class="widget-list">
+    <li ng-repeat="(i,widget) in widgets" class="widget-item">
+      <a href="javascript:void(0);" class="remove-widget" ng-click="removeWidget(i)">x</a>
+      <div class="widget-type-selector">
+        <p>Widget type:</p>
+        <label ng-repeat="(type,label) in types" for="widget_{{i}}_type_{{type}}">
+          <input id="widget_{{i}}_type_{{type}}" ng-model="widget.type" type="radio" ng-value="type" />
+          {{label}}
+        </label>
+      </div>
+      <div class="widget-content-editor">
+        <div class="widget-text" ng-show="widget.type == 'text'">
+          <label for="widget_{{i}}_text_content">
+            Content
+            <textarea id="widget_{{i}}_text_content" ng-model="widget.content" />
+          </label>
+        </div>
+        <div class="widget-analysis" ng-show="widget.type == 'analysis'">
+          <div class="analyses-search item-search" ng-show="!widget.content">
+            <p>
+              <label for="search_analyses_input">Search for analyses</label>
+              <input id="search_analyses_input" type="text" placeholder="Type your search..." ng-model="searchAnalyses" />
+            </p>
+            <div class="search-results" ng-show="searchAnalyses">
+              <p ng-show="!filteredAnalyses.length">No results were found.</p>
+              <ul class="layer-list result-list" ng-show="filteredAnalyses.length">
+                <li ng-repeat="analysis in filteredAnalyses = (analyses | filter:searchAnalyses)" class="analysis-item result-item" ng-click="addAnalysis(analysis)">
+                  <h3>{{analysis.title}}</h3>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

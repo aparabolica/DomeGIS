@@ -95,10 +95,19 @@ angular.module('domegis')
   '$state',
   'Lang',
   'Server',
-  function($scope, $state, Lang, Server) {
+  'Analyses',
+  function($scope, $state, Lang, Server, Analyses) {
+
+    $scope.setting = 'layer';
+
+    $scope.setSetting = function(setting) {
+      $scope.setting = setting;
+    };
 
     var searchService = Server.service('search');
     var viewService = Server.service('views');
+
+    $scope.analyses = Analyses.data;
 
     $scope.langs = Lang.getLanguages();
 
@@ -135,6 +144,7 @@ angular.module('domegis')
     $scope._layers = [];
 
     $scope.addLayer = function(layer) {
+      $scope.search = '';
       if(!$scope.map[layer.id]) {
         $scope.map[layer.id] = {};
         $scope._layers.push(layer);
@@ -151,6 +161,11 @@ angular.module('domegis')
           });
         });
       }
+    };
+
+    $scope.addAnalysis = function(analysis) {
+      $scope.searchAnalyses = '';
+
     };
 
     $scope.removeLayer = function(layerId) {
