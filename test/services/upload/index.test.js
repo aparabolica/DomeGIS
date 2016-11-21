@@ -105,7 +105,16 @@ describe('files service', function () {
       });
   });
 
-  it('repost same file', function(done) {
+  it('table is accessible by sequelize_readonly', function(done){
+    this.timeout(20000);
+    var sequelizeReadonly = app.get('sequelize_readonly');
+    sequelizeReadonly.query('select rid from ' + sampleRaster1LayerId)
+      .then(function(results){
+        done();
+      }).catch(done);
+  });
+
+  it('repost of same file creates a another table', function(done) {
     this.timeout(20000);
 
     chai.request(app)

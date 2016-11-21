@@ -46,6 +46,7 @@ module.exports = function(hook) {
     .then(createBaseOverview)
     .then(dropBaseTable)
     .then(importOriginalRaster)
+    .then(grantReadOnlyAccess)
     .then(updateLayerStatus)
     .catch(updateLayerStatus);
 
@@ -168,6 +169,17 @@ module.exports = function(hook) {
     var cmd = 'export PGCLIENTENCODING=UTF8; raster2pgsql -t ' + BLOCKSIZE + ' -C -I -x -Y -f ' + RASTER_COLUMN_NAME + ' ' + filePath + ' public.' + layer.id+ ' | psql -d domegis -U domegis';
     return promiseFromChildProcess(exec(cmd));
   }
+
+  function grantReadOnlyAccess(){
+    return new Promise(function(resolve, reject){
+      var query = "GRANT SELECT ON \""+layer.id+"\" TO domegis_readonly;"
+      var sequelize = hook.app.get('sequelize');
+      sequelize.query(query).then(function(){
+        resolve();
+      }).catch(reject);
+    });
+  }
+
 
   function updateLayerStatus(err){
     if (err) {
