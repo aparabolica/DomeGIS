@@ -116,6 +116,15 @@ input[type='submit'] {
   }
 }
 
+.button-grp {
+  display: table;
+  width: 100%;
+  > * {
+    display: table-cell;
+    width: 1%;
+  }
+}
+
 p.info {
   background: #fff;
   padding: 5px 12px;
@@ -461,6 +470,11 @@ table {
       float: left;
       margin-right: 4rem;
     }
+    h3 {
+      font-size: 1em;
+      margin: 0;
+      color: rgba(255,255,255,0.5);
+    }
     nav.head-nav {
       float: left;
       margin-top: 1.4rem;
@@ -781,6 +795,9 @@ form {
   input[type=submit] {
     width: 100%;
     display: block;
+  }
+  .ace_editor {
+    height: 200px;
   }
   h2,
   h3 {
@@ -1422,9 +1439,6 @@ form {
         font-size: .6em;
         overflow: hidden;
         white-space: pre-line;
-      }
-      .button {
-        display: block;
       }
     }
   }

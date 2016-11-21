@@ -1,0 +1,31 @@
+<header id="inner-header" class="form-header">
+  <div class="container">
+    <div class="six columns offset-by-three">
+      <h2 ng-show="analysis.id">Editing analysis {{analysis.title}}</h2>
+      <h2 ng-hide="analysis.id">New analysis</h2>
+    </div>
+  </div>
+</header>
+<div class="container">
+  <div class="six columns offset-by-three">
+    <form id="edit_analysis" class="main-form" ng-submit="save(analysis)">
+      <div class="form-section">
+        <p>
+          <label for="name_input">Title</label>
+          <input id="name_input" type="text" placeholder="Title" ng-model="analysis.title" />
+        </p>
+        <p>
+          <label for="description_input">Description</label>
+          <textarea id="description_input" placeholder="Description" ng-model="analysis.description" />
+        </p>
+        <p>
+          <label for="query_input">Query</label>
+          <textarea id="query_input" ng-model="analysis.query" ui-ace="aceOptions"></textarea>
+        </p>
+      </div>
+      <p>
+        <input type="submit" value="Save analysis" />
+      </p>
+    </form>
+  </div>
+</div>

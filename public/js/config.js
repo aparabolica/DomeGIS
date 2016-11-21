@@ -345,19 +345,65 @@ angular.module('domegis')
       ]
     })
     .state('analysis', {
-      url: '/analysis/',
+      url: '/analyses/',
       templateUrl: '/views/analysis/index.html',
       controller: 'AnalysisCtrl',
       resolve: {
+        Auth: AuthDep,
+        Analyses: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('analyses'), {
+              query: {
+                $limit: 100
+              }
+            });
+          }
+        ]
+      }
+    })
+    .state('singleAnalysis', {
+      url: '/analyses/:id/',
+      templateUrl: '/views/analysis/single.html',
+      controller: 'AnalysisSingleCtrl',
+      resolve: {
         Analysis: [
-          function() {
-            return [
-              _.clone(analysisEg),
-              _.clone(analysisEg),
-              _.clone(analysisEg),
-              _.clone(analysisEg),
-              _.clone(analysisEg)
-            ];
+          'Server',
+          '$stateParams',
+          function(Server, $stateParams) {
+            var id = $stateParams.id;
+            return Server.get(Server.service('analyses'), id);
+          }
+        ]
+      }
+    })
+    .state('editAnalysis', {
+      url: '/analyses/edit?id',
+      templateUrl: '/views/analysis/edit.html',
+      controller: 'AnalysisEditCtrl',
+      resolve: {
+        Auth: AuthDep,
+        Layers: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('layers'), {
+              query: {
+                $limit: 100
+              }
+            });
+          }
+        ],
+        Edit: [
+          'Auth',
+          '$q',
+          '$stateParams',
+          'Server',
+          function(Auth, $q, $stateParams, Server) {
+            if($stateParams.id) {
+              return Server.get(Server.service('analyses'), $stateParams.id);
+            } else {
+              return {};
+            }
           }
         ]
       }

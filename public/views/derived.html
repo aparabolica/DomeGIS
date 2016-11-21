@@ -23,18 +23,7 @@
   </div>
   <div class="results" ng-show="data && data.length">
     <h3>Sample data</h3>
-    <table>
-      <thead>
-        <tr>
-          <th ng-repeat="key in keys">{{key}}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="item in data">
-          <td ng-repeat="key in keys">{{item[key]}}</td>
-        </tr>
-      </tbody>
-    </table>
+    <div obj-table="data"></div>
   </div>
   <div class="container row" ng-show="data && data.length">
     <div class="six columns offset-by-three">

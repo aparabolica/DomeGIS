@@ -3,7 +3,7 @@
     <div class="twelve columns">
       <h2>Analysis</h2>
       <nav class="head-nav">
-        <a ui-sref="usersEdit">New analysis</a>
+        <a ui-sref="editAnalysis">New analysis</a>
       </nav>
     </div>
   </div>
@@ -12,12 +12,15 @@
   <div class="container row">
     <div class="twelve columns">
       <section class="analysis-list">
-        <div class="analysis-item" ng-repeat="al in analysis">
+        <div class="analysis-item" ng-repeat="analysis in analyses">
           <div class="analysis-content">
-            <h3>{{al.title}}</h3>
-            <p>{{al.description}}</p>
-            <pre><code>{{al.sql}}</code></pre>
-            <a class="button">Edit analysis</a>
+            <h3>{{analysis.title}}</h3>
+            <p>{{analysis.description}}</p>
+            <pre><code>{{analysis.query}}</code></pre>
+            <div class="button-grp">
+              <a class="button" ui-sref="editAnalysis({id: analysis.id})">Edit</a>
+              <a class="button" ui-sref="singleAnalysis({id: analysis.id})">View</a>
+            </div>
           </div>
         </div>
     </div>

@@ -776,9 +776,95 @@ angular.module('domegis')
 
 .controller('AnalysisCtrl', [
   '$scope',
+  'Analyses',
+  function($scope, Analyses) {
+    $scope.analyses = Analyses.data;
+  }
+])
+
+.controller('AnalysisSingleCtrl', [
+  '$scope',
   'Analysis',
   function($scope, Analysis) {
     $scope.analysis = Analysis;
     console.log(Analysis);
+  }
+])
+
+.controller('AnalysisEditCtrl', [
+  '$scope',
+  '$state',
+  'Layers',
+  'Server',
+  'Edit',
+  'MessageService',
+  function($scope, $state, Layers, Server, Edit, Message) {
+
+    var aceLoaded = function(editor) {
+      var staticWordCompleter = {
+        getCompletions: function(editor, session, pos, prefix, callback) {
+          callback(null, Layers.data.map(function(layer) {
+            return {
+              caption: $filter('translate')(layer.name),
+              value: layer.name,
+              meta: "layer",
+              _id: layer.id,
+              completer: {
+                insertMatch: function(editor, data) {
+                  if (editor.completer.completions.filterText) {
+                    var ranges = editor.selection.getAllRanges();
+                    for (var i = 0, range; range = ranges[i]; i++) {
+                      range.start.column -= editor.completer.completions.filterText.length;
+                      editor.session.remove(range);
+                    }
+                  }
+                  editor.execCommand("insertstring", '"' + data._id + '"');
+                }
+              }
+            };
+          }));
+        }
+      };
+      editor.completers.push(staticWordCompleter);
+    };
+
+    $scope.aceOptions = {
+      mode: 'pgsql',
+      useWrapMode: false,
+      showGutter: false,
+      theme: 'github',
+      maxLines: Infinity,
+      onLoad: aceLoaded,
+      advanced: {
+        enableBasicAutocompletion: true,
+        enableSnippets: true,
+        enableLiveAutocompletion: true
+      }
+    };
+
+    var analysisService = Server.service('analyses');
+
+    $scope.analysis = angular.copy(Edit);
+
+    $scope.save = function(analysis) {
+      if(Edit.id) {
+        Server.patch(analysisService, Edit.id, analysis).then(function(analysis) {
+          $scope.analysis = analysis;
+          Message.add('Analysis updated');
+          $state.go('analysis', {}, {reload: true});
+        }, function(err) {
+          Message.add(err.message);
+        });
+      } else {
+        Server.create(analysisService, analysis).then(function(analysis) {
+          $scope.analysis = analysis;
+          Message.add('Analysis created');
+          $state.go('analysis', {}, {reload: true});
+        }, function(err) {
+          Message.add(err.message);
+        });
+      }
+    };
+
   }
 ]);

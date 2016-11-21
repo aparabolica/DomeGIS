@@ -20,6 +20,28 @@ angular.module('domegis')
   }
 ])
 
+.directive('objTable', [
+  function() {
+    return {
+      restrict: 'EA',
+      scope: {
+        objTable: '='
+      },
+      templateUrl: '/views/parts/data-table.html',
+      link: function(scope, element, attrs) {
+        scope.$watch('objTable', function() {
+          if(scope.objTable && scope.objTable.length) {
+            scope.data = _.clone(scope.objTable);
+            scope.keys = Object.keys(scope.data[0]);
+          } else {
+            scope.keys = [];
+          }
+        }, true);
+      }
+    }
+  }
+])
+
 .directive('domeMap', [
   '$q',
   '$http',
