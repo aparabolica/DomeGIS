@@ -25,6 +25,7 @@ module.exports = function() {
   app.configure(require('./content'));
   app.configure(require('./preview'));
   app.configure(require('./view'));
+  app.configure(require('./analyses'));
 
   // services after this point are avoided to speed up tests
   if (process.env.NODE_ENV != 'test') {

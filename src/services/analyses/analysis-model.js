@@ -4,6 +4,11 @@ var Sequelize = require('sequelize');
 
 module.exports = function(sequelize) {
   var analysis = sequelize.define('analysis', {
+    id: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV1,
+      primaryKey: true
+    },
     title: {
       type: Sequelize.STRING,
       allowNull: false
@@ -11,16 +16,16 @@ module.exports = function(sequelize) {
     description: {
       type: Sequelize.TEXT
     },
-    sql: {
+    query: {
       type: Sequelize.TEXT,
       allowNull: false
     },
-    resultText: {
-      type: Sequelize.TEXT
-    },
-    layerId: {
-      type: Sequelize.STRING
+    results: {
+      type: Sequelize.JSON
     }
+  }, {
+    timestamps: true,
+    updatedAt: 'executedAt'
   });
 
   return analysis;
