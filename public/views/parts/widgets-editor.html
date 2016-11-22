@@ -1,6 +1,9 @@
 <div class="widgets-editor">
   <div class="new-widget-box">
-    <a class="button add-new" href="javascript:void(0);" ng-click="toggleNewWidget()">New widget</a>
+    <a class="button add-new" href="javascript:void(0);" ng-click="toggleNewWidget()">
+      <span ng-hide="showBox">New widget</span>
+      <span ng-show="showBox">Cancel</span>
+    </a>
     <div class="widget-types" ng-show="showBox">
       <a href="javascript:void(0);" ng-click="addWidget({type: 'text'})" class="widget-type text-widget">
         <span class="fa fa-align-left"></span>

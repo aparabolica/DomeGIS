@@ -75,7 +75,7 @@ angular.module('domegis')
         scope.widgets = scope.widgets || [];
         scope.addWidget = function(widget) {
           scope.showBox = false;
-          scope.widgets.push(_.defaults(widget, defaultWidget));
+          scope.widgets.unshift(_.defaults(widget, defaultWidget));
         };
         scope.removeWidget = function(i) {
           scope.widgets.splice(i, 1);
@@ -231,7 +231,6 @@ angular.module('domegis')
           }
           if(widgets && widgets.length) {
             widgets.forEach(function(widget) {
-              // widgetControl.addWidget(widget.content, [layers[0].tile]);
               widgetControl.addWidget(widget.content, widget.display ? [] : widget.layers);
             });
           }
