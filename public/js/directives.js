@@ -55,7 +55,7 @@ angular.module('domegis')
       templateUrl: '/views/parts/widgets-editor.html',
       link: function(scope, element, attrs) {
 
-        var defaults = {
+        var defaultWidget = {
           type: 'text',
           display: true,
           layers: {}
@@ -66,9 +66,16 @@ angular.module('domegis')
           'analysis': 'Analysis'
         };
 
+        scope.showBox = false;
+
+        scope.toggleNewWidget = function() {
+          scope.showBox = scope.showBox ? false : true;
+        };
+
         scope.widgets = scope.widgets || [];
-        scope.addWidget = function() {
-          scope.widgets.push(_.clone(defaults));
+        scope.addWidget = function(widget) {
+          scope.showBox = false;
+          scope.widgets.push(_.defaults(widget, defaultWidget));
         };
         scope.removeWidget = function(i) {
           scope.widgets.splice(i, 1);

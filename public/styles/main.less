@@ -1219,9 +1219,39 @@ form {
 }
 
 .widgets-editor {
-  .button.add-new {
-    display: block;
+  .new-widget-box {
     margin-bottom: 2rem;
+    .button.add-new {
+      display: block;
+      margin: 0;
+    }
+    .widget-types {
+      display: table;
+      width: 100%;
+      background: #f0f0f0;
+      table-layout: fixed;
+      a {
+        display: table-cell;
+        text-align: center;
+        padding: 2rem;
+        font-size: 1em;
+        color: #444;
+        &:hover,
+        &:focus {
+          color: #000;
+        }
+        &:hover,
+        &:active,
+        &:focus {
+          text-decoration: none;
+        }
+        .fa {
+          font-size: 1.5em;
+          display: block;
+          margin-bottom: .5rem;
+        }
+      }
+    }
   }
   .widget-list {
     list-style: none;
@@ -1245,6 +1275,22 @@ form {
         color: #666;
         line-height:1;
         margin: 1rem;
+      }
+      .widget-header {
+        padding: 1rem;
+        background: #fff;
+        cursor: move;
+        h3 {
+          font-size: .8em;
+          margin: 0;
+          padding: 0;
+          border: 0;
+          color: #666;
+          span {
+            color: #ccc;
+            font-size: .8em;
+          }
+        }
       }
       .widget-type-selector {
         padding: 1rem;

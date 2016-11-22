@@ -1,15 +1,33 @@
 <div class="widgets-editor">
-  <a class="button add-new" href="javascript:void(0);" ng-click="addWidget()">New widget</a>
+  <div class="new-widget-box">
+    <a class="button add-new" href="javascript:void(0);" ng-click="toggleNewWidget()">New widget</a>
+    <div class="widget-types" ng-show="showBox">
+      <a href="javascript:void(0);" ng-click="addWidget({type: 'text'})" class="widget-type text-widget">
+        <span class="fa fa-align-left"></span>
+        Text
+      </a>
+      <a href="javascript:void(0);" ng-click="addWidget({type: 'analysis'})" class="widget-type analysis-widget">
+        <span class="fa fa-table"></span>
+        Analysis
+      </a>
+    </div>
+  </div>
   <ul class="widget-list" ui-sortable ng-model="widgets">
     <li ng-repeat="(i,widget) in widgets" class="widget-item">
       <a href="javascript:void(0);" class="remove-widget" ng-click="removeWidget(i)">x</a>
-      <div class="widget-type-selector">
+      <div class="widget-header">
+        <h3>
+          <span>Widget</span>
+          {{widget.type}}
+        </h3>
+      </div>
+      <!-- <div class="widget-type-selector">
         <p><strong>Widget</strong> type:</p>
         <label ng-repeat="(type,label) in types" for="widget_{{i}}_type_{{type}}">
           <input id="widget_{{i}}_type_{{type}}" ng-model="widget.type" type="radio" ng-value="type" />
           {{label}}
         </label>
-      </div>
+      </div> -->
       <div class="widget-content-editor">
         <div class="widget-text" ng-show="widget.type == 'text'">
           <label for="widget_{{i}}_text_content">
