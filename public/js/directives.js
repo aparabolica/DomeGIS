@@ -48,14 +48,16 @@ angular.module('domegis')
       restrict: 'EA',
       scope: {
         'analyses': '=',
-        'widgets': '=ngModel'
+        'widgets': '=ngModel',
+        'layers': '=',
       },
       require: 'ngModel',
       templateUrl: '/views/parts/widgets-editor.html',
       link: function(scope, element, attrs) {
 
         var defaults = {
-          type: 'text'
+          type: 'text',
+          display: true
         };
 
         scope.types = {
@@ -70,6 +72,10 @@ angular.module('domegis')
         scope.removeWidget = function(i) {
           scope.widgets.splice(i, 1);
         };
+
+        scope.$watch('widgets', function() {
+          console.log(scope.widgets);
+        }, true);
       }
     }
   }
@@ -88,6 +94,7 @@ angular.module('domegis')
       restrict: 'A',
       scope: {
         views: '=domeMap',
+        widgets: '=',
         base: '=',
         feature: '=',
         preview: '=',
@@ -130,6 +137,9 @@ angular.module('domegis')
 
         var legendControl = L.control.legend();
         map.addControl(legendControl);
+
+        var widgetControl = L.control.widget();
+        map.addControl(widgetControl);
 
         if(self == top) {
           map.on('move', _.debounce(function() {
@@ -207,6 +217,20 @@ angular.module('domegis')
         } else {
           doneFeature.resolve();
         }
+
+        scope.$watch('widgets', function(widgets, prevWidgets) {
+          if(prevWidgets && prevWidgets.length) {
+            prevWidgets.forEach(function(widget) {
+              widgetControl.removeWidget(widget.content);
+            });
+          }
+          if(widgets && widgets.length) {
+            widgets.forEach(function(widget) {
+              // widgetControl.addWidget(widget.content, [layers[0].tile]);
+              widgetControl.addWidget(widget.content);
+            });
+          }
+        }, true);
 
         function updateLayers(views) {
           if(layers.length) {

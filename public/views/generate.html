@@ -60,7 +60,7 @@
         </ul>
       </div>
       <div class="widgets" ng-show="setting == 'widgets'">
-        <widgets-editor analyses="analyses" ng-model="widgets"></widgets-editor>
+        <widgets-editor analyses="analyses" layers="_layers" ng-model="widgets"></widgets-editor>
       </div>
       <div class="baselayer-selector" ng-show="setting == 'options'">
         <h3>Select a base layer</h3>
@@ -111,5 +111,5 @@
       </div>
     </div>
   </div>
-  <div dome-map="views" base="base" scroll="scroll"></div>
+  <div dome-map="views" widgets="widgets" base="base" scroll="scroll"></div>
 </div>

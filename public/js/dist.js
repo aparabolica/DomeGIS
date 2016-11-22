@@ -16,6 +16,7 @@
 //= require leaflet-bing-layer/leaflet-bing-layer
 //= require Leaflet.fullscreen/dist/Leaflet.fullscreen
 //= require Leaflet.utfgrid/dist/leaflet.utfgrid-src
+//= require leaflet.widgetcontrol
 //= require leaflet.legendcontrol
 //= require leaflet.download
 

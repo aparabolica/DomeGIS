@@ -1,10 +1,10 @@
 <div class="widgets-editor">
   <a class="button add-new" href="javascript:void(0);" ng-click="addWidget()">New widget</a>
-  <ul class="widget-list">
+  <ul class="widget-list" ui-sortable ng-model="widgets">
     <li ng-repeat="(i,widget) in widgets" class="widget-item">
       <a href="javascript:void(0);" class="remove-widget" ng-click="removeWidget(i)">x</a>
       <div class="widget-type-selector">
-        <p>Widget type:</p>
+        <p><strong>Widget</strong> type:</p>
         <label ng-repeat="(type,label) in types" for="widget_{{i}}_type_{{type}}">
           <input id="widget_{{i}}_type_{{type}}" ng-model="widget.type" type="radio" ng-value="type" />
           {{label}}
@@ -32,6 +32,23 @@
               </ul>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="widget-display-editor">
+        <p>Display:</p>
+        <label for="widget_{{i}}_display_all">
+          <input id="widget_{{i}}_display_all" type="radio" ng-model="widget.display" type="radio" ng-value="true" />
+          All layers
+        </label>
+        <label for="widget_{{i}}_display_layer">
+          <input id="widget_{{i}}_display_layer" type="radio" ng-model="widget.display" type="radio" ng-value="false" />
+          Select layers
+        </label>
+        <div class="widget-layers-selector" ng-hide="widget.display">
+          <label ng-repeat="layer in layers" for="widget_{{i}}_layer_{{layer.id}}">
+            <input type="checkbox" id="widget_{{i}}_layer_{{layer.id}}" ng-value="layer.id" />
+            {{layer.name | translate}}
+          </label>
         </div>
       </div>
     </li>

@@ -107,6 +107,8 @@ angular.module('domegis')
     var searchService = Server.service('search');
     var viewService = Server.service('views');
 
+    $scope.widgets = [];
+
     $scope.analyses = Analyses.data;
 
     $scope.langs = Lang.getLanguages();
@@ -161,11 +163,6 @@ angular.module('domegis')
           });
         });
       }
-    };
-
-    $scope.addAnalysis = function(analysis) {
-      $scope.searchAnalyses = '';
-
     };
 
     $scope.removeLayer = function(layerId) {

@@ -246,19 +246,22 @@ table {
       }
     }
   }
-  .map-legends {
+  .map-legends,
+  .map-widgets {
     width: 200px;
     max-height: 300px;
     overflow: auto;
   }
   .map-legend,
-  .download-data {
+  .download-data,
+  .map-widget {
     background: #fff;
     background: #fff;
     box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
     padding: .1rem 1rem;
   }
   .download-data {
+    width: 200px;
     padding: .7rem 1rem;
     text-align: center;
     font-weight: 400;
@@ -274,9 +277,6 @@ table {
         text-decoration: none;
       }
     }
-  }
-  .download-data {
-    width: 200px;
   }
   .map-legend {
     // padding-left: 20px;
@@ -305,6 +305,11 @@ table {
           content: '\2713';
         }
       }
+    }
+  }
+  .map-widget {
+    &.concealed {
+      display: none;
     }
   }
   .map-legend,
@@ -1237,15 +1242,25 @@ form {
 .widgets-editor {
   .button.add-new {
     display: block;
+    margin-bottom: 2rem;
   }
   .widget-list {
     list-style: none;
     margin: 0;
     padding: 0;
+    label {
+      font-weight: normal;
+      font-size: .8em;
+      input[type=radio],
+      input[type=checkbox] {
+        margin-right: .5rem;
+      }
+    }
     .widget-item {
       margin: 0 0 1rem;
-      background: #f0f0f0;
+      background: #f6f6f6;
       position: relative;
+      box-shadow: 0 0 5px rgba(0,0,0,0.15);
       .remove-widget {
         float: right;
         color: #666;
@@ -1254,16 +1269,28 @@ form {
       }
       .widget-type-selector {
         padding: 1rem;
-        background: #e7e7e7;
+        background: #fff;
+        p,
+        label {
+          display: inline-block;
+          margin: 0 1rem 0 0;
+        }
+      }
+      .widget-content-editor {
+        margin: 1rem;
+        textarea {
+          margin: 0;
+        }
+      }
+      .widget-display-editor {
+        border-top: 1px solid #e8e8e8;
+        margin-top: 1rem;
+        padding: 1rem;
         p,
         label {
           display: inline-block;
           margin-right: 1rem;
         }
-      }
-      .widget-content-editor {
-        margin: 1rem;
-        padding-bottom: 1rem;
       }
     }
   }
