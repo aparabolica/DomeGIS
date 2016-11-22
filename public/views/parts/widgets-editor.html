@@ -46,7 +46,7 @@
         </label>
         <div class="widget-layers-selector" ng-hide="widget.display">
           <label ng-repeat="layer in layers" for="widget_{{i}}_layer_{{layer.id}}">
-            <input type="checkbox" id="widget_{{i}}_layer_{{layer.id}}" ng-value="layer.id" />
+            <input type="checkbox" id="widget_{{i}}_layer_{{layer.id}}" ng-model="widget.layers[layer.id]" />
             {{layer.name | translate}}
           </label>
         </div>

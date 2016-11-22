@@ -57,7 +57,8 @@ angular.module('domegis')
 
         var defaults = {
           type: 'text',
-          display: true
+          display: true,
+          layers: {}
         };
 
         scope.types = {
@@ -73,9 +74,6 @@ angular.module('domegis')
           scope.widgets.splice(i, 1);
         };
 
-        scope.$watch('widgets', function() {
-          console.log(scope.widgets);
-        }, true);
       }
     }
   }
@@ -227,7 +225,7 @@ angular.module('domegis')
           if(widgets && widgets.length) {
             widgets.forEach(function(widget) {
               // widgetControl.addWidget(widget.content, [layers[0].tile]);
-              widgetControl.addWidget(widget.content);
+              widgetControl.addWidget(widget.content, widget.display ? [] : widget.layers);
             });
           }
         }, true);
@@ -308,6 +306,7 @@ angular.module('domegis')
             gridBase += '?preview=true&time=' + Date.now();
           }
           layer.tile = L.tileLayer(tileBase, {
+            domegisLayerId: view.layerId,
             layergroupId: view.layergroupId,
             zIndex: (i+1)*10
           });
@@ -315,6 +314,7 @@ angular.module('domegis')
             mapLayers.addLayer(layer.tile);
           if(view.fields && view.fields.length) {
             layer.grid = new L.UtfGrid(gridBase, {
+              domegisLayerId: view.layerId,
               layergroupId: view.layergroupId,
               useJsonP: false
             });

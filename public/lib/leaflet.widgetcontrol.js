@@ -23,6 +23,16 @@ L.Control.Widget = L.Control.extend({
   addWidget: function(text, layers) {
     if (!text) { return this; }
 
+    if(Object.prototype.toString.call( layers ) === '[object Object]') {
+      console.log(layers);
+      var layerArr = [];
+      for(var key in layers) {
+        if(layers[key])
+          layerArr.push(key);
+      }
+      layers = layerArr;
+    }
+
     var widget = {
       div: '',
       text: text,
@@ -30,16 +40,17 @@ L.Control.Widget = L.Control.extend({
     };
 
     widget.addLayerEv = function(e) {
-      widget.layers.forEach(function(layer) {
-        if(e.layer == layer) {
-          $(widget.div).removeClass('concealed');
+      widget.layers.forEach(function(layerId) {
+        console.log(e.layer);
+        if(e.layer.options.domegisLayerId == layerId) {
+          $(widget.div).addClass('active');
         }
       });
     };
     widget.removeLayerEv = function(e) {
-      widget.layers.forEach(function(layer) {
-        if(e.layer == layer) {
-          $(widget.div).addClass('concealed');
+      widget.layers.forEach(function(layerId) {
+        if(e.layer.options.domegisLayerId == layerId) {
+          $(widget.div).removeClass('active');
         }
       });
     };
@@ -78,10 +89,16 @@ L.Control.Widget = L.Control.extend({
       div.innerHTML = widget.text;
       widget.div = div;
       hide = 'block';
-      widget.layers.forEach(function(layer) {
-        if(layer && !self._map.hasLayer(layer))
-          $(widget.div).addClass('concealed');
-      });
+      if(!widget.layers.length)
+        $(widget.div).addClass('active')
+      else {
+        widget.layers.forEach(function(layerId) {
+          for(var layerKey in self._map._layers) {
+            if(self._map._layers[layerKey].options.domegisLayerId == layerId)
+              $(widget.div).addClass('active')
+          }
+        });
+      }
       self._map.on('layeradd', widget.addLayerEv);
       self._map.on('layerremove', widget.removeLayerEv);
     });
