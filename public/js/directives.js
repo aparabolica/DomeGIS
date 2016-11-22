@@ -74,8 +74,9 @@ angular.module('domegis')
 
         scope.widgets = scope.widgets || [];
         scope.addWidget = function(widget) {
-          scope.showBox = false;
+          widget = widget || {};
           scope.widgets.unshift(_.defaults(widget, defaultWidget));
+          scope.showBox = false;
         };
         scope.removeWidget = function(i) {
           scope.widgets.splice(i, 1);
