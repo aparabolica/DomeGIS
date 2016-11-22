@@ -1,10 +1,10 @@
 <div class="widgets-editor">
   <div class="new-widget-box">
-    <a class="button add-new" href="javascript:void(0);" ng-click="toggleNewWidget()">
+    <a class="button add-new" href="javascript:void(0);" ng-click="widgets.length && toggleNewWidget()">
       <span ng-hide="showBox">New widget</span>
       <span ng-show="showBox">Cancel</span>
     </a>
-    <div class="widget-types" ng-show="showBox">
+    <div class="widget-types" ng-show="showBox || !widgets.length">
       <a href="javascript:void(0);" ng-click="addWidget({type: 'text'})" class="widget-type text-widget">
         <span class="fa fa-align-left"></span>
         Text
@@ -39,15 +39,19 @@
           </label>
         </div>
         <div class="widget-analysis" ng-show="widget.type == 'analysis'">
-          <div class="analyses-search item-search" ng-show="!widget.content">
+          <div class="selected-analysis" ng-show="widget.content">
+            <a class="clear-analysis" href="javascript:void(0);" ng-click="clearAnalysis(widget)">x</a>
+            <h3>{{widget.content.title}}</h3>
+          </div>
+          <div class="analyses-search item-search" ng-hide="widget.content">
             <p>
               <label for="search_analyses_input">Search for analyses</label>
-              <input id="search_analyses_input" type="text" placeholder="Type your search..." ng-model="searchAnalyses" />
+              <input id="search_analyses_input" type="text" placeholder="Type your search..." autocomplete="off" ng-model="searchAnalyses" />
             </p>
             <div class="search-results" ng-show="searchAnalyses">
               <p ng-show="!filteredAnalyses.length">No results were found.</p>
-              <ul class="layer-list result-list" ng-show="filteredAnalyses.length">
-                <li ng-repeat="analysis in filteredAnalyses = (analyses | filter:searchAnalyses)" class="analysis-item result-item" ng-click="addAnalysis(analysis)">
+              <ul class="analysis-list result-list" ng-show="filteredAnalyses.length">
+                <li ng-repeat="analysis in filteredAnalyses = (analyses | filter:searchAnalyses)" class="analysis-item result-item" ng-click="selectAnalysis(widget, analysis)">
                   <h3>{{analysis.title}}</h3>
                 </li>
               </ul>

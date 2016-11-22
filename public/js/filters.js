@@ -16,6 +16,65 @@ angular.module('domegis')
   })
 })
 
+.filter('parseWidgets', [
+  '$filter',
+  function($filter) {
+    return function(input) {
+      input.forEach(function(widget) {
+        if(!widget.type) return;
+        widget._text = '';
+        switch (widget.type) {
+          case 'text':
+            widget._text = widget.content
+            break;
+          case 'analysis':
+            if(widget.content) {
+              if(widget.content.dataTemplate) {
+                widget._text = $filter('dataTemplate')(widget.content.results, widget.content.dataTemplate);
+              } else {
+                widget._text = $filter('list')(widget.content.results);
+              }
+            }
+            break;
+        }
+      });
+      return input;
+    }
+  }
+])
+
+.filter('list', [
+  '$sce',
+  function($sce) {
+    return _.memoize(function(input) {
+      var html = '';
+      if(_.isArray(input)) {
+        input.forEach(function(item, i) {
+          html += '<div class="item-' + i + '">';
+          for(var key in item) {
+            html += '<p>';
+            html += '<strong>' + key + ':</strong> ';
+            html += item[key];
+            html += '</p>';
+          }
+          html += '</div>';
+        })
+      } else if(_.isObject(input)) {
+        for(var key in input) {
+          html += '<p>';
+          html += '<strong>' + key + ':</strong> ';
+          html += input[key];
+          html += '</p>';
+        }
+      }
+      // return $sce.trustAsHtml(html);
+      return html;
+    }, function() {
+      return JSON.stringify(arguments);
+    });
+  }
+])
+
 .filter('join', function() {
   return function(input, splitChar) {
     return input.join(splitChar);

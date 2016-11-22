@@ -1270,6 +1270,11 @@ form {
       background: #f6f6f6;
       position: relative;
       box-shadow: 0 0 5px rgba(0,0,0,0.15);
+      border: 1px solid #ddd;
+      &:hover {
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      }
       .remove-widget {
         float: right;
         color: #666;
@@ -1315,6 +1320,52 @@ form {
         label {
           display: inline-block;
           margin-right: 1rem;
+        }
+      }
+      .widget-analysis {
+        input {
+          margin: 0 0 1rem;
+        }
+        .selected-analysis {
+          background: #fff;
+          box-shadow: 0 0 4px rgba(0,0,0,0.15);
+          padding: 1rem;
+          .clear-analysis {
+            float: right;
+            color: #999;
+            line-height: 1.1;
+            &:hover {
+              color: #000;
+              text-decoration: none;
+            }
+          }
+          h3 {
+            border: 0;
+            padding: 0;
+            margin: 0;
+            color: #000;
+          }
+        }
+        ul {
+          margin: 0;
+          padding: 0;
+          li {
+            background: #fff;
+            box-shadow: 0 0 3px rgba(0,0,0,0.1);
+            padding: 1rem;
+            margin: 0;
+            &:hover {
+              box-shadow: 0 0 4px rgba(0,0,0,0.15);
+              h3 {
+                color: #000;
+              }
+            }
+            h3 {
+              border: 0;
+              padding: 0;
+              margin: 0;
+            }
+          }
         }
       }
     }

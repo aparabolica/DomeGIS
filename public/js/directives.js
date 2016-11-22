@@ -82,6 +82,14 @@ angular.module('domegis')
           scope.widgets.splice(i, 1);
         };
 
+        scope.selectAnalysis = function(widget, analysis) {
+          widget.content = analysis;
+        };
+
+        scope.clearAnalysis = function(widget) {
+          widget.content = undefined;
+        };
+
       }
     }
   }
@@ -227,12 +235,14 @@ angular.module('domegis')
         scope.$watch('widgets', function(widgets, prevWidgets) {
           if(prevWidgets && prevWidgets.length) {
             prevWidgets.forEach(function(widget) {
-              widgetControl.removeWidget(widget.content);
+              widgetControl.removeWidget(widget._text);
             });
           }
           if(widgets && widgets.length) {
             widgets.forEach(function(widget) {
-              widgetControl.addWidget(widget.content, widget.display ? [] : widget.layers);
+              if(widget._text) {
+                widgetControl.addWidget(widget._text, widget.display ? [] : widget.layers);
+              }
             });
           }
         }, true);
