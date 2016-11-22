@@ -24,7 +24,6 @@ L.Control.Widget = L.Control.extend({
     if (!text) { return this; }
 
     if(Object.prototype.toString.call( layers ) === '[object Object]') {
-      console.log(layers);
       var layerArr = [];
       for(var key in layers) {
         if(layers[key])
@@ -41,7 +40,6 @@ L.Control.Widget = L.Control.extend({
 
     widget.addLayerEv = function(e) {
       widget.layers.forEach(function(layerId) {
-        console.log(e.layer);
         if(e.layer.options.domegisLayerId == layerId) {
           $(widget.div).addClass('active');
         }
@@ -89,20 +87,19 @@ L.Control.Widget = L.Control.extend({
       div.innerHTML = widget.text;
       widget.div = div;
       hide = 'block';
-      if(!widget.layers.length)
-        $(widget.div).addClass('active')
-      else {
-        widget.layers.forEach(function(layerId) {
-          for(var layerKey in self._map._layers) {
-            if(self._map._layers[layerKey].options.domegisLayerId == layerId)
-              $(widget.div).addClass('active')
-          }
-        });
+      $(widget.div).addClass('active');
+      var mapLayers = [];
+      for(var layerKey in self._map._layers) {
+        mapLayers.push(self._map._layers[layerKey].options.domegisLayerId);
       }
+      widget.layers.forEach(function(layerId) {
+        if(mapLayers.indexOf(layerId) == -1) {
+          $(widget.div).removeClass('active');
+        }
+      });
       self._map.on('layeradd', widget.addLayerEv);
       self._map.on('layerremove', widget.removeLayerEv);
     });
-
 
     // hide the control entirely unless there is at least one widget;
     // otherwise there will be a small grey blemish on the map.
