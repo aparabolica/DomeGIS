@@ -220,7 +220,7 @@ angular.module('domegis')
     };
 
     $scope.getMapURL = function() {
-      return $state.href('map', { id: $scope.map.id }, { absolute: true });
+      return $state.href('singleMap', { id: $scope.map.id }, { absolute: true });
     };
 
     $scope.getHTMLEmbed = function() {

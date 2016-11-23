@@ -332,30 +332,6 @@ angular.module('domegis')
         ]
       }
     })
-    .state('singleMap', {
-      url: '/maps/:id/',
-      templateUrl: '/views/map/single.html',
-      resolve: {
-        Map: [
-          '$stateParams',
-          'Server',
-          function($stateParams, Server) {
-            return Server.get(Server.service('maps'), $stateParams.id);
-          }
-        ]
-      },
-      controller: [
-        '$stateParams',
-        '$scope',
-        'Map',
-        function($stateParams, $scope, Map) {
-          $scope.views = Map.layers;
-          $scope.scroll = Map.scrollWheelZoom;
-          $scope.widgets = Map.widgets;
-          $scope.base = Map.baseLayer;
-        }
-      ]
-    })
     .state('editMap', {
       url: '/maps/edit/?id',
       controller: 'MapEditCtrl',
@@ -384,6 +360,30 @@ angular.module('domegis')
         ]
       }
     })
+    .state('singleMap', {
+      url: '/maps/:id/',
+      templateUrl: '/views/map/single.html',
+      resolve: {
+        MapData: [
+          '$stateParams',
+          'Server',
+          function($stateParams, Server) {
+            return Server.get(Server.service('maps'), $stateParams.id);
+          }
+        ]
+      },
+      controller: [
+        '$stateParams',
+        '$scope',
+        'MapData',
+        function($stateParams, $scope, MapData) {
+          $scope.views = MapData.layers;
+          $scope.scroll = MapData.scrollWheelZoom;
+          $scope.widgets = MapData.widgets;
+          $scope.base = MapData.baseLayer;
+        }
+      ]
+    })
     .state('analysis', {
       url: '/analyses/',
       templateUrl: '/views/analysis/index.html',
@@ -402,23 +402,8 @@ angular.module('domegis')
         ]
       }
     })
-    .state('singleAnalysis', {
-      url: '/analyses/:id/',
-      templateUrl: '/views/analysis/single.html',
-      controller: 'AnalysisSingleCtrl',
-      resolve: {
-        Analysis: [
-          'Server',
-          '$stateParams',
-          function(Server, $stateParams) {
-            var id = $stateParams.id;
-            return Server.get(Server.service('analyses'), id);
-          }
-        ]
-      }
-    })
     .state('editAnalysis', {
-      url: '/analyses/edit?id',
+      url: '/analyses/edit/?id',
       templateUrl: '/views/analysis/edit.html',
       controller: 'AnalysisEditCtrl',
       resolve: {
@@ -444,6 +429,21 @@ angular.module('domegis')
             } else {
               return {};
             }
+          }
+        ]
+      }
+    })
+    .state('singleAnalysis', {
+      url: '/analyses/:id/',
+      templateUrl: '/views/analysis/single.html',
+      controller: 'AnalysisSingleCtrl',
+      resolve: {
+        Analysis: [
+          'Server',
+          '$stateParams',
+          function(Server, $stateParams) {
+            var id = $stateParams.id;
+            return Server.get(Server.service('analyses'), id);
           }
         ]
       }
