@@ -43,7 +43,7 @@ describe('maps service', function () {
       description: 'Description of analysis 1',
       baseLayer: 'Base layer id',
       language: 'pt',
-      scrollWhellZoom: false,
+      scrollWheelZoom: false,
       widgets: [{text: 'some analysis'}],
       layers: [
         {layerId: 'layerId1', viewId: 'viewId1'},
@@ -65,7 +65,7 @@ describe('maps service', function () {
         res.body.should.have.property('description', map1.description);
         res.body.should.have.property('baseLayer', map1.baseLayer);
         res.body.should.have.property('language', map1.language);
-        res.body.should.have.property('scrollWhellZoom', map1.scrollWhellZoom);
+        res.body.should.have.property('scrollWheelZoom', map1.scrollWheelZoom);
         res.body.should.have.property('widgets').which.has.length(1);
         res.body.should.have.property('layers').which.has.length(2);
 
