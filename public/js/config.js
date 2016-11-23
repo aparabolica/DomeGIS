@@ -279,19 +279,68 @@ angular.module('domegis')
         ]
       }
     })
+    .state('generateMap', {
+      url: '/map/?views&feature&base&scroll&loc&lang',
+      templateUrl: '/views/map/single.html',
+      controller: [
+        '$scope',
+        '$stateParams',
+        function($scope, $stateParams) {
+          $scope.views = [];
+          if($stateParams.views) {
+            var views = $stateParams.views.split(',');
+            views.forEach(function(v) {
+              var view = {};
+              v = v.split(':');
+              view.id = v[0];
+              if(v[1] == 0) {
+                view.hidden = true;
+              } else {
+                view.hidden = false;
+              }
+              $scope.views.push(view);
+            });
+          }
+          $scope.scroll = $stateParams.scroll;
+          if($stateParams.feature)
+            $scope.feature = $stateParams.feature.split(':');
+          $scope.base = $stateParams.base;
+        }
+      ]
+    })
     .state('map', {
-      url: '/maps/?id&views&feature&base&scroll&loc&lang',
-      templateUrl: '/views/map.html',
+      url: '/maps/',
+      templateUrl: '/views/map/index.html',
+      controller: [
+        '$scope',
+        'Maps',
+        function($scope, Maps) {
+          $scope.maps = Maps.data;
+        }
+      ],
+      resolve: {
+        Auth: AuthDep,
+        Maps: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('maps'), {
+              query: {
+                $limit: 100
+              }
+            });
+          }
+        ]
+      }
+    })
+    .state('singleMap', {
+      url: '/maps/:id/',
+      templateUrl: '/views/map/single.html',
       resolve: {
         Map: [
           '$stateParams',
           'Server',
           function($stateParams, Server) {
-            if($stateParams.id) {
-              return Server.get(Server.service('maps'), $stateParams.id);
-            } else {
-              return {};
-            }
+            return Server.get(Server.service('maps'), $stateParams.id);
           }
         ]
       },
@@ -300,41 +349,10 @@ angular.module('domegis')
         '$scope',
         'Map',
         function($stateParams, $scope, Map) {
-
-          if(!_.isEmpty(Map)) {
-
-            $scope.views = Map.layers;
-            $scope.scroll = Map.scrollWheelZoom;
-            $scope.widgets = Map.widgets;
-            $scope.base = Map.baseLayer;
-
-          } else {
-
-            $scope.views = [];
-            if($stateParams.views) {
-              var views = $stateParams.views.split(',');
-              views.forEach(function(v) {
-                var view = {};
-                v = v.split(':');
-                view.id = v[0];
-                if(v[1] == 0) {
-                  view.hidden = true;
-                } else {
-                  view.hidden = false;
-                }
-                $scope.views.push(view);
-              });
-            }
-
-            $scope.scroll = $stateParams.scroll;
-
-            if($stateParams.feature)
-              $scope.feature = $stateParams.feature.split(':');
-
-            $scope.base = $stateParams.base;
-
-          }
-
+          $scope.views = Map.layers;
+          $scope.scroll = Map.scrollWheelZoom;
+          $scope.widgets = Map.widgets;
+          $scope.base = Map.baseLayer;
         }
       ]
     })

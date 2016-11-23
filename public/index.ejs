@@ -30,9 +30,9 @@
               <span class="fa fa-upload"></span>
               Upload
             </a>
+            <a ui-sref="map">Maps</a>
             <a ui-sref="usersEdit({id: user.id})" ng-show="token">My account</a>
             <a ui-sref="users" ng-show="hasRole('admin')">Users</a>
-            <a ui-sref="editMap">Generate map</a>
             <a ui-sref="derived" ui-sref-opts="{inherit:false,reload:true}" ng-show="hasRole('editor')">Derived Layers</a>
             <a ui-sref="analysis">Analysis</a>
             <a href="javascript:void(0);" ng-click="getLogs()" ng-show="hasRole('admin')">Logs</a>

@@ -1,0 +1,26 @@
+<header id="inner-header">
+  <div class="container">
+    <div class="twelve columns">
+      <h2>Maps</h2>
+      <nav class="head-nav">
+        <a ui-sref="editMap">New map</a>
+      </nav>
+    </div>
+  </div>
+</header>
+<div id="map-archive">
+  <div class="container row">
+    <div class="twelve columns">
+      <section class="map-list">
+        <div class="map-item" ng-repeat="map in maps">
+          <div class="map-content">
+            <h3>{{map.title}}</h3>
+            <div class="button-grp">
+              <a class="button" ui-sref="editMap({id: map.id})">Edit</a>
+              <a class="button" ui-sref="singleMap({id: map.id})">View</a>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
