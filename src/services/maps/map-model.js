@@ -3,7 +3,7 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(sequelize) {
-  var map = sequelize.define('map', {
+  var map = sequelize.define('maps', {
     id: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV1,
@@ -26,13 +26,10 @@ module.exports = function(sequelize) {
       type: Sequelize.BOOLEAN
     },
     widgets: {
-      type: Sequelize.JSON
-    }
-  }, {
-    classMethods: {
-      associate: function(models) {
-        map.hasMany(models.layers);
-      }
+      type: Sequelize.ARRAY(Sequelize.JSON)
+    },
+    layers: {
+      type: Sequelize.ARRAY(Sequelize.JSON)
     }
   });
 

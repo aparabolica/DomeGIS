@@ -63,11 +63,11 @@
     "windshaft": "~2.6.2"
   },
   "devDependencies": {
+    "chai": "~3.5.0",
+    "chai-http": "~3.0.0",
     "jshint": "^2.9.1",
     "mocha": "^2.4.5",
-    "should": "^8.3.0",
     "replay": "~2.0.6",
-    "chai": "~3.5.0",
-    "chai-http": "~3.0.0"
+    "should": "^11.1.1"
   }
 }
