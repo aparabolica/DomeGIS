@@ -20,15 +20,18 @@ module.exports = function(sequelize) {
       type: Sequelize.TEXT,
       allowNull: false
     },
-    dataTemplate: {
-      type: Sequelize.TEXT
+    task: {
+      type: Sequelize.JSON,
+      defaultValue: {}
     },
     results: {
       type: Sequelize.JSON
+    },
+    dataTemplate: {
+      type: Sequelize.TEXT
     }
   }, {
-    timestamps: true,
-    updatedAt: 'executedAt'
+    timestamps: true
   });
 
   return analysis;

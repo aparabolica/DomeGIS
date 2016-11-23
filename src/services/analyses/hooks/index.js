@@ -7,6 +7,16 @@ var hooks = require('feathers-hooks-common');
 var auth = require('feathers-authentication').hooks;
 var runQuery = require('./run-query');
 
+function initTaskStatus(hook) {
+  if (!hook.params.bypassRunQuery) {
+    hook.data.task = {
+      status: 'running',
+      startedAt: Date.now()
+    };
+  }
+  return hook;
+}
+
 exports.before = {
   all: [],
   find: [],
@@ -16,7 +26,7 @@ exports.before = {
     auth.populateUser(),
     auth.restrictToAuthenticated(),
     auth.restrictToRoles({ roles: ['editor'] }),
-    runQuery
+    initTaskStatus
   ],
   update: [
     hooks.disable()
@@ -26,7 +36,7 @@ exports.before = {
     auth.populateUser(),
     auth.restrictToAuthenticated(),
     auth.restrictToRoles({ roles: ['editor'] }),
-    runQuery
+    initTaskStatus
   ],
   remove: [
     auth.verifyToken(),
@@ -40,8 +50,12 @@ exports.after = {
   all: [],
   find: [],
   get: [],
-  create: [],
+  create: [
+    runQuery
+  ],
   update: [],
-  patch: [],
+  patch: [
+    runQuery
+  ],
   remove: []
 };

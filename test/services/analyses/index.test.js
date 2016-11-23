@@ -11,13 +11,13 @@ var token;
 chai.use(chaiHttp);
 var should = chai.should();
 
-// Test configuration
-// var IMPORT_FILE_TIMEOUT = 5000; // miliseconds
-
-// Test data
+// Test variables
+var analysesService;
 var analysis1;
+var invalidAnalysis;
 
 describe('analyses service', function () {
+  this.timeout(5000);
 
   // setup client
   before(function (done) {
@@ -40,10 +40,11 @@ describe('analyses service', function () {
   });
 
   it('registered the uploads service', function() {
-    assert.ok(app.service('analyses'));
+    analysesService = app.service('analyses');
+    assert.ok(analysesService);
   });
 
-  it('create an analysis', function(done) {
+  it('start an analysis', function(done) {
     var query =
       " SELECT                       " +
       " generate_series(1,10) AS id,         " +
@@ -67,57 +68,119 @@ describe('analyses service', function () {
         res.body.should.have.property('title');
         res.body.should.have.property('description');
         res.body.should.have.property('query');
-        res.body.should.have.property('results');
         res.body.should.have.property('createdAt');
-        res.body.should.have.property('executedAt');
+        res.body.should.have.property('updatedAt');
 
-        var results = res.body.results;
+        // verify task status
+        res.body.should.have.property('task');
+        var task = res.body.task;
+        task.should.have.property('status', 'running');
+        task.should.have.property('startedAt');
+        task.should.not.have.property('finisheddAt');
+
+        // keep results to compare later
+        analysis1 = res.body;
+
+        done();
+
+    });
+  });
+
+  it('analysis task is finished successfully', function(done){
+
+    var checkFinishedSuccessfully = function(analysis){
+      if (analysis.task.status == 'running') return;
+
+      // verify results
+      try {
+        analysis.should.have.property('results');
+        var results = analysis.results;
         for (var i = 0; i < 10; i++) {
           var row = results[i];
           row.should.have.property('id', i + 1 );
           row.should.have.property('text_value');
           row.should.have.property('numeric_value');
         }
-
-        // keep results to compare later
-        analysis1 = res.body;
-
         done();
-    });
+      } catch (e) {
+        done(e);
+      } finally {
+        analysesService.removeListener('patched', checkFinishedSuccessfully);
+      }
+    }
+
+    // wait tasks completion
+    analysesService.on('patched', checkFinishedSuccessfully);
   });
 
-  it('re-execute analysis', function(done) {
+
+  it('start an invalid analysis', function(done) {
+    var query = "Invalid SQL query";
 
     chai.request(app)
-      .patch('/analyses/' + analysis1.id)
+      .post('/analyses')
       .set('Authorization', 'Bearer '.concat(token))
       .send({
-        title: 'Changed title 1',
-        description: 'Changed description of analysis 1',
-        query: "SELECT 1;"
+        title: 'Title 1',
+        description: 'Description of analysis 1',
+        query: query
       })
       .end(function (err, res) {
         if (err) console.log(err);
 
         should.not.exist(err);
 
-        res.body.should.have.property('id', analysis1.id);
-        res.body.should.have.property('title', analysis1.title);
-        res.body.should.have.property('description', analysis1.description);
-        res.body.should.have.property('query', analysis1.query);
-        res.body.should.have.property('createdAt', analysis1.createdAt);
-        res.body.should.have.property('executedAt').not.equal(analysis1.executedAt);
+        res.body.should.have.property('id');
+        res.body.should.have.property('title');
+        res.body.should.have.property('description');
+        res.body.should.have.property('query');
+        res.body.should.have.property('createdAt');
+        res.body.should.have.property('updatedAt');
 
-        res.body.should.have.property('results');
-        var results = res.body.results;
-        for (var i = 0; i < 10; i++) {
-          var row = results[i];
-          row.should.have.property('id', i + 1 );
-          row.should.have.property('text_value').not.equal(analysis1.results[i].text_value);
-          row.should.have.property('numeric_value').not.equal(analysis1.results[i].numeric_value);
-        }
+        // verify task status
+        res.body.should.have.property('task');
+        var task = res.body.task;
+        task.should.have.property('status', 'running');
+        task.should.have.property('startedAt');
+        task.should.not.have.property('finisheddAt');
+
+        // keep results to compare later
+        invalidAnalysis = res.body;
+
         done();
 
     });
   });
+
+  it('analysis task is finished successfully', function(done){
+
+
+    var checkTaskIsFailed = function(analysis){
+      var task = analysis.task;
+
+      if (task.status == 'running') return;
+
+      // verify results
+      try {
+
+        analysis.should.have.property('id', invalidAnalysis.id);
+        analysis.should.have.property('results', null);
+
+        task.should.have.property('status', 'failed');
+        task.should.have.property('startedAt');
+        task.should.have.property('finishedAt');
+        task.should.have.property('message', 'syntax error at or near "Invalid"');
+
+        done();
+      } catch (e) {
+        done(e);
+      } finally {
+        analysesService.removeListener('patched', checkTaskIsFailed);
+      }
+    }
+
+    // wait tasks completion
+    analysesService.on('patched', checkTaskIsFailed);
+  });
+
 });

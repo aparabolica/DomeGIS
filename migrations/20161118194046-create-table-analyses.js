@@ -19,14 +19,20 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false
       },
+      task: {
+        type: Sequelize.JSON
+      },
       results: {
         type: Sequelize.JSON
+      },
+      dataTemplate: {
+        type: Sequelize.TEXT
       },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false
       },
-      executedAt: {
+      updatedAt: {
         type: Sequelize.DATE,
         allowNull: false
       }

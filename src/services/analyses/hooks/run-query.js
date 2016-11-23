@@ -1,34 +1,57 @@
 'use strict';
 
+var _ = require('underscore');
+
 module.exports = function(hook) {
   var sequelize = hook.app.get('sequelize_readonly');
   var Analyses = hook.app.service('analyses');
-  var query;
+  var layerId = hook.id || hook.result.id;
+  var avoidQuery = false;
+  var results;
 
-  function getQuery() {
-    return new Promise(function(resolve, reject){
-      if (hook.method == 'create') {
-        query = hook.data.query;
-        resolve();
-      } else {
-        // load query from database
-        Analyses.get(hook.id).then(function(analysis){
-          query = analysis.query;
-          resolve();
-        }).catch(reject);
-      }
-    });
+  function executeQuery(doneExecuteQuery){
+    var query = hook.data.query;
+    var task = hook.data.task;
+
+    sequelize.query(query)
+      .then(function(results){
+        doneExecuteQuery(null, {
+          task: task,
+          results: results[0]
+        });
+      })
+      .catch(function(err){
+        doneExecuteQuery(err, {
+          task: task,
+          results: null
+        });
+      })
   }
 
-  function executeQuery() {
-    return new Promise(function(resolve, reject){
-      sequelize.query(query).then(function(results){
-        hook.data.results = results[0];
-        resolve();
-      }).catch(reject);
-    });
+  function updateAnalysisStatus(err, queryResults){
+    var task = queryResults.task;
+    var results = queryResults.results;
+
+    if (!err) {
+      task.status = 'finished';
+    } else {
+      task.status = 'failed';
+      task.message = err.message;
+    }
+
+    task.finishedAt = Date.now();
+
+    Analyses.patch(layerId, {
+      results: results,
+      task: task
+    }, {
+      bypassRunQuery: true
+    })
   }
 
-  return getQuery()
-    .then(executeQuery);
+  if (!hook.params.bypassRunQuery) {
+    executeQuery(updateAnalysisStatus)
+  }
+
+  return hook;
 }
