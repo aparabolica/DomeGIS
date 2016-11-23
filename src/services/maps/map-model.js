@@ -22,7 +22,7 @@ module.exports = function(sequelize) {
     language: {
       type: Sequelize.STRING
     },
-    scrollWhellZoom: {
+    scrollWheelZoom: {
       type: Sequelize.BOOLEAN
     },
     widgets: {

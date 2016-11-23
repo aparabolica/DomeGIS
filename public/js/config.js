@@ -142,23 +142,6 @@ angular.module('domegis')
         ]
       }
     })
-    .state('generateMap', {
-      url: '/generate/',
-      controller: 'GenerateCtrl',
-      templateUrl: '/views/generate.html',
-      resolve: {
-        Analyses: [
-          'Server',
-          function(Server) {
-            return Server.find(Server.service('analyses'), {
-              query: {
-                $limit: 100
-              }
-            });
-          }
-        ]
-      }
-    })
     .state('upload', {
       url: '/upload/',
       controller: 'UploadCtrl',
@@ -297,38 +280,91 @@ angular.module('domegis')
       }
     })
     .state('map', {
-      url: '/map/?views&feature&base&scroll&loc&lang',
+      url: '/maps/?id&views&feature&base&scroll&loc&lang',
       templateUrl: '/views/map.html',
+      resolve: {
+        Map: [
+          '$stateParams',
+          'Server',
+          function($stateParams, Server) {
+            if($stateParams.id) {
+              return Server.get(Server.service('maps'), $stateParams.id);
+            } else {
+              return {};
+            }
+          }
+        ]
+      },
       controller: [
         '$stateParams',
         '$scope',
-        function($stateParams, $scope) {
+        'Map',
+        function($stateParams, $scope, Map) {
 
-          $scope.views = [];
-          if($stateParams.views) {
-            var views = $stateParams.views.split(',');
-            views.forEach(function(v) {
-              var view = {};
-              v = v.split(':');
-              view.id = v[0];
-              if(v[1] == 0) {
-                view.hidden = true;
-              } else {
-                view.hidden = false;
-              }
-              $scope.views.push(view);
-            });
+          if(!_.isEmpty(Map)) {
+
+            $scope.views = Map.layers;
+            $scope.scroll = Map.scrollWheelZoom;
+            $scope.widgets = Map.widgets;
+            $scope.base = Map.baseLayer;
+
+          } else {
+
+            $scope.views = [];
+            if($stateParams.views) {
+              var views = $stateParams.views.split(',');
+              views.forEach(function(v) {
+                var view = {};
+                v = v.split(':');
+                view.id = v[0];
+                if(v[1] == 0) {
+                  view.hidden = true;
+                } else {
+                  view.hidden = false;
+                }
+                $scope.views.push(view);
+              });
+            }
+
+            $scope.scroll = $stateParams.scroll;
+
+            if($stateParams.feature)
+              $scope.feature = $stateParams.feature.split(':');
+
+            $scope.base = $stateParams.base;
+
           }
-
-          $scope.scroll = $stateParams.scroll;
-
-          if($stateParams.feature)
-            $scope.feature = $stateParams.feature.split(':');
-
-          $scope.base = $stateParams.base;
 
         }
       ]
+    })
+    .state('editMap', {
+      url: '/maps/edit/?id',
+      controller: 'MapEditCtrl',
+      templateUrl: '/views/map/edit.html',
+      resolve: {
+        Analyses: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('analyses'), {
+              query: {
+                $limit: 100
+              }
+            });
+          }
+        ],
+        Edit: [
+          '$stateParams',
+          'Server',
+          function($stateParams, Server) {
+            if($stateParams.id) {
+              return Server.get(Server.service('maps'), $stateParams.id);
+            } else {
+              return {};
+            }
+          }
+        ]
+      }
     })
     .state('analysis', {
       url: '/analyses/',

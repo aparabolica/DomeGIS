@@ -11,16 +11,41 @@ L.Control.Widget = L.Control.extend({
 
   onAdd: function(map) {
     var self = this;
-    this._container = L.DomUtil.create('div', 'map-widgets');
-    L.DomEvent.disableClickPropagation(this._container);
-    L.DomEvent.disableScrollPropagation(this._container);
+    var container = this._container = $('<div class="map-widgets" />');
+    // this._container = L.DomUtil.create('div', 'map-widgets');
+    L.DomEvent.disableClickPropagation(this._container[0]);
+    L.DomEvent.disableScrollPropagation(this._container[0]);
+
+    var header = $('<div class="map-widgets-header" />');
+    header.append('<span class="toggle-icon fa fa-chevron-down" />');
+    header.append('<h2><span class="fa fa-info"></span>Map info</h2>');
+
+    header.on('click', function() {
+      if(container.hasClass('active')) {
+        $(this).find('.toggle-icon')
+          .removeClass('fa-chevron-up')
+          .addClass('fa-chevron-down');
+        $(container.removeClass('active'));
+      } else {
+        $(this).find('.toggle-icon')
+          .removeClass('fa-chevron-down')
+          .addClass('fa-chevron-up');
+        $(container.addClass('active'));
+      }
+    });
+
+    this._content = $('<div class="map-widgets-content" />');
+
+    this._container
+      .append(header)
+      .append(this._content);
 
     this._update();
 
-    return this._container;
+    return this._container[0];
   },
 
-  addWidget: function(text, layers) {
+  addWidget: function(text, title, layers) {
     if (!text) { return this; }
 
     if(Object.prototype.toString.call( layers ) === '[object Object]') {
@@ -34,6 +59,7 @@ L.Control.Widget = L.Control.extend({
 
     var widget = {
       div: '',
+      title: title || '',
       text: text,
       layers: layers || []
     };
@@ -41,14 +67,14 @@ L.Control.Widget = L.Control.extend({
     widget.addLayerEv = function(e) {
       widget.layers.forEach(function(layerId) {
         if(e.layer.options.domegisLayerId == layerId) {
-          $(widget.div).addClass('active');
+          widget.div.addClass('active');
         }
       });
     };
     widget.removeLayerEv = function(e) {
       widget.layers.forEach(function(layerId) {
         if(e.layer.options.domegisLayerId == layerId) {
-          $(widget.div).removeClass('active');
+          widget.div.removeClass('active');
         }
       });
     };
@@ -77,24 +103,31 @@ L.Control.Widget = L.Control.extend({
 
     var self = this;
 
+    var control = $(this._container);
+    var container = $(this._content);
+
     if (!this._map) { return this; }
 
-    this._container.innerHTML = '';
+    container.html('');
+
     var hide = 'none';
 
     this.widgets.forEach(function(widget) {
-      var div = L.DomUtil.create('div', 'map-widget', self._container);
-      div.innerHTML = widget.text;
+      var div = $('<div class="map-widget" />');
+      if(widget.title)
+        div.append('<h3>' + widget.title + '</h3>');
+      div.append(widget.text);
+      div.appendTo(container);
       widget.div = div;
       hide = 'block';
-      $(widget.div).addClass('active');
+      widget.div.addClass('active');
       var mapLayers = [];
       for(var layerKey in self._map._layers) {
         mapLayers.push(self._map._layers[layerKey].options.domegisLayerId);
       }
       widget.layers.forEach(function(layerId) {
         if(mapLayers.indexOf(layerId) == -1) {
-          $(widget.div).removeClass('active');
+          widget.div.removeClass('active');
         }
       });
       self._map.on('layeradd', widget.addLayerEv);
@@ -103,7 +136,7 @@ L.Control.Widget = L.Control.extend({
 
     // hide the control entirely unless there is at least one widget;
     // otherwise there will be a small grey blemish on the map.
-    this._container.style.display = hide;
+    control.css({'display': hide});
 
     return this;
   }

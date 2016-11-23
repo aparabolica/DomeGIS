@@ -246,15 +246,80 @@ table {
       }
     }
   }
-  .map-legends,
-  .map-widgets {
+  .map-legends {
     width: 200px;
     max-height: 300px;
     overflow: auto;
   }
+  .map-widgets {
+    width: 300px;
+    .map-widgets-header {
+      background: #fff;
+      padding: 1rem;
+      cursor: pointer;
+      border-bottom: 1px solid #ddd;
+      h2 {
+        text-align: center;
+        font-size: 1em;
+        margin: 0;
+        font-weight: 600;
+        color: #999;
+        text-transform: uppercase;
+        .fa {
+          margin-right: 1rem;
+        }
+      }
+      .toggle-icon {
+        float: right;
+        font-size: .8em;
+        color: #999;
+        margin-top: .2rem;
+      }
+      &:hover {
+        h2 {
+          color: #333;
+        }
+        .toggle-icon {
+          color: #333;
+        }
+      }
+    }
+    .map-widgets-content {
+      display: none;
+      max-height: 400px;
+      overflow: auto;
+    }
+    &.active {
+      .map-widgets-content {
+        display: block;
+      }
+    }
+    .map-widget {
+      display: none;
+      background: #fff;
+      padding: 1rem;
+      border-bottom: 1px solid #e7e7e7;
+      font-size: .8em;
+      &.active {
+        display: block;
+      }
+      h3 {
+        margin: 0 0 1rem;
+        font-size: 1.2em;
+        line-height: 1;
+        font-weight: 600;
+        color: #666;
+      }
+      ul:last-child,
+      li:last-child,
+      p:last-child {
+        padding: 0;
+        margin-bottom: 0;
+      }
+    }
+  }
   .map-legend,
-  .download-data,
-  .map-widget {
+  .download-data {
     background: #fff;
     background: #fff;
     box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
@@ -283,12 +348,6 @@ table {
     border-left: 3px solid #8dd48f;
     &.concealed {
       border-left: 3px solid #eee;
-    }
-  }
-  .map-widget {
-    display: none;
-    &.active {
-      display: block;
     }
   }
   .map-legend,
@@ -1280,6 +1339,7 @@ form {
         color: #666;
         line-height:1;
         margin: 1rem;
+        font-size: .8em;
       }
       .widget-header {
         padding: 1rem;
@@ -1334,6 +1394,8 @@ form {
             float: right;
             color: #999;
             line-height: 1.1;
+            font-size: .8em;
+            margin-top: .3rem;
             &:hover {
               color: #000;
               text-decoration: none;
@@ -1381,6 +1443,7 @@ form {
 #generate_map {
   .layer-list {
     list-style: none;
+    margin: 0;
     .layer-item {
       cursor: pointer;
       h3 {
@@ -1395,26 +1458,45 @@ form {
       color: #333;
     }
     .layer-item {
-      background: darken(#fff, 5%);
-      padding: 2rem 2rem 2rem 50px;
-      margin: 0 0 1px;
       position: relative;
       cursor: default;
+      margin: 0 0 1rem;
+      background: #f6f6f6;
+      position: relative;
+      box-shadow: 0 0 5px rgba(0,0,0,0.15);
+      border: 1px solid #ddd;
+      &:hover {
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0,0,0,0.15);
+      }
+      .layer-item-header {
+        padding: 1rem;
+        background: #fff;
+        cursor: move;
+        h3 {
+          font-size: .8em;
+          margin: 0;
+          padding: 0;
+          border: 0;
+          color: #666;
+          span {
+            color: #ccc;
+            font-size: .8em;
+          }
+        }
+      }
+      .layer-item-content {
+        padding: 1rem;
+        font-size: .8em;
+      }
+      .concealed {
+        border-top: 1px solid #e8e8e8;
+        margin: 0;
+        padding: 1rem;
+        font-size: .8em;
+      }
       input {
         width: auto;
-      }
-      .sort {
-        position: absolute;
-        top: 1px;
-        left: 1px;
-        bottom: 1px;
-        width: 30px;
-        background: darken(#fff, 7%);
-        font-size: 1.2em;
-        padding-top: 2rem;
-        text-align: center;
-        cursor: move;
-        color: #999;
       }
       h3,
       a {
@@ -1423,13 +1505,14 @@ form {
       .actions {
         float: right;
         color: #999;
+        font-size: .8em;
         a {
           color: inherit;
         }
       }
       h3 {
-        font-size: 1.2em;
         letter-spacing: 0;
+        margin: 0 0 1rem;
       }
       .views {
         margin: 0;
@@ -1437,11 +1520,11 @@ form {
           float: left;
           font-weight: 600;
           color: #666;
-          margin-right: 2.5rem;
+          margin-right: 1.5rem;
         }
         label {
           float: left;
-          margin-right: 2rem;
+          margin: 0 1rem 0 0;
           font-weight: 400;
         }
       }
@@ -1471,19 +1554,28 @@ form {
       font-size: .8em;
     }
   }
-  .output {
+  .share {
     h3 {
-      font-size: 2em;
+      font-size: 1em;
+      border: 0;
+      margin: 1rem 0;
       span {
         float: left;
-        margin: -1.5rem 2rem 2rem 0;
-        font-size: 2.4em;
+        margin: -.4rem 1.5rem 1.5rem 0;
+        font-size: 1.5em;
       }
+    }
+    p {
+      font-size: .8em;
+      margin: 0 0 1rem;
     }
     textarea {
       width: 100%;
       height: 100px;
     }
+  }
+  .save-map {
+    margin-top: 3rem;
   }
 }
 

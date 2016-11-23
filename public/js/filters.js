@@ -116,6 +116,16 @@ angular.module('domegis')
   }
 ])
 
+.filter('reverse', function() {
+  return _.memoize(function(input) {
+    if(_.isArray(input))
+      input = input.slice().reverse();
+    return input;
+  }, function() {
+    return JSON.stringify(arguments);
+  });
+})
+
 .filter('map', [
   function() {
     return function(input, prop) {

@@ -140,7 +140,9 @@ angular.module('domegis')
   'Lang',
   function(Lang) {
     return function(input) {
-      if(typeof input == 'object')
+      if(typeof input == 'undefined')
+        return '';
+      else if(typeof input == 'object')
         return input[Lang.get()];
       else
         return langSplit(input)[Lang.get()];

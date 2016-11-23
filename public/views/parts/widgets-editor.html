@@ -17,7 +17,7 @@
   </div>
   <ul class="widget-list" ui-sortable ng-model="widgets">
     <li ng-repeat="(i,widget) in widgets" class="widget-item">
-      <a href="javascript:void(0);" class="remove-widget" ng-click="removeWidget(i)">x</a>
+      <a href="javascript:void(0);" class="remove-widget fa fa-close" ng-click="removeWidget(i)"></a>
       <div class="widget-header">
         <h3>
           <span>Widget</span>
@@ -32,15 +32,21 @@
         </label>
       </div> -->
       <div class="widget-content-editor">
+        <div class="widget-title">
+          <label for="widget_{{i}}_title">
+            Title
+            <input type="text" id="widget_{{i}}_title" ng-model="widget.title" />
+          </label>
+        </div>
         <div class="widget-text" ng-show="widget.type == 'text'">
           <label for="widget_{{i}}_text_content">
             Content
-            <textarea id="widget_{{i}}_text_content" ng-model="widget.content" />
+            <textarea id="widget_{{i}}_text_content" ng-model="widget.content"></textarea>
           </label>
         </div>
         <div class="widget-analysis" ng-show="widget.type == 'analysis'">
           <div class="selected-analysis" ng-show="widget.content">
-            <a class="clear-analysis" href="javascript:void(0);" ng-click="clearAnalysis(widget)">x</a>
+            <a class="clear-analysis fa fa-close" href="javascript:void(0);" ng-click="clearAnalysis(widget)"></a>
             <h3>{{widget.content.title}}</h3>
           </div>
           <div class="analyses-search item-search" ng-hide="widget.content">

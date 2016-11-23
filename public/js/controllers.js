@@ -90,38 +90,39 @@ angular.module('domegis')
   }
 ])
 
-.controller('GenerateCtrl', [
+.controller('MapEditCtrl', [
   '$scope',
   '$state',
   'Lang',
   'Server',
   'Analyses',
-  function($scope, $state, Lang, Server, Analyses) {
+  'Edit',
+  'MessageService',
+  function($scope, $state, Lang, Server, Analyses, Edit, Message) {
+
+    $scope.map = _.defaults(Edit, {
+      layers: [],
+      widgets: [],
+      baseLayer: '',
+      scrollWheelZoom: false,
+      language: ''
+    });
 
     $scope.setting = 'layer';
-
     $scope.setSetting = function(setting) {
       $scope.setting = setting;
     };
 
+    var mapService = Server.service('maps');
     var searchService = Server.service('search');
+    var layerService = Server.service('layers');
     var viewService = Server.service('views');
 
-    $scope.widgets = [];
-
     $scope.analyses = Analyses.data;
-
     $scope.langs = Lang.getLanguages();
-
-    $scope.settings = {
-      lng: ''
-    };
-
-    $scope.scroll = false;
 
     $scope.search = '';
     $scope.results = [];
-
     $scope.$watch('search', function(search) {
       if(search) {
         searchService.find({
@@ -142,49 +143,93 @@ angular.module('domegis')
       }
     });
 
-    $scope.map = {};
-    $scope._layers = [];
+    $scope.layers = {};
+
+    $scope.hasLayer = function(layer) {
+      return _.find($scope.map.layers, function(l) { return l.layerId == layer.id; });
+    };
 
     $scope.addLayer = function(layer) {
+      if($scope.hasLayer(layer))
+        return false;
+      $scope.layers[layer.id] = layer;
       $scope.search = '';
-      if(!$scope.map[layer.id]) {
-        $scope.map[layer.id] = {};
-        $scope._layers.push(layer);
-        viewService.find({
-          query: {
-            layerId: layer.id,
-            $limit: 100
+      var mapLayer = {
+        layerId: layer.id
+      };
+      $scope.map.layers.unshift(mapLayer);
+    };
+
+    var populateViews = function(mapLayer, layer) {
+      viewService.find({
+        query: {
+          layerId: layer.id,
+          $limit: 100
+        }
+      }).then(function(res) {
+        $scope.$apply(function() {
+          layer.views = res.data;
+          if(!mapLayer.hidden)
+            mapLayer.hidden = false;
+          if(!mapLayer.id)
+            mapLayer.id = res.data[0].id;
+        });
+      });
+    };
+
+    $scope.$watch('map.layers', function(layers, prevLayers) {
+      if(layers !== prevLayers || _.isEmpty($scope.layers)) {
+        $scope.map.layers.forEach(function(mapLayer) {
+          if($scope.layers[mapLayer.layerId]) {
+            populateViews(mapLayer, $scope.layers[mapLayer.layerId]);
+          } else {
+            Server.get(layerService, mapLayer.layerId).then(function(layer) {
+              $scope.layers[layer.id] = layer;
+              populateViews(mapLayer, $scope.layers[mapLayer.layerId]);
+            });
           }
-        }).then(function(res) {
-          $scope.$apply(function() {
-            layer.views = res.data;
-            $scope.map[layer.id].id = res.data[0].id;
-            $scope.map[layer.id].hidden = false;
-          });
+        });
+      }
+    }, true);
+
+    $scope.removeLayer = function(layerId) {
+      delete $scope.layers[layerId];
+      $scope.map.layers = _.filter($scope.map.layers, function(l) {
+        return l.id !== layerId;
+      });
+    };
+
+    $scope.save = function(map) {
+      if(Edit.id) {
+        Server.patch(mapService, Edit.id, map).then(function(map) {
+          $scope.map = map;
+          Message.add('Map saved');
+          // $state.go('editMap', {id: map.id}, {reload: true});
+        }, function(err) {
+          Message.add(err.message);
+        });
+      } else {
+        Server.create(mapService, map).then(function(map) {
+          $scope.map = map;
+          $state.go('editMap', {id: map.id}, {reload: true});
+          Message.add('Map created');
+        }, function(err) {
+          Message.add(err.message);
         });
       }
     };
 
-    $scope.removeLayer = function(layerId) {
-      if($scope.map[layerId]) {
-        delete $scope.map[layerId];
-        $scope._layers = _.filter($scope._layers, function(l) {
-          return l.id !== layerId;
-        });
-      }
+    $scope.getMapURL = function() {
+      return $state.href('map', { id: $scope.map.id }, { absolute: true });
     };
 
     $scope.getHTMLEmbed = function() {
-      var url = $state.href('map', {views: getCSViews(), lang: $scope.settings.lng, base: $scope.base, scroll: $scope.scroll}, {absolute: true});
-      return '<iframe src="' + url + '" width="100%" height="400" frameborder="0" allowfullscreen></iframe>';
+      return '<iframe src="' + $scope.getMapURL() + '" width="100%" height="400" frameborder="0" allowfullscreen></iframe>';
     };
 
     $scope.getWPShortcode = function() {
       var config = {
-        views: getCSViews(),
-        lang: $scope.settings.lng,
-        base: $scope.base,
-        scroll: $scope.scroll
+        id: $scope.map.id
       };
       var shortcode = '[domegis_map';
       for(var key in config) {
@@ -194,31 +239,6 @@ angular.module('domegis')
       shortcode += ']';
       return shortcode;
     };
-
-    $scope.views = [];
-
-    var _update = function() {
-      $scope.views = [];
-      $scope._layers.forEach(function(l) {
-        if($scope.map[l.id] && $scope.map[l.id].id)
-          $scope.views.unshift($scope.map[l.id]);
-      });
-    };
-
-    $scope.$watch('map', _update, true);
-    $scope.$watch('_layers', _update, true);
-    $scope.$watch('settings', _update, true);
-    $scope.$watch('base', _update, true);
-
-    function getCSViews() {
-      var views = [];
-      $scope._layers.forEach(function(l) {
-        if($scope.map[l.id] && $scope.map[l.id].id)
-          views.unshift($scope.map[l.id].id + ':' + ($scope.map[l.id].hidden ? 0 : 1));
-      });
-
-      return views.join(',');
-    }
   }
 ])
 

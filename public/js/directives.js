@@ -241,7 +241,7 @@ angular.module('domegis')
           if(widgets && widgets.length) {
             widgets.forEach(function(widget) {
               if(widget._text) {
-                widgetControl.addWidget(widget._text, widget.display ? [] : widget.layers);
+                widgetControl.addWidget(widget._text, widget.title || '', widget.display ? [] : widget.layers);
               }
             });
           }
