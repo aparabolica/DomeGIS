@@ -67,7 +67,7 @@ angular.module('domegis')
 
     $scope.$on('$stateChangeStart', function(ev, toState, toParams) {
       $scope.bodyClass = [];
-      if(toState.name == 'map') {
+      if(toState.name == 'generateMap' || toState.name == 'singleMap') {
         $scope.bodyClass.push('map');
       }
       $scope.bodyClass.push('loading');
