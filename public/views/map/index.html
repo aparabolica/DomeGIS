@@ -11,16 +11,22 @@
 <div id="map-archive">
   <div class="container row">
     <div class="twelve columns">
-      <section class="map-list">
-        <div class="map-item" ng-repeat="map in maps">
-          <div class="map-content">
-            <h3>{{map.title}}</h3>
-            <div class="button-grp">
-              <a class="button" ui-sref="editMap({id: map.id})">Edit</a>
-              <a class="button" ui-sref="singleMap({id: map.id})">View</a>
-            </div>
-          </div>
-        </div>
-    </div>
+      <table class="map-table">
+        <thead>
+          <tr>
+            <th>Map</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="map in maps">
+            <td><h3>{{map.title}}</h3></td>
+            <td>
+              <a ui-sref="editMap({id: map.id})">Edit</a>
+              <a ui-sref="singleMap({id: map.id})">View</a>
+            </td>
+          </tr>
+        </tbody>
+    </table>
   </div>
 </div>

@@ -362,13 +362,10 @@ angular.module('domegis')
 
         function getTooltipHtml(view, data, fields) {
           var html = '<div class="tooltip-content">';
-          // console.log(view, data, fields);
           view.fields.forEach(function(field) {
             html += '<h2>' + getLabel(field, fields) + '</h2>';
             html += '<p>' + data[field] + '</p>';
           });
-          // for(var key in data) {
-          // }
           html += '</div>';
           return html;
         }
@@ -387,9 +384,6 @@ angular.module('domegis')
         }
 
         function getViewLegend(view, layer) {
-
-          // if(layer.type == 'raster')
-          //   return '';
 
           var layerType;
 
