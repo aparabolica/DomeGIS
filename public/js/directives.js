@@ -388,8 +388,8 @@ angular.module('domegis')
 
         function getViewLegend(view, layer) {
 
-          if(layer.type == 'raster')
-            return '';
+          // if(layer.type == 'raster')
+          //   return '';
 
           var layerType;
 
@@ -420,30 +420,31 @@ angular.module('domegis')
 
           var stroke = '0';
           var strokeColor = 'transparent';
-          if(style.stroke) {
-            stroke = style.stroke.width + 'px';
-            strokeColor = 'rgba(' + chroma(style.stroke.color).rgb().join(',') + ', ' + style.stroke.opacity + ')';
-          }
 
-          var bgColor = 'rgba(' + chroma(style.fill.color).rgb().join(',') + ', ' + style.fill.opacity + ')';
-
-          if(view.style.column) {
-            if(view.style.type == 'category') {
-              if(view.style.category[view.style.column.name]) {
-                var catStyle = view.style.category[view.style.column.name];
-                var columnName = _.find(layer.fields, function(field) {
-                  return field.name == view.style.column.name;
-                }).title[Lang.get()];
-              }
+          if(style) {
+            if(style.stroke) {
+              stroke = style.stroke.width + 'px';
+              strokeColor = 'rgba(' + chroma(style.stroke.color).rgb().join(',') + ', ' + style.stroke.opacity + ')';
             }
-            if(view.style.type == 'choropleth') {
-              if(view.style.choropleth && view.style.choropleth[view.style.column.name]) {
-                var cPlethStyle = view.style.choropleth[view.style.column.name];
-                var categories = quantiles(view.style.column.values, cPlethStyle.bucket_size || 3);
-                var ramp = chroma.scale(cPlethStyle.scale).colors(categories.length).reverse();
-                var columnName = _.find(layer.fields, function(field) {
-                  return field.name == view.style.column.name;
-                }).title[Lang.get()];
+            var bgColor = 'rgba(' + chroma(style.fill.color).rgb().join(',') + ', ' + style.fill.opacity + ')';
+            if(view.style.column) {
+              if(view.style.type == 'category') {
+                if(view.style.category[view.style.column.name]) {
+                  var catStyle = view.style.category[view.style.column.name];
+                  var columnName = _.find(layer.fields, function(field) {
+                    return field.name == view.style.column.name;
+                  }).title[Lang.get()];
+                }
+              }
+              if(view.style.type == 'choropleth') {
+                if(view.style.choropleth && view.style.choropleth[view.style.column.name]) {
+                  var cPlethStyle = view.style.choropleth[view.style.column.name];
+                  var categories = quantiles(view.style.column.values, cPlethStyle.bucket_size || 3);
+                  var ramp = chroma.scale(cPlethStyle.scale).colors(categories.length).reverse();
+                  var columnName = _.find(layer.fields, function(field) {
+                    return field.name == view.style.column.name;
+                  }).title[Lang.get()];
+                }
               }
             }
           }
