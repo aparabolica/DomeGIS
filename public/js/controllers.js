@@ -808,10 +808,49 @@ angular.module('domegis')
 
 .controller('AnalysisCtrl', [
   '$scope',
+  '$interval',
   'Analyses',
-  function($scope, Analyses) {
+  function($scope, $interval, Analyses) {
     $scope.analyses = Analyses.data;
-    console.log(Analyses);
+
+    $scope.getElapsedTime = function(analysis) {
+      var start = analysis.task.startedAt;
+      var finish = analysis.task.finishedAt || false;
+
+      if(start && finish) {
+        var elapsed = finish - start;
+        return moment.duration(elapsed).humanize();
+      } else {
+        return '';
+      }
+    };
+
+    $scope.$on('server.analyses.created', function(ev, data) {
+      $scope.analyses.unshift(data);
+    });
+
+    $scope.$on('server.analyses.removed', function(ev, data) {
+      $scope.analyses = _.filter($scope.analyses, function(item) {
+        return item.id !== data.id;
+      });
+    });
+
+    $scope.$on('server.analyses.updated', function(ev, data) {
+      $scope.analyses.forEach(function(analysis, i) {
+        if(analysis.id == data.id) {
+          $scope.analyses[i] = data;
+        }
+      });
+    });
+
+    $scope.$on('server.analyses.patched', function(ev, data) {
+      $scope.analyses.forEach(function(analysis, i) {
+        if(analysis.id == data.id) {
+          $scope.analyses[i] = data;
+        }
+      });
+    });
+
   }
 ])
 
@@ -820,7 +859,6 @@ angular.module('domegis')
   'Analysis',
   function($scope, Analysis) {
     $scope.analysis = Analysis;
-    console.log(Analysis);
   }
 ])
 

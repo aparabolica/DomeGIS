@@ -4,6 +4,7 @@ angular.module('domegis', [
   'ngFileUpload',
   'ui.sortable',
   'ui.ace',
+  'timer',
   'colorpicker.module',
   'infinite-scroll'
 ]);

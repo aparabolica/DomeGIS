@@ -1682,15 +1682,13 @@ form {
 }
 
 #analysis {
-  .analysis-list {
+  .analysis-table {
     width: 100%;
-    display: flex;
-    flex-flow: row wrap;
-    .analysis-item {
-      flex: 1 1 25%;
-      padding: 2rem;
+    th {
+      color: #999;
+      font-weight: normal;
     }
-    .analysis-content {
+    tbody {
       h3 {
         font-size: 1.2em;
         font-weight: 600;
@@ -1712,7 +1710,13 @@ form {
         height: 100px;
         font-size: .6em;
         overflow: hidden;
-        white-space: pre-line;
+        white-space: pre-wrap;
+      }
+      .finished,
+      .running-time,
+      .last-execution {
+        font-size: .8em;
+        color: #999;
       }
     }
   }

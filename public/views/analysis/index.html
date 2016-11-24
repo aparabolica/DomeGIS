@@ -11,18 +11,40 @@
 <div id="analysis">
   <div class="container row">
     <div class="twelve columns">
-      <section class="analysis-list">
-        <div class="analysis-item" ng-repeat="analysis in analyses">
-          <div class="analysis-content">
-            <h3>{{analysis.title}}</h3>
-            <p>{{analysis.description}}</p>
-            <pre><code>{{analysis.query}}</code></pre>
-            <div class="button-grp">
-              <a class="button" ui-sref="editAnalysis({id: analysis.id})">Edit</a>
-              <a class="button" ui-sref="singleAnalysis({id: analysis.id})">View</a>
-            </div>
-          </div>
-        </div>
+      <table class="analysis-table">
+        <thead>
+          <tr>
+            <th>Analysis</th>
+            <th>SQL Query</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="analysis in analyses">
+            <td>
+              <h3>{{analysis.title}}</h3>
+              <p>{{analysis.description}}</p>
+            </td>
+            <td>
+              <pre><code>{{analysis.query}}</code></pre>
+            </td>
+            <td class="status">
+              <span ng-show="analysis.task.status == 'running'">Running query</span>
+              <span ng-show="analysis.task.status == 'finished'">Ok</span><br/>
+              <timer start-time="analysis.task.startedAt-1000" class="running-time" ng-show="analysis.task.status == 'running'">for <span ng-show="minutes">{{minutes}} minute(s),</span> {{seconds}} seconds</timer>
+              <span class="finished" ng-show="analysis.task.status == 'finished'">Query lasted {{getElapsedTime(analysis)}}</span><br/>
+              <span class="last-execution" ng-show="analysis.task.status == 'finished'">Last executed {{analysis.task.finishedAt-1000 | fromNow}}</span>
+            </td>
+            <td>
+              <span ng-hide="analysis.task.status == 'running'">
+                <a ui-sref="editAnalysis({id: analysis.id})">Edit</a>
+                <a ui-sref="singleAnalysis({id: analysis.id})">View</a>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

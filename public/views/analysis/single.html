@@ -7,19 +7,14 @@
   </div>
 </header>
 <div class="container">
-  <div class="six columns">
+  <div class="twelve columns">
     <p>{{analysis.description}}</p>
-  </div>
-</div>
-<div class="container">
-  <div class="six columns">
     <h3>Query</h3>
     <pre><code>{{analysis.query}}</code></pre>
-  </div>
-  <div class="six columns">
     <h3>Result</h3>
     <div obj-table="analysis.results"></div>
     <h3>Template</h3>
-    <p>{{analysis.results | dataTemplate:analysis.dataTemplate}}</p>
+    <p ng-show="analysis.dataTemplate">{{analysis.results | dataTemplate:analysis.dataTemplate||''}}</p>
+    <p ng-hide="analysis.dataTemplate" ng-bind-html="analysis.results | list | trustHtml"></p>
   </div>
 </div>

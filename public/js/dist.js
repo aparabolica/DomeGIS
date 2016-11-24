@@ -21,6 +21,8 @@
 //= require leaflet.download
 
 //= require angular/angular
+//= require humanize-duration/humanize-duration
+//= require angular-timer/dist/angular-timer
 //= require ng-file-upload/ng-file-upload
 //= require angular-cookies/angular-cookies
 //= require angular-ui-router/release/angular-ui-router

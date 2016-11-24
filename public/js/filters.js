@@ -50,6 +50,7 @@ angular.module('domegis')
       var html = '';
       if(_.isArray(input)) {
         input.forEach(function(item, i) {
+          delete item['$$hashKey'];
           html += '<div class="item-' + i + '">';
           for(var key in item) {
             html += '<p>';
@@ -60,6 +61,7 @@ angular.module('domegis')
           html += '</div>';
         })
       } else if(_.isObject(input)) {
+        delete input['$$hashKey'];
         for(var key in input) {
           html += '<p>';
           html += '<strong>' + key + ':</strong> ';
@@ -69,6 +71,17 @@ angular.module('domegis')
       }
       // return $sce.trustAsHtml(html);
       return html;
+    }, function() {
+      return JSON.stringify(arguments);
+    });
+  }
+])
+
+.filter('trustHtml', [
+  '$sce',
+  function($sce) {
+    return _.memoize(function(input) {
+      return $sce.trustAsHtml(input);
     }, function() {
       return JSON.stringify(arguments);
     });
