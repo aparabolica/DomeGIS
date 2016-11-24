@@ -53,7 +53,6 @@ module.exports = function(hook) {
 
   return hook;
 
-  // TODO scale non-Byte bands to Byte
   function downsample(){
     return new Promise(function(resolve,reject){
       var dataset = gdal.open(filePath);
@@ -190,7 +189,7 @@ module.exports = function(hook) {
         sequelize.query(query).then(function(){
           doneEach();
         }).catch(doneEach);
-        
+
       }, function(err){
         if (err) return reject(err);
         resolve();

@@ -16,7 +16,7 @@
   },
   "scripts": {
     "start": "node src/",
-    "test": "NODE_ENV=test mocha test/services/upload",
+    "test": "NODE_ENV=test mocha \"test/**/*.js\"",
     "jshint": "jshint src/. test/. --config"
   },
   "dependencies": {

@@ -5,7 +5,6 @@ var async = require('async');
 var service = require('feathers-sequelize');
 var layer = require('./layer-model');
 var hooks = require('./hooks');
-var errors = require('feathers-errors');
 
 module.exports = function(){
   var app = this;

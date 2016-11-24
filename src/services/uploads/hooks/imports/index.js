@@ -3,6 +3,7 @@
 var crypto = require('crypto');
 var errors = require('feathers-errors');
 var raster2pgsql = require('./raster');
+var zipfile = require('./zipfile');
 
 module.exports.init = function(hook) {
 
@@ -28,8 +29,16 @@ module.exports.init = function(hook) {
     // init raster import job
     return raster2pgsql(hook);
 
+  // shapefile layer
+  } else if (hook.params && hook.params.file && hook.params.file.type == 'application/zip') {
+
+    hook.result.layer.type = 'vector';
+
+    // init raster import job
+    return zipfile(hook);
+
   // invalid or non-supported file
   } else {
-    return new errors.BadRequest('Invalid file or non-supported format');
+    throw new errors.BadRequest('Invalid file or non-supported format');
   }
 }

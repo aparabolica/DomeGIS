@@ -95,6 +95,9 @@ CREATE DATABASE $APP_DB_NAME WITH OWNER=$APP_DB_USER
                                   ENCODING='UTF8'
                                   TEMPLATE=template0;
 
+-- User domegis can add new SRIDs
+GRANT ALL ON TABLE spatial_ref_sys TO $APP_DB_USER;
+
 -- Create the database user:
 CREATE USER $APP_DB_READONLY_USER WITH PASSWORD '$APP_DB_READONLY_USER_PWD';
 GRANT CONNECT ON DATABASE $APP_DB_NAME TO $APP_DB_READONLY_USER;
