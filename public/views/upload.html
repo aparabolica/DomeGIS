@@ -12,11 +12,12 @@
       <form class="main-form">
         <div class="dropbox" ngf-drop="uploadFiles($files)" ngf-select="uploadFiles($files)" ngf-multiple="true" ngf-drag-over-class="'dragover'" ng-model="files" ng-disabled="getProgress()">
           <span class="fa fa-upload"></span>
-          Arraste arquivos aqui ou clique para selecionar
+          Drag files here or click to select
           <span class="progress-bar" ng-show="getProgress()" ng-style="{'width': getProgress() + '%' }">
             <span class="progress-label" ng-show="getProgress()"> {{getProgress()}}%</span>
           </span>
         </div>
+        <p class="tip">Supported formats: <span class="format">.zip (shapefile)</span> <span class="format">.tiff</span>
       </form>
     </div>
   </div>
