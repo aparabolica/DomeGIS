@@ -313,9 +313,20 @@ angular.module('domegis')
       templateUrl: '/views/map/index.html',
       controller: [
         '$scope',
+        '$q',
+        'Server',
         'Maps',
-        function($scope, Maps) {
+        function($scope, $q, Server, Maps) {
           $scope.maps = Maps.data;
+          $scope.maps.forEach(function(map) {
+            var promises = [];
+            map.layers.forEach(function(layer) {
+              promises.push(Server.get(Server.service('layers'), layer.layerId));
+            });
+            $q.all(promises).then(function(layers) {
+              map._layers = layers;
+            });
+          });
         }
       ],
       resolve: {
@@ -389,7 +400,6 @@ angular.module('domegis')
       templateUrl: '/views/analysis/index.html',
       controller: 'AnalysisCtrl',
       resolve: {
-        Auth: AuthDep,
         Analyses: [
           'Server',
           function(Server) {
