@@ -416,7 +416,8 @@ angular.module('domegis')
   '$state',
   'Upload',
   '$q',
-  function($scope, $state, Upload, $q) {
+  'MessageService',
+  function($scope, $state, Upload, $q, Message) {
 
     var uploadUrl = '/uploads';
 
@@ -425,7 +426,6 @@ angular.module('domegis')
     $scope.uploaded = [];
 
     var upload = function(file) {
-      console.log(file);
       return Upload.upload({
         url: uploadUrl,
         data: {
@@ -433,14 +433,21 @@ angular.module('domegis')
           name: file.name
         }
       }).then(function(res) {
-        console.log(res);
         $scope.uploaded.push(res.data);
       }, function(err) {
-        console.log(err);
+        // console.log(err);
       }, function(evt) {
         $scope.progress[file.name] = [evt.loaded, evt.total];
       });
-    }
+    };
+
+    $scope.$on('server.layers.patched', function(ev, layer) {
+      $scope.uploaded.forEach(function(u, i) {
+        if(u.layer.id == layer.id) {
+          $scope.uploaded[i].layer = layer;
+        }
+      });
+    });
 
     $scope.uploadFiles = function(files) {
       if(files && files.length) {
@@ -449,9 +456,7 @@ angular.module('domegis')
           promises.push(upload(files[i]));
         }
         $q.all(promises).then(function(files) {
-          console.log(files);
           $scope.progress = {};
-          // $state.go($state.current, {}, {reload:true});
         });
       }
     };

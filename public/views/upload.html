@@ -28,11 +28,18 @@
           <tr>
             <th>File name</th>
             <th>Type</th>
+            <th>Status</th>
+            <th>Actions</th>
         </thead>
         <tbody>
           <tr ng-repeat="file in uploaded">
             <td>{{file.layer.name}}</td>
             <td>{{file.layer.type}}</td>
+            <td>{{file.layer.sync.status}}</td>
+            <td>
+              <a ng-show="file.layer.sync.status == 'imported'" ui-sref="editLayer({id: file.layer.id})">Edit</a>
+              <a ng-show="file.layer.sync.status == 'imported'" ui-sref="editView({layerId: file.layer.id})">New view</a>
+            </td>
           </tr>
         </tbody>
       </table>
