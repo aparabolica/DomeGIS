@@ -121,6 +121,12 @@ angular.module('domegis')
     $scope.analyses = Analyses.data;
     $scope.langs = Lang.getLanguages();
 
+    $scope.showNewLayerBox = false;
+
+    $scope.toggleNewLayer = function() {
+      $scope.showNewLayerBox = $scope.showNewLayerBox ? false : true;
+    };
+
     $scope.search = '';
     $scope.results = [];
     $scope.$watch('search', function(search) {
@@ -168,11 +174,16 @@ angular.module('domegis')
         }
       }).then(function(res) {
         $scope.$apply(function() {
-          layer.views = res.data;
-          if(!mapLayer.hidden)
-            mapLayer.hidden = false;
-          if(!mapLayer.id)
-            mapLayer.id = res.data[0].id;
+          if(!res.data.length) {
+            Message.add('This layer has no views.');
+            $scope.removeLayer(mapLayer.layerId);
+          } else {
+            layer.views = res.data;
+            if(!mapLayer.hidden)
+              mapLayer.hidden = false;
+            if(!mapLayer.id)
+              mapLayer.id = res.data[0].id;
+          }
         });
       });
     };
@@ -195,7 +206,7 @@ angular.module('domegis')
     $scope.removeLayer = function(layerId) {
       delete $scope.layers[layerId];
       $scope.map.layers = _.filter($scope.map.layers, function(l) {
-        return l.id !== layerId;
+        return l.id !== layerId && l.layerId !== layerId;
       });
     };
 

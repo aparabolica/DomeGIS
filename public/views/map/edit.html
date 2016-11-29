@@ -24,17 +24,23 @@
         </li>
       </ul>
       <div class="layer-search item-search" ng-show="setting == 'layer'">
-        <p>
-          <label for="search_layers_input">Search for layers</label>
-          <input id="search_layers_input" type="text" placeholder="Type your search..." ng-model="search" />
-        </p>
-        <div class="search-results">
-          <p ng-show="!results.length && search">No results were found.</p>
-          <ul class="layer-list result-list" ng-show="results.length && search">
-            <li ng-repeat="layer in results" class="layer-item result-item" ng-click="addLayer(layer)">
-              <h3>{{layer.name | translate}}</h3>
-            </li>
-          </ul>
+        <a class="button add-new" href="javascript:void(0);" ng-click="map.layers.length && toggleNewLayer()">
+          <span ng-hide="showNewLayerBox">New layer</span>
+          <span ng-show="showNewLayerBox">Cancel</span>
+        </a>
+        <div class="layer-search-content" ng-show="showNewLayerBox || !map.layers.length">
+          <p>
+            <label for="search_layers_input">Search for layers</label>
+            <input id="search_layers_input" type="text" placeholder="Type your search..." ng-model="search" />
+          </p>
+          <div class="search-results">
+            <p ng-show="!results.length && search">No results were found.</p>
+            <ul class="layer-list result-list" ng-show="results.length && search">
+              <li ng-repeat="layer in results" class="layer-item result-item" ng-click="addLayer(layer)">
+                <h3>{{layer.name | translate}}</h3>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
       <div class="selected-layers" ng-show="setting == 'layer' && map.layers.length">
