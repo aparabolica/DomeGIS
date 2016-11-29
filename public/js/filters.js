@@ -17,9 +17,10 @@ angular.module('domegis')
 })
 
 .filter('parseWidgets', [
+  'Server',
   '$filter',
-  function($filter) {
-    return function(input) {
+  function(Server, $filter) {
+    var parseFilter = _.memoize(function(input) {
       input.forEach(function(widget) {
         if(!widget.type) return;
         widget._text = '';
@@ -29,17 +30,22 @@ angular.module('domegis')
             break;
           case 'analysis':
             if(widget.content) {
-              if(widget.content.dataTemplate) {
-                widget._text = $filter('dataTemplate')(widget.content.results, widget.content.dataTemplate);
-              } else {
-                widget._text = $filter('list')(widget.content.results);
-              }
+              Server.get(Server.service('analyses'), widget.content.id).then(function(analysis) {
+                if(analysis.dataTemplate) {
+                  widget._text = $filter('dataTemplate')(analysis.results, analysis.dataTemplate);
+                } else {
+                  widget._text = $filter('list')(analysis.results);
+                }
+              });
             }
             break;
         }
       });
       return input;
-    }
+    }, function() {
+      return JSON.stringify(arguments);
+    });
+    return parseFilter;
   }
 ])
 
