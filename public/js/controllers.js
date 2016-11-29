@@ -918,6 +918,29 @@ angular.module('domegis')
 
     $scope.analysis = angular.copy(Edit);
 
+    if(!$scope.analysis.dataTemplate)
+      $scope.analysis.dataTemplate = '';
+
+    $scope.examples = [
+      'Property: {{property}}',
+      'List of properties:\n{{#data}}\n  Property: {{property}}\n{{/data}}',
+    ];
+
+    $scope.properties = [];
+    if($scope.analysis.results) {
+      $scope.properties = Object.keys($scope.analysis.results[0]);
+      if(!$scope.analysis.dataTemplate) {
+        if($scope.analysis.results.length > 1) {
+          $scope.analysis.dataTemplate = '{{#data}}\n\n{{/data}}';
+        }
+      }
+    }
+
+    $scope.addProperty = function(property) {
+      if(property)
+        $scope.analysis.dataTemplate += '{{' + property + '}}';
+    };
+
     $scope.save = function(analysis) {
       if(Edit.id) {
         Server.patch(analysisService, Edit.id, analysis).then(function(analysis) {

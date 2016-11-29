@@ -116,6 +116,10 @@ input[type='submit'] {
   }
 }
 
+textarea {
+  height: auto;
+}
+
 .button-grp {
   display: table;
   width: 100%;
@@ -862,11 +866,51 @@ form {
       }
     }
   }
-  p.tip {
+  p.tip,
+  span.tip,
+  .examples {
+    display: block;
     border: 1px solid #e6e6e6;
     border-radius: 4px;
     padding: 1rem;
-    font-size: .8em;
+    font-size: .7em;
+    margin: 0 0 1rem;
+    p {
+      margin: 0 0 1rem;
+    }
+  }
+  .available-properties {
+    display: block;
+    margin-top: 1rem;
+    font-weight: 600;
+    .property {
+      font-weight: normal;
+      display: inline-block;
+      padding: .2rem .6rem;
+      background: #f0f0f0;
+      margin: .2rem;
+      border-radius: 3px;
+      cursor: pointer;
+      &:hover {
+        background: #fff;
+        box-shadow: 0 0 3px rgba(0,0,0,0.1);
+      }
+    }
+  }
+  .examples {
+    pre,
+    code {
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+    pre {
+      margin: 0 0 1rem;
+      border: 1px solid #eee;
+    }
+    code {
+      padding: .5rem;
+    }
   }
   .form-section {
   }

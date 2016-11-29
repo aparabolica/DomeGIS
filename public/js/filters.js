@@ -7,7 +7,7 @@ angular.module('domegis')
       if(input.length == 1) {
         output = Mustache.render(template, input[0]);
       } else {
-        output = Mustache.render(template, input);
+        output = Mustache.render(template, {data: input});
       }
     }
     return output;

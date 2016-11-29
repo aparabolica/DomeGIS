@@ -24,8 +24,19 @@
         </p>
         <p>
           <label for="data_template_input">Data template</label>
-          <textarea id="data_template_input" ng-model="analysis.dataTemplate"></textarea>
+          <span class="tip">
+            Use <a href="http://mustache.github.io/#demo" target="_blank" rel="external">mustache</a> to display data
+            <span class="available-properties" ng-show="properties.length">
+              Available properties:
+              <span class="property" ng-repeat="property in properties" ng-click="addProperty(property)">{{property}}</span>
+            </span>
+          </span>
+          <textarea id="data_template_input" ng-model="analysis.dataTemplate" rows="8"></textarea>
         </p>
+        <div class="examples">
+          <p>Examples:</p>
+          <pre ng-repeat="example in examples"><code>{{example}}</code></pre>
+        </div>
       </div>
       <p>
         <input type="submit" value="Save analysis" />
