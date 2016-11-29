@@ -1,4 +1,4 @@
-<h3><a ui-sref="map({views: view.id})">{{view.name}}</a></h3>
+<h3><a ui-sref="generateMap({views: view.id})">{{view.name}}</a></h3>
 <p class="view-actions" ng-show="canEdit(view)">
   <a class="button" ui-sref="editView({id: view.id})"><span class="fa fa-edit"></span></a>
   <button ng-click="remove(view)"><span class="fa fa-remove"></span></button>

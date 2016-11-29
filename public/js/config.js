@@ -361,7 +361,7 @@ angular.module('domegis')
       }
     })
     .state('singleMap', {
-      url: '/maps/:id/',
+      url: '/maps/:id/?loc',
       templateUrl: '/views/map/single.html',
       resolve: {
         MapData: [

@@ -21,26 +21,28 @@ angular.module('domegis')
   '$filter',
   function(Server, $filter) {
     var parseFilter = _.memoize(function(input) {
-      input.forEach(function(widget) {
-        if(!widget.type) return;
-        widget._text = '';
-        switch (widget.type) {
-          case 'text':
-            widget._text = widget.content
-            break;
-          case 'analysis':
-            if(widget.content) {
-              Server.get(Server.service('analyses'), widget.content.id).then(function(analysis) {
-                if(analysis.dataTemplate) {
-                  widget._text = $filter('dataTemplate')(analysis.results, analysis.dataTemplate);
-                } else {
-                  widget._text = $filter('list')(analysis.results);
-                }
-              });
-            }
-            break;
-        }
-      });
+      if(input) {
+        input.forEach(function(widget) {
+          if(!widget.type) return;
+          widget._text = '';
+          switch (widget.type) {
+            case 'text':
+              widget._text = widget.content
+              break;
+            case 'analysis':
+              if(widget.content) {
+                Server.get(Server.service('analyses'), widget.content.id).then(function(analysis) {
+                  if(analysis.dataTemplate) {
+                    widget._text = $filter('dataTemplate')(analysis.results, analysis.dataTemplate);
+                  } else {
+                    widget._text = $filter('list')(analysis.results);
+                  }
+                });
+              }
+              break;
+          }
+        });
+      }
       return input;
     }, function() {
       return JSON.stringify(arguments);
