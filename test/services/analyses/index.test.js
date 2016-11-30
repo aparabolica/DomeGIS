@@ -1,6 +1,6 @@
 'use strict';
 
-// var fs = require('fs');
+var moment = require('moment');
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var assert = require('assert');
@@ -11,10 +11,16 @@ var token;
 chai.use(chaiHttp);
 var should = chai.should();
 
-// Test variables
+// Test data
 var analysesService;
 var analysis1;
-var invalidAnalysis;
+var analysis2;
+var validQuery =
+  " SELECT                       " +
+  " generate_series(1,10) AS id,         " +
+  " md5(random()::text) AS text_value,   " +
+  " random() * 1000 AS numeric_value;    ";
+var invalidQuery = "Invalid SQL query";
 
 describe('analyses service', function () {
   this.timeout(5000);
@@ -44,20 +50,14 @@ describe('analyses service', function () {
     assert.ok(analysesService);
   });
 
-  it('start an analysis', function(done) {
-    var query =
-      " SELECT                       " +
-      " generate_series(1,10) AS id,         " +
-      " md5(random()::text) AS text_value,   " +
-      " random() * 1000 AS numeric_value;    ";
-
+  it('post analysis1', function(done) {
     chai.request(app)
       .post('/analyses')
       .set('Authorization', 'Bearer '.concat(token))
       .send({
         title: 'Title 1',
         description: 'Description of analysis 1',
-        query: query
+        query: validQuery
       })
       .end(function (err, res) {
         if (err) console.log(err);
@@ -86,7 +86,7 @@ describe('analyses service', function () {
     });
   });
 
-  it('analysis task is finished successfully', function(done){
+  it('analysis1 task is finished successfully', function(done){
 
     var checkFinishedSuccessfully = function(analysis){
       if (analysis.task.status == 'running') return;
@@ -109,21 +109,19 @@ describe('analyses service', function () {
       }
     }
 
-    // wait tasks completion
+    // await tasks completion
     analysesService.on('patched', checkFinishedSuccessfully);
   });
 
 
-  it('start an invalid analysis', function(done) {
-    var query = "Invalid SQL query";
-
+  it('post an invalid analysis2', function(done) {
     chai.request(app)
       .post('/analyses')
       .set('Authorization', 'Bearer '.concat(token))
       .send({
         title: 'Title 1',
         description: 'Description of analysis 1',
-        query: query
+        query: invalidQuery
       })
       .end(function (err, res) {
         if (err) console.log(err);
@@ -145,17 +143,18 @@ describe('analyses service', function () {
         task.should.not.have.property('finisheddAt');
 
         // keep results to compare later
-        invalidAnalysis = res.body;
+        analysis2 = res.body;
 
         done();
 
     });
   });
 
-  it('analysis task is finished successfully', function(done){
 
 
-    var checkTaskIsFailed = function(analysis){
+  it('analysis2 have proper failed status', function(done){
+
+    var checkIfTaskHasFailedStatus = function(analysis){
       var task = analysis.task;
 
       if (task.status == 'running') return;
@@ -163,7 +162,7 @@ describe('analyses service', function () {
       // verify results
       try {
 
-        analysis.should.have.property('id', invalidAnalysis.id);
+        analysis.should.have.property('id', analysis2.id);
         analysis.should.have.property('results', null);
 
         task.should.have.property('status', 'failed');
@@ -175,12 +174,12 @@ describe('analyses service', function () {
       } catch (e) {
         done(e);
       } finally {
-        analysesService.removeListener('patched', checkTaskIsFailed);
+        analysesService.removeListener('patched', checkIfTaskHasFailedStatus);
       }
     }
 
-    // wait tasks completion
-    analysesService.on('patched', checkTaskIsFailed);
+    // await tasks completion
+    analysesService.on('patched', checkIfTaskHasFailedStatus);
   });
 
 });

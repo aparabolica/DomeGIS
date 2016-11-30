@@ -47,6 +47,7 @@
     "gdal": "^0.9.3",
     "mailgun-js": "~0.7.12",
     "mapnik": "https://s3.amazonaws.com/cartodb-node-binary/mapnik/v1.4.15-cdb10/1.4.15-cdb10.tgz",
+    "moment": "^2.17.0",
     "moment-timezone": "~0.5.4",
     "ogr2ogr": "~0.5.1",
     "passport": "^0.3.2",

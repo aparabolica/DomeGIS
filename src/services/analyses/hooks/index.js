@@ -8,7 +8,7 @@ var auth = require('feathers-authentication').hooks;
 var runQuery = require('./run-query');
 
 function initTaskStatus(hook) {
-  if (!hook.params.bypassRunQuery) {
+  if (!hook.params.bypassRunQuery && ( hook.data.query || hook.data.forceExecution )) {
     hook.data.task = {
       status: 'running',
       startedAt: Date.now()

@@ -49,7 +49,7 @@ module.exports = function(hook) {
     })
   }
 
-  if (!hook.params.bypassRunQuery) {
+  if (!hook.params.bypassRunQuery && ( hook.data.query || hook.data.forceExecution )) {
     executeQuery(updateAnalysisStatus)
   }
 
