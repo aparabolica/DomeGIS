@@ -23,7 +23,7 @@ var validQuery =
 var invalidQuery = "Invalid SQL query";
 
 describe('analyses service', function () {
-  this.timeout(5000);
+  this.timeout(20000);
 
   // setup client
   before(function (done) {
@@ -180,6 +180,78 @@ describe('analyses service', function () {
 
     // await tasks completion
     analysesService.on('patched', checkIfTaskHasFailedStatus);
+  });
+
+  it('start re-execution for analysis2 by setting different query', function(doneIt){
+    chai.request(app)
+      .patch('/analyses/' + analysis2.id)
+      .set('Authorization', 'Bearer '.concat(token))
+      .send({
+        query: validQuery
+      })
+      .end(function (err, res) {
+        if (err) console.log(err);
+
+        should.not.exist(err);
+
+        res.body.should.have.property('id');
+        res.body.should.have.property('title', analysis2.title);
+        res.body.should.have.property('description', analysis2.description);
+        res.body.should.have.property('query', validQuery);
+        res.body.should.have.property('createdAt', analysis2.createdAt);
+        res.body.should.have.property('updatedAt');
+
+        // verify task status
+        res.body.should.have.property('task');
+        var task = res.body.task;
+        task.should.have.property('status', 'running');
+        task.should.have.property('startedAt');
+        task.should.not.have.property('finisheddAt');
+
+        doneIt();
+    });
+  });
+
+  it('task re-execution should be completed successfully', function(doneIt){
+
+    var listener = function(analysis){
+      var task = analysis.task;
+
+      if (task.status == 'running') return;
+
+      // verify results
+      try {
+
+        analysis.should.have.property('id', analysis2.id);
+
+        analysis.should.have.property('results');
+        var results = analysis.results;
+        for (var i = 0; i < 10; i++) {
+          var row = results[i];
+          row.should.have.property('id', i + 1 );
+          row.should.have.property('text_value');
+          row.should.have.property('numeric_value');
+        }
+
+        task.should.have.property('status', 'finished');
+        task.should.have.property('startedAt');
+        task.should.have.property('finishedAt');
+        task.should.not.have.property('message');
+
+        analysis2 = analysis;
+
+        doneIt();
+
+      } catch (e) {
+        doneIt(e);
+      } finally {
+        analysesService.removeListener('patched', listener);
+      }
+    }
+
+    // await tasks completion
+    analysesService.on('patched', listener);
+
   });
 
 });
