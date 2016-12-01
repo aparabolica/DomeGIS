@@ -2,7 +2,7 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    queryInterface.changeColumn('layers', 'type', {
+    return queryInterface.changeColumn('layers', 'type', {
       type: Sequelize.STRING,
       required: true
     });

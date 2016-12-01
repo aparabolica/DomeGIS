@@ -2,10 +2,10 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    queryInterface.addColumn('layers', 'metadata', Sequelize.JSON )
+    return queryInterface.addColumn('layers', 'metadata', Sequelize.JSON )
   },
 
   down: function (queryInterface, Sequelize) {
-    queryInterface.removeColumn('layers', 'metadata')
+    return queryInterface.removeColumn('layers', 'metadata')
   }
 };

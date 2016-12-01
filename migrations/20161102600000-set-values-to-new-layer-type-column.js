@@ -2,9 +2,9 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    return queryInterface.addColumn('layers', 'sync', Sequelize.JSON );
+    return queryInterface.sequelize.query("UPDATE \"layers\" SET type='vector' WHERE source='arcgis';");
   },
+
   down: function (queryInterface, Sequelize) {
-    return queryInterface.removeColumn('layers', 'sync');
   }
 };
