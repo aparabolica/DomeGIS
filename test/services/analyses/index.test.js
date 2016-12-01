@@ -150,8 +150,6 @@ describe('analyses service', function () {
     });
   });
 
-
-
   it('analysis2 have proper failed status', function(done){
 
     var checkIfTaskHasFailedStatus = function(analysis){
@@ -234,9 +232,10 @@ describe('analyses service', function () {
         }
 
         task.should.have.property('status', 'finished');
-        task.should.have.property('startedAt');
-        task.should.have.property('finishedAt');
         task.should.not.have.property('message');
+
+        moment(task.startedAt).diff(analysis2.task.startedAt).should.not.be.equal(0);
+        moment(task.finishedAt).diff(analysis2.task.finishedAt).should.not.be.equal(0);
 
         analysis2 = analysis;
 
@@ -254,4 +253,108 @@ describe('analyses service', function () {
 
   });
 
+  it('start re-execution for analysis2 by setting forceExecution=true', function(doneIt){
+    chai.request(app)
+      .patch('/analyses/' + analysis2.id)
+      .set('Authorization', 'Bearer '.concat(token))
+      .send({
+        forceExecution: true
+      })
+      .end(function (err, res) {
+        if (err) console.log(err);
+
+        should.not.exist(err);
+
+        res.body.should.have.property('id');
+        res.body.should.have.property('title', analysis2.title);
+        res.body.should.have.property('description', analysis2.description);
+        res.body.should.have.property('query', validQuery);
+        res.body.should.have.property('createdAt');
+        res.body.should.have.property('updatedAt');
+
+        // verify task status
+        res.body.should.have.property('task');
+        var task = res.body.task;
+        task.should.have.property('status', 'running');
+        task.should.have.property('startedAt');
+        task.should.not.have.property('finisheddAt');
+
+        doneIt();
+    });
+  });
+
+  it('task re-execution should be completed successfully', function(doneIt){
+
+    var listener = function(analysis){
+      var task = analysis.task;
+
+      if (task.status == 'running') return;
+
+      // verify results
+      try {
+
+        analysis.should.have.property('id', analysis2.id);
+
+        analysis.should.have.property('results');
+        var results = analysis.results;
+        for (var i = 0; i < 10; i++) {
+          var row = results[i];
+          row.should.have.property('id', i + 1 );
+          row.should.have.property('text_value');
+          row.should.have.property('numeric_value');
+        }
+
+        task.should.have.property('status', 'finished');
+        task.should.have.property('startedAt');
+        task.should.have.property('finishedAt');
+        task.should.not.have.property('message');
+
+        moment(task.startedAt).diff(analysis2.task.startedAt).should.not.be.equal(0);
+        moment(task.finishedAt).diff(analysis2.task.finishedAt).should.not.be.equal(0);
+
+        analysis2 = analysis;
+
+        doneIt();
+
+      } catch (e) {
+        doneIt(e);
+      } finally {
+        analysesService.removeListener('patched', listener);
+      }
+    }
+
+    // await tasks completion
+    analysesService.on('patched', listener);
+
+  });
+
+  it('patch analysis2 without query re-execution', function(doneIt){
+    chai.request(app)
+      .patch('/analyses/' + analysis2.id)
+      .set('Authorization', 'Bearer '.concat(token))
+      .send({
+        title: 'new title 2',
+        description: 'description 2'
+      })
+      .end(function (err, res) {
+        if (err) console.log(err);
+
+        should.not.exist(err);
+
+        res.body.should.have.property('id');
+        res.body.should.have.property('title', 'new title 2');
+        res.body.should.have.property('description', 'description 2');
+        res.body.should.have.property('query', validQuery);
+
+        // verify task status
+        res.body.should.have.property('task');
+        var task = res.body.task;
+        task.should.have.property('status', 'finished');
+
+        moment(task.startedAt).diff(analysis2.task.startedAt).should.be.equal(0);
+        moment(task.finishedAt).diff(analysis2.task.finishedAt).should.be.equal(0);
+
+        doneIt();
+    });
+  });
 });

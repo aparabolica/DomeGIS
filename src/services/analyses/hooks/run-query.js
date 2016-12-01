@@ -13,19 +13,32 @@ module.exports = function(hook) {
     var query = hook.data.query;
     var task = hook.data.task;
 
-    sequelize.query(query)
-      .then(function(results){
-        doneExecuteQuery(null, {
-          task: task,
-          results: results[0]
-        });
+    function runQuery() {
+      sequelize.query(query)
+        .then(function(results){
+          doneExecuteQuery(null, {
+            task: task,
+            results: results[0]
+          });
+        })
+        .catch(function(err){
+          doneExecuteQuery(err, {
+            task: task,
+            results: null
+          });
+        })
+    }
+
+    if (!query) {
+      Analyses.get(layerId).then(function(result){
+        query = result.query;
+        runQuery();
+      }).catch(function(err){
+        console.log('erro');
+        console.log(err);
       })
-      .catch(function(err){
-        doneExecuteQuery(err, {
-          task: task,
-          results: null
-        });
-      })
+    } else runQuery();
+
   }
 
   function updateAnalysisStatus(err, queryResults){
@@ -46,7 +59,10 @@ module.exports = function(hook) {
       task: task
     }, {
       bypassRunQuery: true
-    })
+    }).catch(function(err){
+      console.log('path error');
+      console.log(err);
+    });
   }
 
   if (!hook.params.bypassRunQuery && ( hook.data.query || hook.data.forceExecution )) {
