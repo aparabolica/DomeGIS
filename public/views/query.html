@@ -74,7 +74,7 @@
           <tbody ng-repeat="item in filteredUploaded = (uploaded | filter:search)" ng-class="{active: item.$viewLayers, synced: isSynced(item)}">
             <tr ng-click="toggleLayers(item, hasRole('editor'))" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
               <td></td>
-              <td class="main">{{item.name}}</td>
+              <td class="main">{{item.name | translate}}</td>
               <td>
                 {{item.createdAt | formatDate}}
                 <span class="modified">Updated: {{item.updatedAt | formatDate}}</span>
