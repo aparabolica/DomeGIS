@@ -30,6 +30,13 @@ angular.module('domegis')
         var layerService = Server.service('layers');
         var viewService = Server.service('views');
 
+        scope.isOk = function(layer) {
+          return layer.sync.status == 'finished' || layer.sync.status == 'imported';
+        };
+        scope.hasError = function(layer) {
+          return layer.sync.status == 'failed';
+        };
+
         scope.hasRole = function(role) {
           var user = Server.app.get('user');
           if(user)
