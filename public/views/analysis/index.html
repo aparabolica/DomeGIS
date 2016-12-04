@@ -31,8 +31,10 @@
             </td>
             <td class="status">
               <span ng-show="analysis.task.status == 'running'">Running query</span>
+              <span ng-show="analysis.task.status == 'failed'">Failed</span>
               <span ng-show="analysis.task.status == 'finished'">Ok</span><br/>
               <timer start-time="analysis.task.startedAt-1000" class="running-time" ng-show="analysis.task.status == 'running'">for <span ng-show="minutes">{{minutes}} minute(s),</span> {{seconds}} seconds</timer>
+              <span class="err-message" ng-show="analysis.task.status == 'failed'">{{analysis.task.message}}</span>
               <span class="finished" ng-show="analysis.task.status == 'finished'">Query lasted {{getElapsedTime(analysis)}}</span><br/>
               <span class="last-execution" ng-show="analysis.task.status == 'finished'">Last executed {{analysis.task.finishedAt-1000 | fromNow}}</span>
             </td>
