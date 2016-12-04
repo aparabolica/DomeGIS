@@ -317,6 +317,7 @@ angular.module('domegis')
         'Server',
         'Maps',
         function($scope, $q, Server, Maps) {
+          var mapService = Server.service('maps');
           $scope.maps = Maps.data;
           $scope.maps.forEach(function(map) {
             var promises = [];
@@ -325,6 +326,33 @@ angular.module('domegis')
             });
             $q.all(promises).then(function(layers) {
               map._layers = layers;
+            });
+          });
+          $scope.remove = function(map) {
+            if(confirm('Are you sure?')) {
+              Server.remove(mapService, map.id);
+            }
+          };
+          $scope.$on('server.maps.created', function(ev, data) {
+            $scope.maps.unshift(data);
+          });
+          $scope.$on('server.maps.removed', function(ev, data) {
+            $scope.maps = _.filter($scope.maps, function(item) {
+              return item.id !== data.id;
+            });
+          });
+          $scope.$on('server.maps.updated', function(ev, data) {
+            $scope.maps.forEach(function(map, i) {
+              if(map.id == data.id) {
+                $scope.maps[i] = data;
+              }
+            });
+          });
+          $scope.$on('server.maps.patched', function(ev, data) {
+            $scope.maps.forEach(function(map, i) {
+              if(map.id == data.id) {
+                $scope.maps[i] = data;
+              }
             });
           });
         }

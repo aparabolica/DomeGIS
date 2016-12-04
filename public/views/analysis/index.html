@@ -40,6 +40,7 @@
               <span ng-hide="analysis.task.status == 'running'">
                 <a ui-sref="editAnalysis({id: analysis.id})">Edit</a>
                 <a ui-sref="singleAnalysis({id: analysis.id})">View</a>
+                <a href="javascript:void(0);" ng-click="remove(analysis)">Delete</a>
               </span>
             </td>
           </tr>

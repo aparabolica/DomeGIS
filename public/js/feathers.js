@@ -71,7 +71,7 @@ angular.module('domegis')
   '$rootScope',
   function(Server, $rootScope) {
     var Services = {};
-    var services = ['layers', 'contents', 'users', 'views', 'previews', 'analyses'];
+    var services = ['layers', 'contents', 'users', 'views', 'previews', 'analyses', 'maps'];
     var events = ['created', 'patched', 'updated', 'removed'];
     services.forEach(function(service) {
       Services[service] = Server.service(service);

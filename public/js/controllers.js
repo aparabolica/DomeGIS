@@ -825,8 +825,12 @@ angular.module('domegis')
 .controller('AnalysisCtrl', [
   '$scope',
   '$interval',
+  'Server',
   'Analyses',
-  function($scope, $interval, Analyses) {
+  function($scope, $interval, Server, Analyses) {
+
+    var analysisService = Server.service('analyses');
+
     $scope.analyses = Analyses.data;
 
     $scope.getElapsedTime = function(analysis) {
@@ -841,16 +845,20 @@ angular.module('domegis')
       }
     };
 
+    $scope.remove = function(analysis) {
+      if(confirm('Are you sure?')) {
+        Server.remove(analysisService, analysis.id);
+      }
+    };
+
     $scope.$on('server.analyses.created', function(ev, data) {
       $scope.analyses.unshift(data);
     });
-
     $scope.$on('server.analyses.removed', function(ev, data) {
       $scope.analyses = _.filter($scope.analyses, function(item) {
         return item.id !== data.id;
       });
     });
-
     $scope.$on('server.analyses.updated', function(ev, data) {
       $scope.analyses.forEach(function(analysis, i) {
         if(analysis.id == data.id) {
@@ -858,7 +866,6 @@ angular.module('domegis')
         }
       });
     });
-
     $scope.$on('server.analyses.patched', function(ev, data) {
       $scope.analyses.forEach(function(analysis, i) {
         if(analysis.id == data.id) {
