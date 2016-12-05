@@ -436,7 +436,11 @@ angular.module('domegis')
 
             } else {
 
-              if($scope.styles.column.type == 'esriFieldTypeInteger' || $scope.styles.column.type == 'esriFieldTypeDouble') {
+              if(
+                $scope.styles.column.type == 'esriFieldTypeInteger' ||
+                $scope.styles.column.type == 'esriFieldTypeDouble' ||
+                $scope.styles.column.type == 'double precision'
+              ) {
 
                 if(!$scope.styles.choropleth[$scope.styles.column.name]) {
                   $scope.styles.choropleth[$scope.styles.column.name] = {
@@ -633,7 +637,7 @@ angular.module('domegis')
           });
         } else if(type == 'choropleth') {
           input = _.filter(input, function(column) {
-            return column.type == 'esriFieldTypeInteger' || column.type == 'esriFieldTypeDouble';
+            return column.type == 'esriFieldTypeInteger' || column.type == 'esriFieldTypeDouble' || column.type == 'double precision';
           });
         }
       }
