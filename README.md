@@ -1,17 +1,22 @@
 # DomeGIS
 
-Publishing platform for Arcgis Online maps
+> Map publishing platform
 
-# Running
+## Install
 
-Clone this repository locally:
+Clone this repository locally, install Vagrant and run `vagrant up` inside the repository base directory.
 
-    git clone git@github.com:ecodigital/DomeGIS.git
+If you have a Ubuntu environment, its possible to install the dependencies by running `./Vagrant-setup/bootstrap.sh` via terminal, but it can cause conflicts with other installed packages.
 
-Install VM:
+## Migrate the database
 
-    cd DomeGIS
-    vagrant up
+We use Sequelize to handle models and migrations in PostgreSQL. To migrate a database, run:
+
+    sequelize db:migrate
+
+You can set database credentials at `config/config.json`.
+
+## Configuration
 
 The `config` directory contains the following files:
 
@@ -25,27 +30,24 @@ For production environments, set `NODE_ENV=production`. If you want to override 
 - `PORT`: server port (default: `3030`);
 - `SUBDOMAINS`: available subdomains, useful for tile requests (default: `a,b,c`).
 
-Access the machine via SSH:
+## Running tests
 
-  vagrant ssh
+We use Mocha as test suite, use the following command to run all tests:
 
-Install dependencies and migrate database:
+    npm test
 
-    cd /vagrant
-    npm install
-    bower install
-    sequelize db:migrate
+You can specify an expression to run only a limited set of tests. For example, the command bellow test the `maps` service:
 
-Then start the application:
+    npm test -- -g "maps"
 
-    npm start
-
-## API
-
-DomeGIS uses [FeathersJS](http://feathersjs.com) as its web application framework, which exposes a [RESTful interface](http://docs.feathersjs.com/rest/readme.html).
+This application is based on [FeathersJS](http://feathersjs.com) framework, you can check the documentation [here](http://docs.feathersjs.com/).
 
 ## License
 
-Copyright (c) 2016
+[MIT](LICENSE)
 
-Licensed under the [MIT license](LICENSE).
+## Authors
+
+This project is maintained by [Miguel Peixe](https://github.com/miguelpeixe) and [Vitor George](https://github.com/vgeorge).
+
+Please check the [list of contributors](graphs/contributors) on Github.
