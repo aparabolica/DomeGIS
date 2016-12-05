@@ -50,4 +50,4 @@ This application is based on [FeathersJS](http://feathersjs.com) framework, you 
 
 This project is maintained by [Miguel Peixe](https://github.com/miguelpeixe) and [Vitor George](https://github.com/vgeorge).
 
-Please check the [list of contributors](graphs/contributors) on Github.
+Please check the [list of contributors](https://github.com/ecodigital/DomeGIS/graphs/contributors) on Github.
