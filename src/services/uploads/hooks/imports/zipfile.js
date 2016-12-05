@@ -18,18 +18,16 @@ module.exports = function(hook) {
   var unzipPath = hook.params.file.path + '.zip/';
   var layer = _.clone(hook.result.layer);
   var Layers = hook.app.service('layers');
+  var fields = {};
 
   function unzipFile(){
     var cmd = 'unzip -o -d ' + unzipPath + ' ' + filePath;
-    console.log('unzipFile');
     return promiseFromChildProcess(exec(cmd));
   }
 
   function zipToPostgresql(){
     var cmd = 'ogr2ogr --config PG_USE_COPY YES -f "PostgreSQL" "PG:user=domegis dbname=domegis " "' + unzipPath + '" -t_srs "EPSG:3857" -lco GEOMETRY_NAME=geometry -lco FID=gid -lco PRECISION=no -nlt PROMOTE_TO_MULTI -nln ' + layer.id + ' -overwrite'
     // var cmd = 'ogr2ogr -f PostgreSQL PG:"dbname=domegis user=domegis ' + unzipPath;
-    console.log(cmd);
-    console.log('zipToPostgresql');
     return promiseFromChildProcess(exec(cmd));
   }
 
@@ -45,8 +43,49 @@ module.exports = function(hook) {
     });
   }
 
+  function getFields() {
+    return new Promise(function(resolve, reject){
+      var sequelize = hook.app.get('sequelize');
+      var query = "select column_name as name, data_type as type, character_maximum_length as length from INFORMATION_SCHEMA.COLUMNS where table_name = '" + layer.id + "';"
+
+      sequelize.query(query).then(function(result){
+
+        // prepare fields
+        fields = _.map(result[0], function(field) {
+
+          // translate field type
+          switch (field.type) {
+            case "character varying":
+              field.type = "esriFieldTypeString"
+              break;
+            case "integer":
+              field.type = "esriFieldTypeInteger"
+              break;
+            case "double":
+              field.type = "esriFieldTypeDouble"
+              break;
+          }
+
+          // localization
+          field.title = {
+            "en": field.name,
+            "es": field.name,
+            "pt": field.name
+          }
+          return field;
+        });
+
+        // discard geometry
+        fields = _.reject(fields, function(field){ return (field.type == 'USER-DEFINED') });
+
+        resolve();
+      }).catch(function(err){
+        console.log('err', err);
+      });
+    });
+  }
+
   function updateLayerStatus(err){
-    console.log('updateLayerStatus');
     if (err) {
       console.log(err);
       layer.sync.status = 'error';
@@ -60,6 +99,7 @@ module.exports = function(hook) {
     // update layer
     Layers.patch(layer.id, {
       metadata: layer.metadata,
+      fields: fields,
       sync: layer.sync
     }).catch(function(err){
       log(layer.id + ' error saving raster import status');
@@ -69,6 +109,7 @@ module.exports = function(hook) {
   unzipFile()
     .then(zipToPostgresql)
     .then(updateLayerMeta)
+    .then(getFields)
     .then(updateLayerStatus)
     .catch(updateLayerStatus);
 
