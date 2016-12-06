@@ -1,10 +1,8 @@
 'use strict';
 
-// var fs = require('fs');
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var assert = require('assert');
-var app = require('../../../src/app');
 var token;
 
 // Configure Chai
@@ -15,22 +13,19 @@ describe('maps service', function () {
 
   // setup client
   before(function (done) {
-    this.server = app.listen(3030);
-    this.server.once('listening', function() {
-      chai.request(app)
-          .post('/auth/local')
-          .set('Accept', 'application/json')
-          .send({
-             'email': 'admin@domegis',
-             'password': 'domegis'
-          })
-          .end(function (err, res) {
-            should.not.exist(err);
-            should.exist(res.body.token);
-            token = res.body.token;
-            done();
-          });
-    });
+    chai.request(app)
+        .post('/auth/local')
+        .set('Accept', 'application/json')
+        .send({
+           'email': 'admin@domegis',
+           'password': 'domegis'
+        })
+        .end(function (err, res) {
+          should.not.exist(err);
+          should.exist(res.body.token);
+          token = res.body.token;
+          done();
+        });
   });
 
   it('is registered as a service', function() {

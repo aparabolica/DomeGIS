@@ -4,7 +4,6 @@ var moment = require('moment');
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var assert = require('assert');
-var app = require('../../../src/app');
 var token;
 
 // Configure Chai
@@ -27,30 +26,63 @@ describe('analyses service', function () {
 
   // setup client
   before(function (done) {
-    this.server = app.listen(3030);
-    this.server.once('listening', function() {
-      chai.request(app)
-          .post('/auth/local')
-          .set('Accept', 'application/json')
-          .send({
-             'email': 'admin@domegis',
-             'password': 'domegis'
-          })
-          .end(function (err, res) {
-            should.not.exist(err);
-            should.exist(res.body.token);
-            token = res.body.token;
-            done();
-          });
-    });
-  });
 
-  it('registered the uploads service', function() {
+    // get analyses service
     analysesService = app.service('analyses');
-    assert.ok(analysesService);
+
+    // login as admin
+    chai.request(app)
+        .post('/auth/local')
+        .set('Accept', 'application/json')
+        .send({
+           'email': 'admin@domegis',
+           'password': 'domegis'
+        })
+        .end(function (err, res) {
+          should.not.exist(err);
+          should.exist(res.body.token);
+          token = res.body.token;
+          done();
+        });
   });
 
-  it('post analysis1', function(done) {
+  it('service is defined', function(doneIt) {
+    assert.ok(analysesService);
+    doneIt();
+  });
+
+  it('post analysis1', function(doneIt) {
+
+    // define a listener to check results
+    var checkCreateAnalysis1 = function(analysis){
+      if (analysis.task.status == 'running') return;
+
+      // catch errors inside the listener
+      try {
+        analysis.should.have.property('results');
+        var results = analysis.results;
+        for (var i = 0; i < 10; i++) {
+          var row = results[i];
+          row.should.have.property('id', i + 1 );
+          row.should.have.property('text_value');
+          row.should.have.property('numeric_value');
+        }
+
+        // keep results to compare later
+        analysis1 = analysis;
+
+        doneIt();
+      } catch (e) {
+        doneIt(e);
+      } finally {
+        analysesService.removeListener('patched', checkCreateAnalysis1);
+      }
+    }
+
+    // register listener
+    analysesService.on('patched', checkCreateAnalysis1);
+
+    // send the request
     chai.request(app)
       .post('/analyses')
       .set('Authorization', 'Bearer '.concat(token))
@@ -78,43 +110,44 @@ describe('analyses service', function () {
         task.should.have.property('startedAt');
         task.should.not.have.property('finisheddAt');
 
-        // keep results to compare later
-        analysis1 = res.body;
-
-        done();
-
     });
   });
 
-  it('analysis1 task is finished successfully', function(done){
+  it('post an invalid analysis2', function(doneIt) {
 
-    var checkFinishedSuccessfully = function(analysis){
-      if (analysis.task.status == 'running') return;
+    // define a listener to check results
+    var verifyPatchEvent = function(analysis){
+      var task = analysis.task;
 
-      // verify results
+      if (task.status == 'running') return;
+
+      // catch errors inside the listener
       try {
-        analysis.should.have.property('results');
-        var results = analysis.results;
-        for (var i = 0; i < 10; i++) {
-          var row = results[i];
-          row.should.have.property('id', i + 1 );
-          row.should.have.property('text_value');
-          row.should.have.property('numeric_value');
-        }
-        done();
+
+        analysis.should.have.property('id', analysis2.id);
+        analysis.should.have.property('results', null);
+
+        task.should.have.property('status', 'failed');
+        task.should.have.property('startedAt');
+        task.should.have.property('finishedAt');
+        task.should.have.property('message', 'syntax error at or near "Invalid"');
+
+
+        // keep results to compare later
+        analysis2 = analysis;
+
+        doneIt();
       } catch (e) {
-        done(e);
+        doneIt(e);
       } finally {
-        analysesService.removeListener('patched', checkFinishedSuccessfully);
+        analysesService.removeListener('patched', verifyPatchEvent);
       }
     }
 
-    // await tasks completion
-    analysesService.on('patched', checkFinishedSuccessfully);
-  });
+    // register listener
+    analysesService.on('patched', verifyPatchEvent);
 
-
-  it('post an invalid analysis2', function(done) {
+    // send the request
     chai.request(app)
       .post('/analyses')
       .set('Authorization', 'Bearer '.concat(token))
@@ -142,82 +175,23 @@ describe('analyses service', function () {
         task.should.have.property('startedAt');
         task.should.not.have.property('finisheddAt');
 
-        // keep results to compare later
-        analysis2 = res.body;
-
-        done();
+        analysis2 = res.body
 
     });
-  });
-
-  it('analysis2 have proper failed status', function(done){
-
-    var checkIfTaskHasFailedStatus = function(analysis){
-      var task = analysis.task;
-
-      if (task.status == 'running') return;
-
-      // verify results
-      try {
-
-        analysis.should.have.property('id', analysis2.id);
-        analysis.should.have.property('results', null);
-
-        task.should.have.property('status', 'failed');
-        task.should.have.property('startedAt');
-        task.should.have.property('finishedAt');
-        task.should.have.property('message', 'syntax error at or near "Invalid"');
-
-        done();
-      } catch (e) {
-        done(e);
-      } finally {
-        analysesService.removeListener('patched', checkIfTaskHasFailedStatus);
-      }
-    }
-
-    // await tasks completion
-    analysesService.on('patched', checkIfTaskHasFailedStatus);
   });
 
   it('start re-execution for analysis2 by setting different query', function(doneIt){
-    chai.request(app)
-      .patch('/analyses/' + analysis2.id)
-      .set('Authorization', 'Bearer '.concat(token))
-      .send({
-        query: validQuery
-      })
-      .end(function (err, res) {
-        if (err) console.log(err);
 
-        should.not.exist(err);
+    should.exist(analysis2);
 
-        res.body.should.have.property('id');
-        res.body.should.have.property('title', analysis2.title);
-        res.body.should.have.property('description', analysis2.description);
-        res.body.should.have.property('query', validQuery);
-        res.body.should.have.property('createdAt', analysis2.createdAt);
-        res.body.should.have.property('updatedAt');
+    // define a listener to check results
+    var checkReexecution = function(analysis){
 
-        // verify task status
-        res.body.should.have.property('task');
-        var task = res.body.task;
-        task.should.have.property('status', 'running');
-        task.should.have.property('startedAt');
-        task.should.not.have.property('finisheddAt');
-
-        doneIt();
-    });
-  });
-
-  it('task re-execution should be completed successfully', function(doneIt){
-
-    var listener = function(analysis){
       var task = analysis.task;
 
       if (task.status == 'running') return;
 
-      // verify results
+      // catch errors inside the listener
       try {
 
         analysis.should.have.property('id', analysis2.id);
@@ -244,16 +218,88 @@ describe('analyses service', function () {
       } catch (e) {
         doneIt(e);
       } finally {
-        analysesService.removeListener('patched', listener);
+        analysesService.removeListener('patched', checkReexecution);
       }
     }
 
-    // await tasks completion
-    analysesService.on('patched', listener);
+    // register listener
+    analysesService.on('patched', checkReexecution);
 
+    // send the request
+    chai.request(app)
+      .patch('/analyses/' + analysis2.id)
+      .set('Authorization', 'Bearer '.concat(token))
+      .send({
+        query: validQuery
+      })
+      .end(function (err, res) {
+        if (err) console.log(err);
+
+        should.not.exist(err);
+
+        res.body.should.have.property('id');
+        res.body.should.have.property('title', analysis2.title);
+        res.body.should.have.property('description', analysis2.description);
+        res.body.should.have.property('query', validQuery);
+        res.body.should.have.property('createdAt');
+        res.body.should.have.property('updatedAt');
+
+        // verify task status
+        res.body.should.have.property('task');
+        var task = res.body.task;
+        task.should.have.property('status', 'running');
+        task.should.have.property('startedAt');
+        task.should.not.have.property('finisheddAt');
+
+    });
   });
 
-  it('start re-execution for analysis2 by setting forceExecution=true', function(doneIt){
+  it('start re-execution for analysis2 by passing forceExecution=true', function(doneIt){
+
+    // create a listener for analyses changes
+    var checkReexecution = function(analysis){
+
+      var task = analysis.task;
+
+      if (task.status == 'running') return;
+
+      // verify results
+      try {
+
+        analysis.should.have.property('id', analysis2.id);
+
+        analysis.should.have.property('results');
+        var results = analysis.results;
+        for (var i = 0; i < 10; i++) {
+          var row = results[i];
+          row.should.have.property('id', i + 1 );
+          row.should.have.property('text_value');
+          row.should.have.property('numeric_value');
+        }
+
+        task.should.have.property('status', 'finished');
+        task.should.have.property('startedAt');
+        task.should.have.property('finishedAt');
+        task.should.not.have.property('message');
+
+        moment(task.startedAt).diff(analysis2.task.startedAt).should.not.be.equal(0);
+        moment(task.finishedAt).diff(analysis2.task.finishedAt).should.not.be.equal(0);
+
+        analysis2 = analysis;
+
+        doneIt();
+
+      } catch (e) {
+        doneIt(e);
+      } finally {
+        analysesService.removeListener('patched', checkReexecution);
+      }
+    }
+
+    // register listener
+    analysesService.on('patched', checkReexecution);
+
+    // send resquest
     chai.request(app)
       .patch('/analyses/' + analysis2.id)
       .set('Authorization', 'Bearer '.concat(token))
@@ -278,54 +324,7 @@ describe('analyses service', function () {
         task.should.have.property('status', 'running');
         task.should.have.property('startedAt');
         task.should.not.have.property('finisheddAt');
-
-        doneIt();
     });
-  });
-
-  it('task re-execution should be completed successfully', function(doneIt){
-
-    var listener = function(analysis){
-      var task = analysis.task;
-
-      if (task.status == 'running') return;
-
-      // verify results
-      try {
-
-        analysis.should.have.property('id', analysis2.id);
-
-        analysis.should.have.property('results');
-        var results = analysis.results;
-        for (var i = 0; i < 10; i++) {
-          var row = results[i];
-          row.should.have.property('id', i + 1 );
-          row.should.have.property('text_value');
-          row.should.have.property('numeric_value');
-        }
-
-        task.should.have.property('status', 'finished');
-        task.should.have.property('startedAt');
-        task.should.have.property('finishedAt');
-        task.should.not.have.property('message');
-
-        moment(task.startedAt).diff(analysis2.task.startedAt).should.not.be.equal(0);
-        moment(task.finishedAt).diff(analysis2.task.finishedAt).should.not.be.equal(0);
-
-        analysis2 = analysis;
-
-        doneIt();
-
-      } catch (e) {
-        doneIt(e);
-      } finally {
-        analysesService.removeListener('patched', listener);
-      }
-    }
-
-    // await tasks completion
-    analysesService.on('patched', listener);
-
   });
 
   it('patch analysis2 without query re-execution', function(doneIt){

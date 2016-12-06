@@ -27,7 +27,6 @@ module.exports = function(hook) {
 
   function zipToPostgresql(){
     var cmd = 'ogr2ogr --config PG_USE_COPY YES -f "PostgreSQL" "PG:user=domegis dbname=domegis " "' + unzipPath + '" -t_srs "EPSG:3857" -lco GEOMETRY_NAME=geometry -lco FID=gid -lco PRECISION=no -nlt PROMOTE_TO_MULTI -nln ' + layer.id + ' -overwrite'
-    // var cmd = 'ogr2ogr -f PostgreSQL PG:"dbname=domegis user=domegis ' + unzipPath;
     return promiseFromChildProcess(exec(cmd));
   }
 
