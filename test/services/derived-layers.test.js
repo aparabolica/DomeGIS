@@ -57,8 +57,7 @@ describe('derived layers service', function () {
   });
 
 
-  it('create a derived layer from a query', function(doneIt) {
-    this.timeout(30000);
+  it('created a derived layer from a query', function(doneIt) {
 
     // create a listener of changes
     var checkResults = function(layer){
@@ -71,8 +70,10 @@ describe('derived layers service', function () {
       try {
 
         layer.should.have.property('id', layer1.id);
-        layer.should.have.property('fields');
-        layer.should.have.property('extents');
+
+        var fields = layer.fields;
+        fields.should.have.length(2);
+        layer.should.have.property('extents', 'BOX(-46.1043441 -23.315067,-46.1043441 -23.315067)');
 
         sync.should.have.property('status', 'ok');
         sync.should.have.property('startedAt');

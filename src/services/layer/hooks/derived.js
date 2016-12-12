@@ -27,6 +27,7 @@ module.exports.after = function(hook) {
 
   validateQuery(hook)
     .then(generateDerivedTable)
+    .then(updateExtentsIndexAndPermissions)
     .then(function(hook){
       handleSyncFinishEvent(null, hook);
     })
@@ -85,7 +86,7 @@ function validateQuery (hook) {
         resolve(hook);
     }).catch(function(err){
       log('err', err);
-      updateLayerStatus(err, hook);
+      reject(err);
     });
   });
 }
@@ -93,7 +94,7 @@ function validateQuery (hook) {
 
 function generateDerivedTable (hook) {
   return new Promise(function(resolve, reject){
-    log('generateDerivedTable');
+    log('generateDerivedTable()');
     var sequelize = hook.app.get('sequelize');
     var sql = hook.data.query;
 
@@ -102,8 +103,6 @@ function generateDerivedTable (hook) {
 
     // create table with features
     var createTableQuery = 'SELECT * INTO "'+hook.data.id+'" from ('+sql+') as derived';
-
-    log('createTableQuery:', createTableQuery);
 
     sequelize
       .query(createTableQuery)
@@ -142,5 +141,24 @@ function generateDerivedTable (hook) {
         .catch(function(err){
           return reject(new errors.GeneralError('Error creating derived layer.'));
         });
+  });
+}
+
+function updateExtentsIndexAndPermissions(hook){
+  return new Promise(function(resolve, reject){
+    log('updateExtentsAndFeatureCount()');
+
+    var sequelize = hook.app.get('sequelize');
+    var layerId = hook.data.id;
+    var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = (select count(*) from \""+layerId+"\"), \"geometryType\" = (select GeometryType(geometry) from \""+layerId+"\" LIMIT 1) WHERE (layers.id =  '"+ layerId +"');"
+      + "ALTER TABLE \""+layerId+"\" ADD COLUMN \"domegis_id\" SERIAL PRIMARY KEY;"
+      + "GRANT SELECT ON \""+layerId+"\" TO domegis_readonly;";
+
+    sequelize.query(query).then(function(result){
+      resolve(hook);
+    }).catch(function(err){
+      if (err) console.log(err);
+      reject(err);
+    });
   });
 }
