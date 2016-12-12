@@ -10,12 +10,13 @@
   <div class="sql-query" ng-hide="data && data.length">
     <div class="container row">
       <div class="six columns offset-by-three">
-        <form class="main-form" ng-submit="submit()">
+        <form class="main-form" ng-submit="create()">
+          <input type="text" placeholder="Layer name" ng-model="name">
           <h3>SQL Query</h3>
           <p>
             <textarea ng-model="sql" ui-ace="aceOptions"></textarea>
           </p>
-          <input type="submit" value="{{loading ? 'Obtaining results...' : 'Send query'}}" ng-disabled="loading" />
+          <input type="submit" value="{{loading ? 'Obtaining results...' : 'Create query'}}" ng-disabled="loading" />
           <p class="err" ng-show="err">{{err}}</p>
         </form>
       </div>
@@ -29,7 +30,6 @@
     <div class="six columns offset-by-three">
       <form ng-submit="create()">
         <p>
-          <input type="text" placeholder="Layer name" ng-model="name">
         </p>
         <p>
           <input type="submit" value="Click here to create new layer" />

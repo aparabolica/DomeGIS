@@ -812,9 +812,11 @@ angular.module('domegis')
       Server.create(Server.service('layers'), {
         source: 'derived',
         name: $scope.name,
-        query: $stateParams.sql
+        query: $scope.sql
       }).then(function(data) {
-        $state.go('editView', {layerId: data.id});
+        Message.add('Layer created, performing query.');
+        console.log(data);
+        // $state.go('editView', {layerId: data.id});
       }, function(err) {
         Message.add(err.message);
       });
