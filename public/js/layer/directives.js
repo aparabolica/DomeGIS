@@ -31,7 +31,7 @@ angular.module('domegis')
         var viewService = Server.service('views');
 
         scope.isOk = function(layer) {
-          return layer.sync.status == 'finished' || layer.sync.status == 'imported';
+          return layer.sync.status == 'finished' || layer.sync.status == 'imported' || layer.sync.status == 'ok';
         };
         scope.hasError = function(layer) {
           return layer.sync.status == 'failed';
