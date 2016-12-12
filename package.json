@@ -37,7 +37,7 @@
     "feathers-configuration": "^0.2.2",
     "feathers-errors": "^2.0.2",
     "feathers-hooks": "^1.5.8",
-    "feathers-hooks-common": "~2.0.0",
+    "feathers-hooks-common": "^2.0.2",
     "feathers-logger": "~0.2.2",
     "feathers-memory": "~0.8.1",
     "feathers-rest": "^1.2.4",

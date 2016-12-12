@@ -1,18 +1,35 @@
 'use strict';
 
-var crypto = require('crypto');
+var debug = require('debug');
+var log = debug('domegis:service:layers');
+
 var fs = require('fs');
 var _ = require('underscore');
 var async = require('async');
-var hooks = require('feathers-hooks');
+var hooks = require('feathers-hooks-common');
 var request = require('request');
 var Sequelize = require('sequelize');
 var auth = require('feathers-authentication').hooks;
 var errors = require('feathers-errors');
 var exec = require('child_process').exec;
 
-var debug = require('debug');
-var log = debug('domegis:service:layers');
+var handleSyncFinishEvent = require('../common').handleSyncFinishEvent;
+var derivedLayers = require('./derived');
+
+function setInitSyncStatus (hook) {
+  if (!hook.data.sync) {
+    hook.data.sync = {
+      status: 'initiated',
+      featureCount: 0,
+      startedAt: Date.now()
+    }
+  }
+  return hook;
+}
+
+function isDerived (hook) {
+  return hook.data.source == 'derived';
+}
 
 exports.before = {
   all: [],
@@ -23,23 +40,22 @@ exports.before = {
     auth.populateUser(),
     auth.restrictToAuthenticated(),
     auth.restrictToRoles({ roles: ['editor'] }),
+    setInitSyncStatus,
+    hooks.iff(isDerived, derivedLayers.before),
     function(hook){
       return new Promise(function(resolve, reject){
 
         var sequelize = hook.app.get('sequelize');
 
         async.series([
-
           // remove layer's feature table is exists
           function(doneStep){
             dropLayer(sequelize, hook.data.id, function(err){
               if (err) return reject(err);
               else doneStep();
             })
-
           },
           function(doneStep){
-
             if (hook.data.source == 'arcgis'){
               getArcGisLayerProperties(hook.data.url, function(err, properties){
                 if (err) return reject(err);
@@ -61,19 +77,8 @@ exports.before = {
                 }
                 resolve();
               });
-            } else if (hook.data.source == 'derived') {
-
-              // generate random layer id
-              hook.data.id = crypto.randomBytes(20).toString('hex');
-
-              // create feature table for this layer
-              generateDerivedLayer(hook, function(err){
-                if (err) return reject(err);
-
-                resolve();
-              });
-            } else if (hook.data.source == 'uploaded') {
-                resolve();
+            } else if ((hook.data.source == 'derived') || (hook.data.source == 'uploaded')) {
+              resolve();
             } else {
               reject(new errors.GeneralError('Missing SQL query.'));
             }
@@ -112,42 +117,24 @@ exports.after = {
   all: [],
   find: [],
   get: [],
-  create: [function(hook){
-    return new Promise(function(resolve, reject){
+  create: [
+    hooks.iff(isDerived, derivedLayers.after),
+    function(hook){
+      return new Promise(function(resolve, reject){
 
-      log('layer metadata saved, trying to to sync from arcgis');
+        /*
+         * Sync ArcGIS Layer
+         */
 
-      var layerId = hook.data.id;
+        if (hook.data.source == 'arcgis') {
+          log('layer metadata saved, trying to to sync from arcgis');
+          syncArcGisLayerFeatures(hook)
+          resolve();
+        } else resolve();
 
-      /*
-       * Sync ArcGIS Layer
-       */
-
-      if (hook.data.source == 'arcgis') {
-        syncArcGisLayerFeatures(hook)
-        resolve();
-      }
-      /*
-      * Sync derived Layer
-      */
-      else if (hook.data.source == 'derived') {
-        var sequelize = hook.app.get('sequelize');
-
-        //  var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = (select count(*) from \""+layerId+"\"), \"geometryType\" = (select GeometryType(geometry) from \""+layerId+"\") WHERE (layers.id =  '"+ layerId +"');"
-         var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layerId +"\"), \"featureCount\" = (select count(*) from \""+layerId+"\"), \"geometryType\" = (select GeometryType(geometry) from \""+layerId+"\" LIMIT 1) WHERE (layers.id =  '"+ layerId +"');"
-         + "ALTER TABLE \""+layerId+"\" ADD COLUMN \"domegis_id\" SERIAL PRIMARY KEY;"
-         + "GRANT SELECT ON \""+layerId+"\" TO domegis_readonly;";
-
-         sequelize.query(query).then(function(result){
-           generateDatafiles(hook, hook.data, handleSyncFinishEvent);
-           resolve();
-         }).catch(function(err){
-           handleSyncFinishEvent(err);
-           reject(err);
-         });
-      } else resolve();
-    });
-  }],
+      });
+    }
+  ],
   update: [],
   patch: [],
   remove: []
@@ -157,32 +144,7 @@ exports.after = {
 * General Layer functions
 */
 
-function handleSyncFinishEvent(err, hook, layer) {
-  var Layers = hook.app.service('layers');
-  var syncStatus = hook.data.sync || layer.sync || {};
-  var layerId = hook.data.id || layer.id;
 
-  if (err) {
-    log(layerId + ' sync error: ' + err.message);
-    syncStatus = _.extend(syncStatus, {
-      status: 'failed',
-      finishedAt: Date.now(),
-      message: err.message
-    });
-  } else {
-    log('success syncing layer ' + layerId);
-    syncStatus = _.extend(syncStatus, {
-      status: 'finished',
-      finishedAt: Date.now()
-    });
-  }
-
-  Layers.patch(layerId, {
-    sync: syncStatus
-  }).catch(function(err){
-    log(layerId + ' error saving sync status');
-  });
-}
 
 
 
@@ -267,101 +229,6 @@ function dropLayer(sequelize, layerId, doneResetLayer) {
     .then(function(results){
       doneResetLayer();
     }).catch(doneResetLayer);
-}
-
-/*
- * Derived Layer functions
- */
-
-function generateDerivedLayer(hook, doneGenerateDerivedLayer) {
-  var sequelize = hook.app.get('sequelize');
-  var sequelize_readonly = hook.app.get('sequelize_readonly');
-  var sql = hook.data.query;
-
-
-
-  // a SQL query must be passed
-  if (!hook.data.query)
-    return doneGenerateDerivedLayer(new errors.BadRequest('Missing SQL query.'));
-  // use read-only client to get non-destructive results
-  else
-    sequelize_readonly
-      .query(sql)
-      .then(function(queryResult) {
-
-        var records = queryResult[0];
-        var fields = queryResult[1].fields;
-
-        // check is results are valid
-        if (records.length == 0)
-          return doneGenerateDerivedLayer(new errors.BadRequest('Query returned no records.'));
-        else if (fields.length == 0)
-          return doneGenerateDerivedLayer(new errors.BadRequest('Query returned no fields.'));
-        else {
-
-          var geometryFields = _.filter(fields, function(field){
-            return (field.name == 'geometry');
-          });
-
-          if (geometryFields.length == 0)
-            return doneGenerateDerivedLayer(new errors.BadRequest('Missing `geometry` field.'));
-          else if (geometryFields.length != 1) {
-            return doneGenerateDerivedLayer(new errors.BadRequest('Multiple `geometry` fields.'));
-          } else {
-
-            // remove trailing semicolon
-            sql = sql.replace(';', '');
-
-            // remove domegis_id field or raise error if is passed
-            if (sql.indexOf('*')) {
-              var fieldsString = [];
-              _.each(fields, function(field){
-                if (field.name != 'domegis_id') fieldsString.push('"'+field.name+'"');
-              });
-              sql = sql.replace('*', fieldsString.join(', '));
-            } else if (sql.indexOf('domegis_id')) {
-              return doneGenerateDerivedLayer(new errors.BadRequest('Field name `domegis_id` is forbidden.'));
-            }
-
-            // create table with features
-            var createTableQuery = 'SELECT * INTO "'+hook.data.id+'" from ('+sql+') as derived';
-            sequelize
-              .query(createTableQuery)
-                .then(function(queryResult){
-
-                  // get table description
-                  sequelize.queryInterface
-                    .describeTable(hook.data.id)
-                    .then(function(tableDescription){
-
-                      hook.data.fields = [];
-
-                      // transform description to an array
-                      _.each(_.keys(tableDescription), function(key){
-                        if (key != 'geometry') {
-                          tableDescription[key]['name'] = key;
-                          tableDescription[key]['title'] = {
-                            "en": key,
-                            "es": key,
-                            "pt": key
-                          };
-                          hook.data.fields.push(tableDescription[key]);
-                        }
-                      });
-
-                      doneGenerateDerivedLayer();
-                    })
-                    .catch(function(err){
-                      return doneGenerateDerivedLayer(new errors.GeneralError('Error getting layer description.'));
-                    });
-                })               .catch(function(err){
-                  return doneGenerateDerivedLayer(new errors.GeneralError('Error creating derived layer.'));
-                })
-          }
-        }
-
-      })
-      .catch(doneGenerateDerivedLayer);
 }
 
 /*
