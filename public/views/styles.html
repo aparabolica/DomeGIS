@@ -116,34 +116,9 @@
         </tr>
       </tbody>
     </table>
-    <table class="choropleth_settings" ng-show="styles.type == 'choropleth' && styles.column">
-      <tbody>
-        <tr>
-          <td>Bucket size</td>
-          <td>
-            <select ng-model="styles.choropleth[styles.column.name].bucket_size" ng-options="size as size for size in [3,5,7] track by size"></select>
-          </td>
-        </tr>
-        <tr>
-          <td>Color ramp</td>
-          <td>
-            <span class="input-ctn">
-              <span class="input-lbl">To:</span>
-              <input class="colorpicker-input" colorpicker ng-model="styles.choropleth[styles.column.name].scale[1]" type="text" ng-style="{'background-color': styles.choropleth[styles.column.name].scale[1] || '#000000', 'color': getContrastYIQ(styles.choropleth[styles.column.name].scale[1] || '#000000')}" />
-            </span>
-            <span class="input-ctn">
-              <span class="input-lbl">From:</span>
-              <input class="colorpicker-input" colorpicker ng-model="styles.choropleth[styles.column.name].scale[0]" type="text" ng-style="{'background-color': styles.choropleth[styles.column.name].scale[0] || '#ffffff', 'color': getContrastYIQ(styles.choropleth[styles.column.name].scale[0] || '#ffffff')}" />
-            </span>
-            <!-- <select ng-model="styles.choropleth[column.name].color_ramp">
-            </select> -->
-          </td>
-        </tr>
-      </tbody>
-    </table>
     <table class="default_styles">
       <tbody>
-        <tr ng-show="isType('polygon') && styles.type == 'simple'">
+        <tr ng-show="isType('polygon')">
           <td>Polygon fill</td>
           <td>
             <input class="colorpicker-input" colorpicker ng-model="styles.polygon.fill.color" type="text" ng-style="{'background-color': styles.polygon.fill.color || '#fff', 'color': getContrastYIQ(styles.polygon.fill.color)}" />
@@ -206,6 +181,31 @@
           <td>Composite operation</td>
           <td>
             <select ng-options="key as value for (key, value) in composites" ng-model="styles.linestring.composite"></select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <table class="choropleth_settings" ng-show="styles.type == 'choropleth' && styles.column">
+      <tbody>
+        <tr>
+          <td>Bucket size</td>
+          <td>
+            <select ng-model="styles.choropleth[styles.column.name].bucket_size" ng-options="size as size for size in [3,5,7] track by size"></select>
+          </td>
+        </tr>
+        <tr>
+          <td>Color ramp</td>
+          <td>
+            <span class="input-ctn">
+              <span class="input-lbl">To:</span>
+              <input class="colorpicker-input" colorpicker ng-model="styles.choropleth[styles.column.name].scale[1]" type="text" ng-style="{'background-color': styles.choropleth[styles.column.name].scale[1] || '#000000', 'color': getContrastYIQ(styles.choropleth[styles.column.name].scale[1] || '#000000')}" />
+            </span>
+            <span class="input-ctn">
+              <span class="input-lbl">From:</span>
+              <input class="colorpicker-input" colorpicker ng-model="styles.choropleth[styles.column.name].scale[0]" type="text" ng-style="{'background-color': styles.choropleth[styles.column.name].scale[0] || '#ffffff', 'color': getContrastYIQ(styles.choropleth[styles.column.name].scale[0] || '#ffffff')}" />
+            </span>
+            <!-- <select ng-model="styles.choropleth[column.name].color_ramp">
+            </select> -->
           </td>
         </tr>
       </tbody>

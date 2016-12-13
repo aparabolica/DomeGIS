@@ -34,7 +34,7 @@ angular.module('domegis')
           return layer.sync.status == 'finished' || layer.sync.status == 'imported' || layer.sync.status == 'ok';
         };
         scope.hasError = function(layer) {
-          return layer.sync.status == 'failed';
+          return layer.sync.status == 'failed' || layer.sync.status == 'error';
         };
 
         scope.hasRole = function(role) {
