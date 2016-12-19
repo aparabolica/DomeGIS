@@ -48,7 +48,7 @@ describe('raster upload service', function () {
   it('should post a file', function(doneIt) {
     this.timeout(20000);
 
-    // create a listener for analyses changes
+    // create a listener of changes
     var checkResults = function(layer){
 
       var sync = layer.sync;
@@ -142,7 +142,7 @@ describe('raster upload service', function () {
   it('repost of same file creates a another table', function(doneIt) {
     this.timeout(20000);
 
-    // create a listener for analyses changes
+    // create a listener of changes
     var checkResults = function(layer){
 
       var sync = layer.sync;

@@ -39,6 +39,6 @@ module.exports.init = function(hook) {
 
   // invalid or non-supported file
   } else {
-    throw new errors.BadRequest('Invalid file or non-supported format');
+    throw new errors.BadRequest('Unsupported file format');
   }
 }

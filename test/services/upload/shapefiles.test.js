@@ -47,7 +47,7 @@ describe('shapefile upload service', function () {
   it('should post a file', function(doneIt) {
     this.timeout(30000);
 
-    // create a listener for analyses changes
+    // create a listener for changes
     var checkResults = function(layer){
 
       var sync = layer.sync;
