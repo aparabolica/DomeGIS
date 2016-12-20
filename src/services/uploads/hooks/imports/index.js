@@ -4,6 +4,7 @@ var crypto = require('crypto');
 var errors = require('feathers-errors');
 var raster2pgsql = require('./raster');
 var zipfile = require('./zipfile');
+var kml = require('./kml');
 
 module.exports.init = function(hook) {
 
@@ -29,6 +30,12 @@ module.exports.init = function(hook) {
     // init raster import job
     return raster2pgsql(hook);
 
+  // kml layer
+  } else if (hook.params && hook.params.file && hook.params.file.type == 'application/vnd.google-earth.kml+xml') {
+
+    hook.result.layer.type = 'vector';
+
+    return kml(hook);
   // shapefile layer
   } else if (hook.params && hook.params.file && hook.params.file.type == 'application/zip') {
 

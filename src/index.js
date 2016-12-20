@@ -8,7 +8,7 @@ var server = app.listen(port);
 server.on('listening', function() {
 
   // catch unhandled global errors
-  process.on('unhandledRejection', (reason, p) => {
+  process.on('unhandledRejection', function(reason, p) {
     console.log("Unhandled Rejection at: Promise ", p, " reason: ", reason);
   });
 
