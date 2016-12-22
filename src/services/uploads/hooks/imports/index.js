@@ -22,6 +22,8 @@ module.exports.init = function(hook) {
     }
   }
 
+  var ext = hook.params.file.name.substr(hook.params.file.name.lastIndexOf('.') + 1)
+
   // raster layer
   if (hook.params && hook.params.file && hook.params.file.type == 'image/tiff') {
 
@@ -31,7 +33,7 @@ module.exports.init = function(hook) {
     return raster2pgsql(hook);
 
   // kml layer
-  } else if (hook.params && hook.params.file && hook.params.file.type == 'application/vnd.google-earth.kml+xml') {
+} else if (hook.params && hook.params.file && ext == 'kml') {
 
     hook.result.layer.type = 'vector';
 

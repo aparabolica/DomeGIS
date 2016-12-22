@@ -22,15 +22,17 @@ module.exports = function(hook) {
 
   function kmlToPostgreSQL(){
     var cmd = 'ogr2ogr --config PG_USE_COPY YES -f "PostgreSQL" "PG:user=domegis dbname=domegis " "' + filePath + '" -t_srs "EPSG:3857" -lco GEOMETRY_NAME=geometry -lco FID=gid -lco PRECISION=no -nlt PROMOTE_TO_MULTI -nln ' + layer.id + ' -overwrite';
-    console.log('cmd');
-    console.log(cmd);
     return promiseFromChildProcess(exec(cmd));
   }
 
   function updateLayerMeta(){
     return new Promise(function (resolve, reject){
        var sequelize = hook.app.get('sequelize');
-       var query = "UPDATE layers SET extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layer.id +"\"), \"featureCount\" = (select count(*) from \""+layer.id+"\") WHERE (layers.id =  '"+ layer.id +"');"
+       var geometryType = 'SELECT array_to_string(array_agg(distinct GeometryType(geometry)), \',\') FROM "' + layer.id + '"';
+       var query = "UPDATE layers SET "
+       + "extents = (SELECT ST_Extent(ST_Transform(geometry,4326)) FROM \""+ layer.id +"\"), "
+       + '"geometryType" = (' + geometryType + '),'
+       + "\"featureCount\" = (select count(*) from \""+layer.id+"\") WHERE (layers.id =  '"+ layer.id +"');"
        + "ALTER TABLE \""+layer.id+"\" RENAME COLUMN \"gid\" to \"domegis_id\";"
        + "GRANT SELECT ON \""+layer.id+"\" TO domegis_readonly;";
        sequelize.query(query).then(function(result){
