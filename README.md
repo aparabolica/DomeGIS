@@ -8,6 +8,10 @@ Clone this repository locally, install Vagrant and run `vagrant up` inside the r
 
 If you have a Ubuntu environment, its possible to install the dependencies by running `./Vagrant-setup/bootstrap.sh` via terminal, but it can cause conflicts with other installed packages.
 
+## Dependencies
+
+DomeGIS uses [Carto's fork of node-mapnik](https://github.com/mapnik/node-mapnik) ([lastest releases](https://github.com/CartoDB/node-mapnik/releases)), a requirement of Windshaft module. 
+
 ## Migrate the database
 
 We use Sequelize to handle models and migrations in PostgreSQL. To migrate a database, run:
