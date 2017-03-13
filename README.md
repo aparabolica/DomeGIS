@@ -34,6 +34,10 @@ For production environments, set `NODE_ENV=production`. If you want to override 
 - `PORT`: server port (default: `3030`);
 - `SUBDOMAINS`: available subdomains, useful for tile requests (default: `a,b,c`).
 
+When running locally, configure the file `/etc/hosts` to redirect {a,b,c}. subdomains requests, for example:
+
+    127.0.0.1 localhost a.localhost b.localhost c.localhost
+
 ## Running tests
 
 We use Mocha as test suite, use the following command to run all tests:
