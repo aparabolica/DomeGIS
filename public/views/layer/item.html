@@ -8,7 +8,7 @@
   <p class="last-sync" ng-show="layer.sync.finishedAt">Last sync {{layer.sync.finishedAt | formatDate}}</p>
   <p class="actions" ng-show="hasRole('editor')">
     <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="isOk(layer)">Edit layer</a>
-    <a class="button" ng-click="resync()" ng-show="(isOk(layer) || hasError(layer)) && !layer.source == 'uploaded'">
+    <a class="button" ng-click="resync()" ng-show="(isOk(layer) || hasError(layer)) && layer.source != 'uploaded'">
       <span class="fa fa-refresh"></span>
       Resync layer
     </a>
