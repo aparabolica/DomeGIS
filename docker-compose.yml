@@ -1,0 +1,8 @@
+version: '2'
+services:
+  postgis:
+    build: ./docker/postgis
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=domegis
