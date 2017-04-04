@@ -57,7 +57,7 @@
             <label for="raster_colorizer_default_color">Default color</label>
           </td>
           <td>
-            <input id="raster_colorizer_default_color" class="colorpicker-input colorpicker-rgba" colorpicker="rgba" ng-model="styles.raster.colorizerColor" type="text" ng-style="{'background-color': styles.raster.colorizerColor || '#fff', 'color': getContrastYIQ(styles.raster.colorizerColor, true)}" />
+            <input id="raster_colorizer_default_color" class="colorpicker-input colorpicker-rgba" colorpicker="rgba" ng-model="styles.raster.colorizerColor" type="text" ng-style="{'background-color': styles.raster.colorizerColor || '#fff', 'color': getContrastYIQ(styles.raster.colorizerColor || '', true)}" />
           </td>
         </tr>
         <tr>

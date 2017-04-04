@@ -110,24 +110,26 @@ angular.module('domegis')
           ];
 
           $scope.getContrastYIQ = function(hexcolor, rgba){
-            if(rgba == true) {
-              hexcolor = hexcolor.replace('rgba(', '').replace(')', '');
-              var rgba = hexcolor.split(',');
-              var r = parseInt(rgba[0].trim());
-              var g = parseInt(rgba[1].trim());
-              var b = parseInt(rgba[2].trim());
-              var alpha = parseFloat(rgba[3].trim());
-              if(alpha <= .5) {
-                return 'black';
+            if(hexcolor) {
+              if(rgba == true) {
+                hexcolor = hexcolor.replace('rgba(', '').replace(')', '');
+                var rgba = hexcolor.split(',');
+                var r = parseInt(rgba[0].trim());
+                var g = parseInt(rgba[1].trim());
+                var b = parseInt(rgba[2].trim());
+                var alpha = parseFloat(rgba[3].trim());
+                if(alpha <= .5) {
+                  return 'black';
+                }
+              } else {
+                hexcolor = hexcolor.replace('#', '');
+                var r = parseInt(hexcolor.substr(0,2),16);
+                var g = parseInt(hexcolor.substr(2,2),16);
+                var b = parseInt(hexcolor.substr(4,2),16);
               }
-            } else {
-              hexcolor = hexcolor.replace('#', '');
-              var r = parseInt(hexcolor.substr(0,2),16);
-              var g = parseInt(hexcolor.substr(2,2),16);
-              var b = parseInt(hexcolor.substr(4,2),16);
+              var yiq = ((r*299)+(g*587)+(b*114))/1000;
+              return (yiq >= 128) ? 'black' : 'white';
             }
-            var yiq = ((r*299)+(g*587)+(b*114))/1000;
-            return (yiq >= 128) ? 'black' : 'white';
           }
 
           $scope.isType = function(type) {

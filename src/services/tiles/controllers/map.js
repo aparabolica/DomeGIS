@@ -35,84 +35,98 @@ function MapController(app, mapStore, mapBackend, tileBackend, attributesBackend
   var viewService = app.service('views');
 
   // init views when server is restarted
-  viewService.find({}).then(function(views){
-    _.each(views.data, function(view){
+  viewService.find({ paginate: false }).then(function(views){
+    _.each(views, function(view){
       self.getLayerGroupId(view, function(err, layergroupIds){
         if (err) return console.log(err);
         view = _.extend(view, layergroupIds);
         view.save();
       })
     });
+  }).catch(function(err){
+    console.log('error while regenerating views', err);
   })
 }
 
 MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
   var self = this;
+  var layerService = self._app.service('layers');
 
-  var opts = self._app.get('windshaftOpts');
-
-  var dbParams = opts.dbParams;
-
-
-  var mapnikLayer = {
-    type: 'mapnik',
-    options: {}
-  }
-
-  if (view.type == 'vector') {
-
-    var defaultCartoCSS = "#style { polygon-fill: blue;  line-color: red; marker-width:8; marker-fill: red; }";
-
-    var fields = view.fields || [];
-
-    // clone fields property
-    var selectedFields = JSON.parse(JSON.stringify(fields));
-
-    // add field selected for category/cloropeth
-    if (view.style.column) {
-      selectedFields.push(view.style.column.name);
-      selectedFields = _.uniq(selectedFields);
-    }
-
-    // merge then as a string
-    var fieldsStr = '';
-    if (selectedFields.length > 0) {
-      fieldsStr = ',' + _.map(selectedFields, function(f){ return '"'+f+'"' }).join(',');
-    }
-
-    mapnikLayer.options = {
-      sql: 'select domegis_id, geometry '+ fieldsStr +' from "' + view.layerId + '"',
-      geom_column: "geometry",
-      cartocss_version: "2.3.0",
-      interactivity: view.fields,
-      cartocss: view.cartocss || defaultCartoCSS
-    }
-
-  // raster
-} else if (view.type == 'raster') {
-    mapnikLayer.options = {
-      sql: 'select * from "' + view.layerId + '"',
-      geom_column: "the_geom",
-      geom_type: "raster",
-      raster_band: view.style.raster.band,
-      cartocss: view.cartocss || "#style { raster-opacity: 1; }",
-      cartocss_version: "2.3.0"
-    }
-  } else return doneGetLayerGroupId({message: 'Layer type undefined'});
-
-  var mapConfig = MapConfig.create({
-    version: '1.2.0',
-    layers: [ mapnikLayer ]
-  });
-
-  self
-    .mapBackend
-    .createLayergroup(mapConfig, dbParams, new DummyMapConfigProvider(mapConfig, dbParams), function(err, res){
-      if (err) {
-        console.log(err);
-        doneGetLayerGroupId(err);
-      } else doneGetLayerGroupId(null, res.layergroupid);
+  // check for layer existence
+  layerService
+    .get(view.layerId)
+    .then(function(){
+      createLayergroupId(doneGetLayerGroupId);
+    })
+    .catch(function(){
+      doneGetLayerGroupId();
     });
+
+  function createLayergroupId(doneCreateLayerGroupId) {
+    var opts = self._app.get('windshaftOpts');
+
+    var dbParams = opts.dbParams;
+
+    var mapnikLayer = {
+      type: 'mapnik',
+      options: {}
+    }
+
+    if (view.type == 'vector') {
+
+      var defaultCartoCSS = "#style { polygon-fill: blue;  line-color: red; marker-width:8; marker-fill: red; }";
+
+      var fields = view.fields || [];
+
+      // clone fields property
+      var selectedFields = JSON.parse(JSON.stringify(fields));
+
+      // add field selected for category/cloropeth
+      if (view.style.column) {
+        selectedFields.push(view.style.column.name);
+        selectedFields = _.uniq(selectedFields);
+      }
+
+      // merge then as a string
+      var fieldsStr = '';
+      if (selectedFields.length > 0) {
+        fieldsStr = ',' + _.map(selectedFields, function(f){ return '"'+f+'"' }).join(',');
+      }
+
+      mapnikLayer.options = {
+        sql: 'select domegis_id, geometry '+ fieldsStr +' from "' + view.layerId + '"',
+        geom_column: "geometry",
+        cartocss_version: "2.3.0",
+        interactivity: view.fields,
+        cartocss: view.cartocss || defaultCartoCSS
+      }
+
+    // raster
+  } else if (view.type == 'raster') {
+      mapnikLayer.options = {
+        sql: 'select * from "' + view.layerId + '"',
+        geom_column: "the_geom",
+        geom_type: "raster",
+        raster_band: view.style.raster.band,
+        cartocss: view.cartocss || "#style { raster-opacity: 1; }",
+        cartocss_version: "2.3.0"
+      }
+    } else return doneCreateLayerGroupId({message: 'Layer type undefined'});
+
+    var mapConfig = MapConfig.create({
+      version: '1.2.0',
+      layers: [ mapnikLayer ]
+    });
+
+    self
+      .mapBackend
+      .createLayergroup(mapConfig, dbParams, new DummyMapConfigProvider(mapConfig, dbParams), function(err, res){
+        if (err) {
+          console.log(err);
+          doneCreateLayerGroupId(err);
+        } else doneCreateLayerGroupId(null, res.layergroupid);
+      });
+  }
 }
 
 // Gets a tile for a given token and set of tile ZXY coords. (OSM style)
