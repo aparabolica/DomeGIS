@@ -15,8 +15,8 @@
     },
     "local": {}
   },
-  "sequelize": "postgres://domegis:domegis@localhost:5432/domegis",
-  "sequelize_readonly": "postgres://domegis_readonly:domegis@localhost:5432/domegis",
+  "sequelize": "postgres://domegis:domegis@postgis:5432/domegis",
+  "sequelize_readonly": "postgres://domegis_readonly:domegis@postgis:5432/domegis",
   "windshaftOpts": {
     "baseUrl": "/tiles",
     "layergroup_ttl": 604800,

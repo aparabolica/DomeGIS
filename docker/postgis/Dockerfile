@@ -6,7 +6,6 @@ ENV CARTODB_POSTGRESQL_VERSION 0.18.5
 RUN apt-get update \
       && apt-get install -y --no-install-recommends \
           build-essential \
-          # software-properties-common \
           ca-certificates \
           git \
           postgresql-contrib-$POSTGRESQL_MAJOR \
@@ -26,7 +25,5 @@ RUN git clone https://github.com/CartoDB/cartodb-postgresql.git
 WORKDIR /cartodb-postgresql
 RUN make && make install
 
-
-COPY update-extensions.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-ENTRYPOINT ["/entrypoint.sh"]
+RUN mkdir -p /docker-entrypoint-initdb.d
+COPY setup-database.sh /docker-entrypoint-initdb.d/setup-database.sh

@@ -25,6 +25,7 @@
     "bcryptjs": "2.3.0",
     "bluebird": "3.4.6",
     "body-parser": "1.15.2",
+    "bower": "^1.8.0",
     "compression": "1.6.2",
     "connect-assets": "5.3.2",
     "cors": "2.7.1",

@@ -3,7 +3,7 @@
     "username": "domegis",
     "password": "domegis",
     "database": "domegis",
-    "host": "localhost",
+    "host": "postgis",
     "port": 5432,
     "dialect": "postgresql"
   },
@@ -11,7 +11,7 @@
     "username": "domegis",
     "password": "domegis",
     "database": "domegis",
-    "host": "localhost",
+    "host": "postgis",
     "port": 5432,
     "dialect": "postgresql"
   },
@@ -19,7 +19,7 @@
     "username": "domegis",
     "password": "domegis",
     "database": "domegis",
-    "host": "localhost",
+    "host": "postgis",
     "port": 5432,
     "dialect": "postgresql"
   }

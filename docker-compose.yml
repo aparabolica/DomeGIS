@@ -4,5 +4,25 @@ services:
     build: ./docker/postgis
     volumes:
       - ./data:/var/lib/postgresql/data
+    ports:
+      - 15432:5432
     environment:
       - POSTGRES_DB=domegis
+      - POSTGRES_USER=domegis
+      - POSTGRES_PASSWORD=domegis
+  redis:
+    image: redis:3.2
+  domegis:
+    build: .
+    # command: ./node_modules/.bin/nodemon src/
+    ports:
+      - 3030:3030
+    links:
+      - postgis
+      - redis
+    environment:
+      NODE_ENV: development
+    volumes:
+      - .:/home/node/domegis
+      - /home/node/domegis/node_modules
+      - /home/node/domegis/bower_components
