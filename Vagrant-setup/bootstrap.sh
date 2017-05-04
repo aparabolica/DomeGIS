@@ -151,7 +151,7 @@ cd /vagrant
 npm install
 
 # Install Sequelize and migrate DB
-npm install -g pg sequelize sequelize-cli
+npm install -g pg sequelize sequelize-cli@2.5.1
 sequelize db:migrate
 
 # Install Bower components
