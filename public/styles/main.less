@@ -450,6 +450,23 @@ table {
   }
 }
 
+.full-legend {
+  .leaflet-container {
+    .leaflet-bottom {
+      top: 0;
+      .leaflet-control {
+        margin-top: 10px;
+        margin-bottom: 0;
+      }
+    }
+    .map-legends {
+      background: #fff;
+      height: calc(~"100% - 83px");
+      max-height: none;
+    }
+  }
+}
+
 #masthead {
   background: #222 url(../img/water_bg.jpg) bottom center no-repeat;
   color: #fff;

@@ -400,7 +400,7 @@ angular.module('domegis')
       }
     })
     .state('singleMap', {
-      url: '/maps/:id/?loc',
+      url: '/maps/:id/?loc&full_legend',
       templateUrl: '/views/map/single.html',
       resolve: {
         MapData: [
