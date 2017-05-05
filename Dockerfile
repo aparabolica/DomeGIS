@@ -1,19 +1,37 @@
 FROM nodesource/trusty:0.10
 
+# Setup environment
 ENV DEBIAN_FRONTEND noninteractive
+ENV APP_USER=node
+ENV APP_USERGROUP=$APP_USER
+ENV HOME=/home/node
+
+# Add group and user for running the app
+RUN groupadd $APP_USERGROUP && \
+    useradd --create-home --home-dir $HOME -g $APP_USERGROUP $APP_USER
+
+# RUN useradd -Ums /bin/bash $APP_USER
 
 # Install base dependencies
-RUN apt-get update -y 																	&& \
-		apt-get install -y																		 \
- 			wget git zip build-essential
+RUN apt-get update -y && \
+		apt-get install -y --no-install-recommends \
+      build-essential \
+      git \
+      unzip \
+      zip \
+      wget
 
-# RUN	add-apt-repository ppa:ubuntugis/ppa -y  						&& \
-RUN	apt-get update -y 																	&& \
-		apt-get install -y  				 		 \
-			gdal-bin libmapnik2.2 libcairo2-dev libpango1.0-dev  \
-			libjpeg8-dev libgif-dev
+# Install GIS dependencies
+RUN	apt-get update -y --no-install-recommends && \
+		apt-get install -y \
+			gdal-bin \
+      libcairo2-dev \
+      libgif-dev \
+      libjpeg8-dev \
+      libpango1.0-dev \
+      libmapnik2.2
 
-# GOSU for stepping down from root
+# Install GOSU for stepping down from root
 ENV GOSU_VERSION 1.7
 RUN set -x \
 	&& wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$(dpkg --print-architecture)" \
@@ -25,25 +43,30 @@ RUN set -x \
 	&& chmod +x /usr/local/bin/gosu \
 	&& gosu nobody true
 
+# Install command line dependencies
+RUN npm install -g pg sequelize sequelize-cli@2.5.1
 
-# Setup env
-ENV APP_USER=node
-ENV HOME=/home/node
-ENV DATA=/data
+RUN npm install -g nodemon bower
 
-# Add app user
-RUN useradd -Ums /bin/bash $APP_USER
+RUN chown -R $APP_USER:$APP_USERGROUP $HOME/.npm
 
-# Copy config files and assign app directory permissions
+# Step down to app user
+USER $APP_USER
+
+# Install Node.js modules
+ADD package.json /tmp/package.json
+RUN cd /tmp && npm install
+RUN mkdir -p $HOME/domegis && cp -a /tmp/node_modules $HOME/domegis
+
+# Install Bower components
+ADD bower.json /tmp/bower.json
+RUN cd /tmp && bower install
+RUN mkdir -p $HOME/domegis && cp -a /tmp/bower_components $HOME/domegis
+
 WORKDIR $HOME/domegis
-COPY . $HOME/domegis/
+COPY . $HOME/domegis
 
-# Install global npm dependencies and app
-RUN npm install -g nodemon bower && \
-  chown -R $APP_USER:$APP_USER $HOME/domegis && \
-  gosu $APP_USER:$APP_USER npm install && \
-  gosu $APP_USER:$APP_USER bower install -F
-
+USER root
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

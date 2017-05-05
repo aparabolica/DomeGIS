@@ -21,13 +21,14 @@
     "baseUrl": "/tiles",
     "layergroup_ttl": 604800,
     "dbParams": {
+      "dbhost": "postgis",
       "dbuser": "domegis",
       "dbname": "domegis",
       "dbpassword": "domegis"
     },
     "redis": {
       "name": "windshaft:server",
-      "host": "127.0.0.1",
+      "host": "redis",
       "port": 6379,
       "idleTimeoutMillis": 1,
       "reapIntervalMillis": 1
@@ -35,7 +36,7 @@
     "grainstore": {
       "datasource": {
         "user": "domegis",
-        "host": "/var/run/postgresql",
+        "host": "postgis",
         "port": 5432,
         "geometry_field": "the_geom"
       }

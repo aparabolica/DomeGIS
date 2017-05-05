@@ -3,7 +3,7 @@ services:
   postgis:
     build: ./docker/postgis
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./data/postgis:/var/lib/postgresql/data
     ports:
       - 15432:5432
     environment:
@@ -14,10 +14,10 @@ services:
     image: redis:3.2
   domegis:
     build: .
-    # command: ./node_modules/.bin/nodemon src/
+    command: nodemon src/
     ports:
       - 3030:3030
-    links:
+    depends_on:
       - postgis
       - redis
     environment:

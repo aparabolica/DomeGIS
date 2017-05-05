@@ -152,6 +152,7 @@ var generateDatafiles = function(hook, layer, doneGenerateDatafiles) {
 
   var publicDir = hook.app.get('public');
   var dbParams = hook.app.get('windshaftOpts').dbParams;
+  var pgConnectionString = 'PG:"host='+dbParams.dbhost+' user='+dbParams.dbuser+' dbname='+dbParams.dbname+' password='+dbParams.dbpassword+'"';
   var layerId = layer.id;
 
   log('will generate datafile for ' + layerId);
@@ -200,12 +201,12 @@ var generateDatafiles = function(hook, layer, doneGenerateDatafiles) {
   var cmds = [
     'mkdir -p '+publicDir+'/downloads',
     'mkdir -p /tmp/domegis/shapefiles',
-    'ogr2ogr -overwrite -f "ESRI Shapefile" /tmp/domegis/shapefiles/' + layerId + ' PG:"user=domegis dbname=domegis" ' + layerId,
+    'ogr2ogr -overwrite -f "ESRI Shapefile" /tmp/domegis/shapefiles/' + layerId + ' ' + pgConnectionString + ' ' + layerId,
     'echo \''+ JSON.stringify(shpDatapackage, null, '\t') +'\' > /tmp/domegis/shapefiles/' + layerId + '/datapackage.json',
     'zip -ju '+publicDir+'/downloads/'+layerId+'.shp.zip /tmp/domegis/shapefiles/' + layerId + '/*',
     'rm -rf /tmp/domegis/shapefiles/'+layerId,
     'mkdir -p /tmp/domegis/csvs/' + layerId,
-    'ogr2ogr -overwrite -f "CSV" /tmp/domegis/csvs/'+layerId+'/'+layerId+'.csv PG:"user=domegis dbname=domegis" ' + layerId,
+    'ogr2ogr -overwrite -f "CSV" /tmp/domegis/csvs/'+layerId+'/'+layerId+'.csv ' + pgConnectionString + ' ' + layerId,
     'echo \''+ JSON.stringify(csvDatapackage, null, '\t') +'\' > /tmp/domegis/csvs/' + layerId + '/datapackage.json',
     'zip -ju '+publicDir+'/downloads/'+layerId+'.csv.zip /tmp/domegis/csvs/'+layerId+'/*',
     'rm -rf /tmp/domegis/csvs/'+layerId
