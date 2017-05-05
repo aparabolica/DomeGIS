@@ -280,7 +280,7 @@ angular.module('domegis')
       }
     })
     .state('generateMap', {
-      url: '/map/?views&feature&base&scroll&loc&lang',
+      url: '/map/?views&feature&base&scroll&loc&lang&full_legend',
       templateUrl: '/views/map/single.html',
       controller: [
         '$scope',
