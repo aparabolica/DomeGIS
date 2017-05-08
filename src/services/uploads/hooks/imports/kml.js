@@ -18,10 +18,12 @@ module.exports = function(hook) {
   var layer = _.clone(hook.result.layer);
   var Layers = hook.app.service('layers');
   var fields = {};
-
+  var dbParams = hook.app.get('windshaftOpts').dbParams;
+  var pgConnectionString = 'PG:"host='+dbParams.dbhost+' user='+dbParams.dbuser+' dbname='+dbParams.dbname+' password='+dbParams.dbpassword+'"';
 
   function kmlToPostgreSQL(){
-    var cmd = 'ogr2ogr --config PG_USE_COPY YES -f "PostgreSQL" "PG:user=domegis dbname=domegis " "' + filePath + '" -t_srs "EPSG:3857" -lco GEOMETRY_NAME=geometry -lco FID=gid -lco PRECISION=no -nlt PROMOTE_TO_MULTI -nln ' + layer.id + ' -overwrite';
+    var cmd = 'ogr2ogr --config PG_USE_COPY YES -f "PostgreSQL" ' + pgConnectionString + ' "' + filePath + '" -t_srs "EPSG:3857" -lco GEOMETRY_NAME=geometry -lco FID=gid -lco PRECISION=no -nlt PROMOTE_TO_MULTI -nln ' + layer.id + ' -overwrite';
+
     return promiseFromChildProcess(exec(cmd));
   }
 
