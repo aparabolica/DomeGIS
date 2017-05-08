@@ -29,7 +29,9 @@ RUN	apt-get update -y --no-install-recommends && \
       libgif-dev \
       libjpeg8-dev \
       libpango1.0-dev \
-      libmapnik2.2
+      libmapnik2.2 \
+      postgresql \
+      postgis
 
 # Install GOSU for stepping down from root
 ENV GOSU_VERSION 1.7

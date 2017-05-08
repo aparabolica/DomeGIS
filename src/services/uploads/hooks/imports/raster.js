@@ -4,6 +4,7 @@
 var _ = require('underscore');
 var async = require('async');
 var gdal = require('gdal');
+var errors = require('feathers-errors');
 
 var Promise = require('bluebird');
 var exec = require('child_process').exec;
@@ -12,7 +13,12 @@ var exec = require('child_process').exec;
 function promiseFromChildProcess(child) {
     return new Promise(function (resolve, reject) {
         child.addListener("error", reject);
-        child.addListener("exit", resolve);
+        child.addListener("exit", function(code, signal){
+          if (code > 0)
+            reject(new errors.GeneralError('Error executing child process.'))
+          else
+            resolve();
+        });
     });
 }
 
@@ -37,6 +43,9 @@ module.exports = function(hook) {
   var overviewsList;
   var layer = _.clone(hook.result.layer);
   var Layers = hook.app.service('layers');
+
+  var dbParams = hook.app.get('windshaftOpts').dbParams;
+  var pgConnectionString = 'PG:"host='+dbParams.dbhost+' user='+dbParams.dbuser+' dbname='+dbParams.dbname+' password='+dbParams.dbpassword+'"';
 
   downsample()
     .then(reproject)
@@ -132,7 +141,7 @@ module.exports = function(hook) {
   }
 
   function importAlignedRaster(){
-    var cmd = 'raster2pgsql -s ' + PROJECTION + ' -t ' + BLOCKSIZE + ' -C -x -Y -I -f ' + RASTER_COLUMN_NAME + ' -l ' + overviewsList.join(',') + ' ' + alignedFilePath + ' public.' + layer.id + ' | psql -d domegis -U domegis';
+    var cmd = 'raster2pgsql -s ' + PROJECTION + ' -t ' + BLOCKSIZE + ' -C -x -Y -I -f ' + RASTER_COLUMN_NAME + ' -l ' + overviewsList.join(',') + ' ' + alignedFilePath + ' public.' + layer.id + ' | PGPASSWORD=' + dbParams.dbpassword + ' psql -d ' + dbParams.dbname + ' -h ' + dbParams.dbhost + ' -U ' + dbParams.dbuser;
     return promiseFromChildProcess(exec(cmd));
   }
 
@@ -166,7 +175,7 @@ module.exports = function(hook) {
   }
 
   function importOriginalRaster(){
-    var cmd = 'export PGCLIENTENCODING=UTF8; raster2pgsql -t ' + BLOCKSIZE + ' -C -I -x -Y -f ' + RASTER_COLUMN_NAME + ' ' + filePath + ' public.' + layer.id+ ' | psql -d domegis -U domegis';
+    var cmd = 'export PGCLIENTENCODING=UTF8; raster2pgsql -t ' + BLOCKSIZE + ' -C -I -x -Y -f ' + RASTER_COLUMN_NAME + ' ' + filePath + ' public.' + layer.id+ ' | PGPASSWORD=' + dbParams.dbpassword + ' psql -d ' + dbParams.dbname + ' -h ' + dbParams.dbhost + ' -U ' + dbParams.dbuser;
     return promiseFromChildProcess(exec(cmd));
   }
 
