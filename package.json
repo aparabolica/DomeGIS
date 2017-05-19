@@ -1,18 +1,29 @@
 {
   "name": "DomeGIS",
-  "description": "Publishing platform for Arcgis Online maps",
+  "description": "Map publishing platform for the web",
   "version": "0.1.0",
-  "homepage": "",
+  "homepage": "http://domegis.aparabolica.com.br",
   "main": "src/",
   "keywords": [
-    "feathers"
+    "maps",
+    "nodejs",
+    "opengeo",
+    "Carto",
+    "ArcGIS",
+    "PostGIS"
   ],
   "license": "MIT",
-  "repository": {},
-  "author": {},
-  "contributors": [],
+  "repository": "https://github.com/aparabolica/DomeGIS",
+  "maintainers": [{
+      "name": "Vitor George",
+      "email": "vitor.george@aparabolica.com.br"
+    }, {
+      "name": "Miguel Peixe",
+      "email": "miguel.peixe@aparabolica.com.br"
+    }
+  ],
   "engines": {
-    "node": ">= 0.12.0"
+    "node": ">= 6.9.0"
   },
   "scripts": {
     "start": "node src/",
@@ -47,14 +58,14 @@
     "formidable": "1.0.17",
     "gdal": "0.9.3",
     "mailgun-js": "0.7.12",
-    "mapnik": "https://s3.amazonaws.com/cartodb-node-binary/mapnik/v1.4.15-cdb10/1.4.15-cdb10.tgz",
+    "mapnik": "3.6.0",
     "moment": "2.17.0",
     "moment-timezone": "0.5.5",
     "ogr2ogr": "0.5.1",
     "passport": "0.3.2",
     "pg": "4.5.6",
     "pg-hstore": "2.3.2",
-    "redis-mpool": "0.4.0",
+    "redis-mpool": "0.4.1",
     "request": "2.72.0",
     "request-ip": "1.2.2",
     "sequelize": "3.24.8",
@@ -62,7 +73,7 @@
     "step": "0.0.6",
     "underscore": "1.8.3",
     "validator": "5.5.0",
-    "windshaft": "2.6.3"
+    "windshaft": "3.1.2"
   },
   "devDependencies": {
     "chai": "3.5.0",

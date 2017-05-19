@@ -2,3 +2,4 @@
 .vagrant
 data
 uploads
+node_modules
