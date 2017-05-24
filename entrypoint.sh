@@ -10,6 +10,6 @@ done
 
 # allow the container to be started with `--user`
 if [ "$1" = 'node' ] || [ "$1" = 'nodemon' ]; then
-	exec DEBUG=grainstore:* gosu $APP_USER:$APP_USER "$@"
+	exec gosu $APP_USER:$APP_USER "$@"
 fi
 exec "$@"
