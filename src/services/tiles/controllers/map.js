@@ -96,7 +96,7 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
       mapnikLayer.options = {
         sql: 'select domegis_id, geometry '+ fieldsStr +' from "' + view.layerId + '"',
         geom_column: "geometry",
-        cartocss_version: "2.3.0",
+        cartocss_version: "3.0.13",
         interactivity: view.fields,
         cartocss: view.cartocss || defaultCartoCSS
       }
@@ -109,14 +109,23 @@ MapController.prototype.getLayerGroupId = function(view, doneGetLayerGroupId) {
         geom_type: "raster",
         raster_band: view.style.raster.band,
         cartocss: view.cartocss || "#style { raster-opacity: 1; }",
-        cartocss_version: "2.3.0"
+        cartocss_version: "3.0.13"
       }
     } else return doneCreateLayerGroupId({message: 'Layer type undefined'});
 
-    var mapConfig = MapConfig.create({
-      version: '1.2.0',
-      layers: [ mapnikLayer ]
-    });
+
+    try {
+      var mapConfig = MapConfig.create({
+        version: '1.2.0',
+        layers: [ mapnikLayer ]
+      });
+
+    } catch (e) {
+        console.log('e');
+        console.log(e);
+    } finally {
+
+    }
 
     self
       .mapBackend
