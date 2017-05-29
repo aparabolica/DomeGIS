@@ -1,15 +1,13 @@
 {
   "name": "DomeGIS",
   "description": "Map publishing platform for the web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "http://domegis.aparabolica.com.br",
   "main": "src/",
   "keywords": [
-    "maps",
-    "nodejs",
-    "opengeo",
-    "Carto",
-    "ArcGIS",
+    "Maps",
+    "Mapnik",
+    "ArcGIS Online",
     "PostGIS"
   ],
   "license": "MIT",
