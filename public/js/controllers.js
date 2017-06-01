@@ -67,7 +67,6 @@ angular.module('domegis')
 
     $scope.$on('$stateChangeStart', function(ev, toState, toParams) {
       $scope.bodyClass = [];
-      console.log(toParams);
       if(toState.name == 'generateMap' || toState.name == 'singleMap') {
         $scope.bodyClass.push('map');
       }
@@ -819,7 +818,6 @@ angular.module('domegis')
         query: $scope.sql
       }).then(function(data) {
         Message.add('Layer created, performing query.');
-        console.log(data);
         // $state.go('editView', {layerId: data.id});
       }, function(err) {
         Message.add(err.message);

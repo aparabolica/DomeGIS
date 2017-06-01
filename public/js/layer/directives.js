@@ -55,13 +55,11 @@ angular.module('domegis')
         });
         scope.$on('server.layers.updated', function(ev, data) {
           if(scope.layer.id == data.id) {
-            console.log('updated', data.id, data.sync ? data.sync.status : 'sync property not found');
             scope.layer = data;
           }
         });
         scope.$on('server.layers.patched', function(ev, data) {
           if(scope.layer.id == data.id) {
-            console.log('patched', data.id, data.sync ? data.sync.status : 'sync property not found');
             scope.layer = data;
           }
         });
@@ -84,9 +82,8 @@ angular.module('domegis')
             Server.patch(layerService, scope.layer.id, {
               resync: true
             }).then(function() {
-              console.log('patched', arguments);
             }, function() {
-              console.log('path err', arguments);
+              console.log('patch err', arguments);
             });
           }
         };
