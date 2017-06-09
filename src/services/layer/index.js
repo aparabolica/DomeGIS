@@ -184,6 +184,7 @@ module.exports = function(){
               })
             })
             doneEach();
+            return null;
         }).catch(function(err){
           doneEach(err);
         });

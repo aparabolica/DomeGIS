@@ -524,9 +524,12 @@ function syncArcGisLayerFeatures(hook, doneSyncArcGisLayerFeatures) {
               Features.create(esriFeature)
                 .then(function(){
                   doneEach();
+                  return null;
                 }).catch(function(err){
                   handleSyncFinishEvent(err, hook)
                 });
+
+              return null;
             }, function(err){
               if (err) return handleSyncFinishEvent(err, hook);
 
@@ -539,9 +542,13 @@ function syncArcGisLayerFeatures(hook, doneSyncArcGisLayerFeatures) {
                 handleSyncFinishEvent(err, hook)
               });
             });
+
+            return null;
           }).catch(function(err){
             handleSyncFinishEvent(err, hook)
           });
+
+          return null;
         }).catch(function(err){
           handleSyncFinishEvent(err, hook)
         });
