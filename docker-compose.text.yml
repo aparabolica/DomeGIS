@@ -1,0 +1,24 @@
+version: '2'
+services:
+  test:
+    build: .
+    command: npm test
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - .:/home/node/domegis
+      - /home/node/domegis/node_modules
+      - /home/node/domegis/bower_components
+  postgres:
+    build: ./docker/postgres
+    volumes:
+      - ./data/postgres_test:/var/lib/postgresql/data
+    ports:
+      - 15432:5432
+    environment:
+      - POSTGRES_DB=domegis
+      - POSTGRES_USER=domegis
+      - POSTGRES_PASSWORD=domegis
+  redis:
+    image: redis:3.2

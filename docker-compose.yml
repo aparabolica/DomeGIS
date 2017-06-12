@@ -1,9 +1,9 @@
 version: '2'
 services:
-  postgis:
-    build: ./docker/postgis
+  postgres:
+    build: ./docker/postgres
     volumes:
-      - ./data/postgis:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql/data
     ports:
       - 15432:5432
     environment:
@@ -18,7 +18,7 @@ services:
     ports:
       - 3030:3030
     depends_on:
-      - postgis
+      - postgres
       - redis
     environment:
       NODE_ENV: development

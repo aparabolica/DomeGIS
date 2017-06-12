@@ -15,13 +15,13 @@
     },
     "local": {}
   },
-  "sequelize": "postgres://domegis:domegis@postgis:5432/domegis",
-  "sequelize_readonly": "postgres://domegis_readonly:domegis@postgis:5432/domegis",
+  "sequelize": "postgres://domegis:domegis@postgres:5432/domegis",
+  "sequelize_readonly": "postgres://domegis_readonly:domegis@postgres:5432/domegis",
   "windshaftOpts": {
     "baseUrl": "/tiles",
     "layergroup_ttl": 604800,
     "dbParams": {
-      "dbhost": "postgis",
+      "dbhost": "postgres",
       "dbuser": "domegis",
       "dbname": "domegis",
       "dbpassword": "domegis"
@@ -36,7 +36,7 @@
     "grainstore": {
       "datasource": {
         "user": "domegis",
-        "host": "postgis",
+        "host": "postgres",
         "port": 5432,
         "geometry_field": "the_geom"
       }
