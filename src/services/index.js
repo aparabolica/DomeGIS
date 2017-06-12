@@ -22,6 +22,7 @@ module.exports = function() {
   app.configure(require('./user'));
   app.configure(require('./uploads'));
   app.configure(require('./layer'));
+  app.configure(require('./layer-groups'));
   app.configure(require('./content'));
   app.configure(require('./preview'));
   app.configure(require('./view'));

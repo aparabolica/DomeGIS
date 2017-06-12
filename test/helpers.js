@@ -17,7 +17,7 @@ before(function(doneBefore){
 
       function login() {
 
-        // login as admin
+        // login as admin and set global token
         chai.request(app)
             .post('/auth/local')
             .set('Accept', 'application/json')
@@ -27,6 +27,7 @@ before(function(doneBefore){
             })
             .end(function (err, res) {
               if ((!err) && (res.body.token)) {
+                global.token = 'Bearer ' + res.body.token;
                 doneBefore();
               }
 
