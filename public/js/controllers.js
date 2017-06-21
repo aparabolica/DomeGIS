@@ -256,6 +256,29 @@ angular.module('domegis')
   }
 ])
 
+.controller('LibraryCtrl', [
+  '$scope',
+  'Layers',
+  'Server',
+  'esriService',
+  'MessageService',
+  function($scope, Layers, Server, esriService, Message) {
+
+    var layerService = Server.service('layers');
+
+    $scope.layers = Layers.data;
+
+    $scope.toggleLayers = function(item, isEditor) {
+      if(item.$viewLayers) {
+        item.$viewLayers = false;
+      } else {
+        item.$viewLayers = true;
+      }
+    }
+
+  }
+])
+
 .controller('QueryCtrl', [
   '$scope',
   'Content',

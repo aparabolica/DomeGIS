@@ -94,6 +94,23 @@ angular.module('domegis')
         ]
       }
     })
+    .state('library', {
+      url: '/library/',
+      controller: 'LibraryCtrl',
+      templateUrl: '/views/library/index.html',
+      resolve: {
+        Layers: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('layers'), {
+              query: {
+                $limit: 100
+              }
+            });
+          }
+        ]
+      }
+    })
     .state('login', {
       url: '/login/',
       templateUrl: '/views/login.html'
