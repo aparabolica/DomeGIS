@@ -274,8 +274,36 @@ angular.module('domegis')
       } else {
         item.$viewLayers = true;
       }
-    }
+    };
 
+    $scope.$on('server.layers.created', function(ev, data) {
+      $scope.layers.push(data);
+    });
+
+    $scope.$on('server.layers.removed', function(ev, data) {
+      $scope.layers = _.filter($scope.layers, function(item) {
+        return item.id !== data.id;
+      });
+    });
+
+    $scope.removeLayer = function(layer) {
+      if(confirm('Are you sure?')) {
+        Server.remove(Server.service('layers'), layer.id).then(function() {
+          $scope.derived = _.filter($scope.derived, function(item) {
+            return item.id !== layer.id;
+          });
+        });
+      }
+    };
+
+  }
+])
+
+.controller('SingleLayerCtrl', [
+  '$scope',
+  'Layer',
+  function($scope, Layer) {
+    $scope.layer = Layer;
   }
 ])
 

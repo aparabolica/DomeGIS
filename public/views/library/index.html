@@ -37,7 +37,7 @@
           <tbody ng-repeat="item in filteredLayers = (layers | filter:search)" ng-class="{active: item.$viewLayers, synced: isSynced(item)}">
             <tr ng-click="toggleLayers(item, hasRole('editor'))" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
               <td></td>
-              <td class="main">{{item.name | translate}}</td>
+              <td class="main">{{item.name | translate}} <a ui-sref="singleLayer({id: item.id})">Ver</a></td>
               <td>
                 {{item.createdAt | formatDate}}
                 <span class="modified">Updated: {{item.updatedAt | formatDate}}</span>

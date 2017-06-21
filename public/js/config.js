@@ -111,6 +111,25 @@ angular.module('domegis')
         ]
       }
     })
+    .state('singleLayer', {
+      url: '/library/:id',
+      controller: 'SingleLayerCtrl',
+      templateUrl: '/views/layer/single.html',
+      resolve: {
+        Layer: [
+          '$stateParams',
+          'Server',
+          function($stateParams, Server) {
+            var id = $stateParams.id;
+            if(id) {
+              return Server.get(Server.service('layers'), id);
+            } else {
+              return false;
+            }
+          }
+        ],
+      }
+    })
     .state('login', {
       url: '/login/',
       templateUrl: '/views/login.html'

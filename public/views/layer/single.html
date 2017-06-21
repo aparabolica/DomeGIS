@@ -1,0 +1,17 @@
+<header id="inner-header" class="clearfix">
+  <div class="container">
+    <div class="twelve columns">
+      <h2>{{layer.name}}</h2>
+    </div>
+  </div>
+</header>
+<section id="single-layer-content" class="clearfix">
+  <div class="container">
+    <div class="twelve columns">
+      <p class="date">
+        {{layer.createdAt | formatDate}}
+        <span class="modified">Updated: {{layer.updatedAt | formatDate}}</span>
+      </p>
+    </div>
+  </div>
+</section>
