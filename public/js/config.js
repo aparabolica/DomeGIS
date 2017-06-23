@@ -128,6 +128,18 @@ angular.module('domegis')
             }
           }
         ],
+        Views: [
+          'Layer',
+          'Server',
+          function(Layer, Server) {
+            return Server.find(Server.service('views'), {
+              query: {
+                layerId: Layer.id,
+                $limit: 100
+              }
+            });
+          }
+        ]
       }
     })
     .state('login', {
