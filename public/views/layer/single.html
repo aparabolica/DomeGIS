@@ -7,55 +7,76 @@
 </header>
 <section id="single-layer-content" class="clearfix">
   <div class="container">
-    <div class="twelve columns">
-      <p class="item-id"><strong>ID</strong>: {{layer.id}}</p>
-      <p class="date">
-        {{layer.createdAt | formatDate}}
-        <span class="modified">Updated: {{layer.updatedAt | formatDate}}</span>
-      </p>
-      <table class="layers-table results">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Geometry type</th>
-            <th>Feature count</th>
-            <th>Fields</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="status">
-              <p class="status-icon" ng-class="{ok: isOk(layer), err: hasError(layer)}">
-                <span class="fa fa-refresh fa-spin" ng-hide="isOk(layer) || hasError(layer)"></span>
-                <span class="fa fa-check-circle" ng-show="isOk(layer)"></span>
-                <span class="fa fa-times" ng-show="hasError(layer)"></span>
-                <span class="status-text" ng-hide="isOk(layer)">{{layer.sync.status}}</span>
-              </p>
-              <p class="last-sync" ng-show="layer.sync.finishedAt">Last sync {{layer.sync.finishedAt | formatDate}}</p>
-              <p class="actions" ng-show="hasRole('editor')">
-                <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="isOk(layer)">Edit layer</a>
-                <a class="button" ng-click="resync()" ng-show="(isOk(layer) || hasError(layer)) && layer.source != 'uploaded'">
-                  <span class="fa fa-refresh"></span>
-                  Resync layer
-                </a>
-              </p>
-              <p class="sync-err" ng-show="layer.sync.message">{{layer.sync.message}}</p>
-            </td>
-            <td>
-              <p class="tag">{{layer.geometryType || layer.type}}</p>
-            </td>
-            <td ng-hide="layer.type == 'raster'">
-              <p>{{layer.featureCount}} features</p>
-            </td>
-            <td ng-hide="layer.type == 'raster'">
-              <p>{{(layer.fields | parseLayerField | map:'name').join(', ')}}</p>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="views">
-        <div ng-repeat="view in views" view-item="view" class="view-item"></div>
-        <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="(hasRole('editor') || hasRole('author')) && (isOk(layer))">Create new view</a>
+    <div class="row">
+      <div class="nine columns">
+        <table class="layers-table results">
+          <tbody>
+            <tr>
+              <th>ID</th>
+              <td>
+                <p>{{layer.id}}</p>
+              </td>
+            </tr>
+            <tr>
+              <th>Source</th>
+              <td>
+                <p>{{layer.source}}</p>
+              </td>
+            </tr>
+            <tr>
+              <th>Geometry Type</th>
+              <td>
+                <p class="tag">{{layer.geometryType || layer.type}}</p>
+              </td>
+            </tr>
+            <tr ng-hide="layer.type == 'raster'">
+              <th>Feature count</th>
+              <td>
+                <p>{{layer.featureCount}} features</p>
+              </td>
+            </tr>
+            <tr ng-hide="layer.type == 'raster'">
+              <th>Fields</th>
+              <td>
+                <p>{{(layer.fields | parseLayerField | map:'name').join(', ')}}</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p>
+          <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="isOk(layer)">Edit layer</a>
+        </p>
+
+        <div class="views">
+          <div ng-repeat="view in views" view-item="view" class="view-item"></div>
+          <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="(hasRole('editor') || hasRole('author')) && (isOk(layer))">Create new view</a>
+        </div>
+      </div>
+      <div class="three columns">
+        <p class="date">
+          {{layer.createdAt | formatDate}}
+          <span class="modified">Updated: {{layer.updatedAt | formatDate}}</span>
+        </p>
+        <div class="layer-status-box">
+          <p class="status-icon" ng-class="{ok: isOk(layer), err: hasError(layer)}">
+            <span class="fa fa-refresh fa-spin" ng-hide="isOk(layer) || hasError(layer)"></span>
+            <span class="fa fa-check-circle" ng-show="isOk(layer)"></span>
+            <span class="fa fa-times" ng-show="hasError(layer)"></span>
+            <span class="status-text" ng-hide="isOk(layer)">{{layer.sync.status}}</span>
+          </p>
+          <p class="last-sync" ng-show="layer.sync.finishedAt">Last sync {{layer.sync.finishedAt | formatDate}}</p>
+          <p class="actions" ng-show="hasRole('editor')">
+            <a class="button" ng-click="resync()" ng-show="(isOk(layer) || hasError(layer)) && layer.source != 'uploaded'">
+              <span class="fa fa-refresh"></span>
+              Resync layer
+            </a>
+          </p>
+          <p class="sync-err" ng-show="layer.sync.message">{{layer.sync.message}}</p>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="twelve columns">
       </div>
     </div>
   </div>

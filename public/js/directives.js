@@ -157,7 +157,7 @@ angular.module('domegis')
 
         if(self == top) {
           map.on('move', _.debounce(function() {
-            $state.go($state.current.name, {loc: getLocStr()}, {notify: false, replace: true});
+            $state.go($state.current.name, {loc: getLocStr()}, {notify: false, location: "replace"});
           }, 400));
         }
 

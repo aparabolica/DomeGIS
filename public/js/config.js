@@ -258,6 +258,11 @@ angular.module('domegis')
     })
     .state('editView', {
       url: '/views/edit/?id&layerId&loc&lang',
+      params: {
+        loc: {
+          dynamic: true
+        }
+      },
       templateUrl: '/views/view/edit.html',
       controller: 'ViewEditCtrl',
       resolve: {
@@ -329,6 +334,11 @@ angular.module('domegis')
     })
     .state('generateMap', {
       url: '/map/?views&feature&base&scroll&loc&lang&full_legend',
+      params: {
+        loc: {
+          dynamic: true
+        }
+      },
       templateUrl: '/views/map/single.html',
       controller: [
         '$scope',
@@ -449,6 +459,11 @@ angular.module('domegis')
     })
     .state('singleMap', {
       url: '/maps/:id/?loc&full_legend',
+      params: {
+        loc: {
+          dynamic: true
+        }
+      },
       templateUrl: '/views/map/single.html',
       resolve: {
         MapData: [

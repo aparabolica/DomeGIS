@@ -30,14 +30,16 @@
             <tr>
               <td></td>
               <td>Name</td>
+              <td>Source</td>
               <td>Date</td>
               <td ng-show="hasRole('editor')">Remove layer</td>
             </tr>
           </thead>
           <tbody ng-repeat="item in filteredLayers = (layers | filter:search)" ng-class="{active: item.$viewLayers, synced: isSynced(item)}">
-            <tr ng-click="toggleLayers(item, hasRole('editor'))" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
+            <tr ng-click="viewLayer(item)" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
               <td></td>
-              <td class="main">{{item.name | translate}} <a ui-sref="singleLayer({id: item.id})">Ver</a></td>
+              <td class="main">{{item.name | translate}}</td>
+              <td>{{item.source}}</td>
               <td>
                 {{item.createdAt | formatDate}}
                 <span class="modified">Updated: {{item.updatedAt | formatDate}}</span>
@@ -46,11 +48,11 @@
                 <a href="javascript:void(0);" ng-click="$event.stopPropagation(); removeLayer(item)" class="fa fa-remove"></a>
               </td>
             </tr>
-            <tr>
+            <!-- <tr>
               <td class="sub" colspan="6">
                 <div derived-item="item"></div>
               </td>
-            </tr>
+            </tr> -->
           </tbody>
         </table>
       </div>

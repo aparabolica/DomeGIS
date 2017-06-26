@@ -258,11 +258,12 @@ angular.module('domegis')
 
 .controller('LibraryCtrl', [
   '$scope',
+  '$state',
   'Layers',
   'Server',
   'esriService',
   'MessageService',
-  function($scope, Layers, Server, esriService, Message) {
+  function($scope, $state, Layers, Server, esriService, Message) {
 
     var layerService = Server.service('layers');
 
@@ -276,6 +277,10 @@ angular.module('domegis')
       } else {
         item.$viewLayers = true;
       }
+    };
+
+    $scope.viewLayer = function(item) {
+      $state.go('singleLayer', {id: item.id});
     };
 
     $scope.$on('server.layers.created', function(ev, data) {
@@ -348,7 +353,7 @@ angular.module('domegis')
         return item.id !== data.id;
       });
     });
-    
+
     $scope.resync = function() {
       var doResync = true;
 
