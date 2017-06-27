@@ -92,6 +92,12 @@ RUN apt-get update \
       libpango1.0-dev \
     && rm -rf /var/lib/apt/lists/*;
 
+# Install PostGIS (needed to enable raster2pgsql at command line)
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends\
+    postgis \
+  && rm -rf /var/lib/apt/lists/*;
+
 # Copy config files and assign app directory permissions
 WORKDIR $HOME/domegis
 COPY . $HOME/domegis/
