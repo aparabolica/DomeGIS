@@ -26,18 +26,91 @@
         <div class="twelve columns">
           <h1><a ui-sref="home">DomeGIS</a></h1>
           <nav id="mastnav">
-            <a class="primary" ui-sref="upload" ng-show="hasRole('editor')">
-              <span class="fa fa-upload"></span>
-              Upload
-            </a>
-            <a ui-sref="map">Maps</a>
-            <a ui-sref="usersEdit({id: user.id})" ng-show="token">My account</a>
-            <a ui-sref="users" ng-show="hasRole('admin')">Users</a>
-            <a ui-sref="derived" ui-sref-opts="{inherit:false,reload:true}" ng-show="hasRole('editor')">Derived Layers</a>
-            <a ui-sref="analysis">Analysis</a>
-            <a href="javascript:void(0);" ng-click="getLogs()" ng-show="hasRole('admin')">Logs</a>
-            <a ui-sref="login" ng-hide="token">Login</a>
-            <a href="javascript:void(0);" ng-show="token" ng-click="logout()">Logout</a>
+            <ul>
+              <li ng-show="hasRole('editor')">
+                <a class="primary" ui-sref="upload">
+                  <span class="fa fa-upload"></span>
+                  Upload
+                </a>
+              </li>
+              <li>
+                <a ui-sref="library" ui-sref-opts="{inherit:false,reload:true}">
+                  <span class="fa fa-map-o"></span>
+                  Layers
+                </a>
+                <ul ng-show="hasRole('editor')">
+                  <li>
+                    <a ui-sref="library" ui-sref-opts="{inherit:false,reload:true}">Manage layers</a>
+                  </li>
+                  <li>
+                    <a ui-sref="arcgis" ui-sref-opts="{inherit:false,reload:true}">Import from ArcGIS</a>
+                  </li>
+                  <li>
+                    <a ui-sref="upload" ui-sref-opts="{inherit:false,reload:true}">Upload from disk</a>
+                  </li>
+                  <li>
+                    <a ui-sref="derived" ui-sref-opts="{inherit:false,reload:true}">Create derived layer</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a ui-sref="map">
+                  <span class="fa fa-globe"></span>
+                  Maps
+                </a>
+                <ul ng-show="hasRole('editor')">
+                  <li>
+                    <a ui-sref="map" ui-sref-opts="{inherit:false,reload:true}">Manage maps</a>
+                  </li>
+                  <li>
+                    <a ui-sref="editMap" ui-sref-opts="{inherit:false,reload:true}">New map</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a ui-sref="analysis">
+                  <span class="fa fa-pie-chart"></span>
+                  Analysis
+                </a>
+                <ul ng-show="hasRole('editor')">
+                  <li>
+                    <a ui-sref="analysis" ui-sref-opts="{inherit:false,reload:true}">Manage analyses</a>
+                  </li>
+                  <li>
+                    <a ui-sref="editAnalysis" ui-sref-opts="{inherit:false,reload:true}">New analysis</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="javascript:void(0);">
+                  <span class="fa fa-gear"></span>
+                  Settings
+                </a>
+                <ul>
+                  <li ng-show="hasRole('admin')">
+                    <a ui-sref="users">Users</a>
+                  </li>
+                  <li ng-show="hasRole('admin')">
+                    <a href="javascript:void(0);" ng-click="getLogs()" >Logs</a>
+                  </li>
+                  <li ng-show="token">
+                    <a ui-sref="usersEdit({id: user.id})">My account</a>
+                  </li>
+                </ul>
+              </li>
+              <li ng-hide="token">
+                <a ui-sref="login">
+                  <span class="fa fa-sign-in"></span>
+                  Login
+                </a>
+              </li>
+              <li ng-show="token">
+                <a href="javascript:void(0);" ng-click="logout()">
+                  <span class="fa fa-sign-out"></span>
+                  Logout
+                </a>
+              </li>
+            </ul>
           </nav>
         </div>
       </div>
