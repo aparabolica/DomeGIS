@@ -557,12 +557,6 @@ angular.module('domegis')
       });
     });
 
-    $scope.collectionSource = 'arcgis';
-
-    $scope.setCollection = function(source) {
-      $scope.collectionSource = source;
-    };
-
   }
 ])
 

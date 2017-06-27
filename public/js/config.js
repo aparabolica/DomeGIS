@@ -42,63 +42,13 @@ angular.module('domegis')
     $stateProvider
     .state('home', {
       url: '/',
-      // controller: 'QueryCtrl',
-      // templateUrl: '/views/query.html',
       resolve: {
         Redirect: [
           '$state',
           function($state) {
             $state.go('library');
-            return true;
           }
-        ],
-        // Content: [
-        //   'esriService',
-        //   function(Esri) {
-        //     return Esri.getContent(
-        //       '',
-        //       {
-        //         type: 'Feature Service',
-        //       },
-        //       {
-        //         sortField: 'modified',
-        //         sortOrder: 'desc'
-        //       }
-        //     );
-        //   }
-        // ],
-        // Synced: [
-        //   'Server',
-        //   function(Server) {
-        //     return Server.find(Server.service('contents'), {
-        //       query: {
-        //         $limit: 100
-        //       }
-        //     });
-        //   }
-        // ],
-        // Derived: [
-        //   'Server',
-        //   function(Server) {
-        //     return Server.find(Server.service('layers'), {
-        //       query: {
-        //         source: 'derived',
-        //         $limit: 100
-        //       }
-        //     });
-        //   }
-        // ],
-        // Uploaded: [
-        //   'Server',
-        //   function(Server) {
-        //     return Server.find(Server.service('layers'), {
-        //       query: {
-        //         source: 'uploaded',
-        //         $limit: 100
-        //       }
-        //     });
-        //   }
-        // ]
+        ]
       }
     })
     .state('library', {
@@ -128,6 +78,60 @@ angular.module('domegis')
             }
             return Server.find(Server.service('layers'), {
               query: query
+            });
+          }
+        ]
+      }
+    })
+    .state('arcgis', {
+      url: '/arcgis/',
+      controller: 'QueryCtrl',
+      templateUrl: '/views/query.html',
+      resolve: {
+        Content: [
+          'esriService',
+          function(Esri) {
+            return Esri.getContent(
+              '',
+              {
+                type: 'Feature Service',
+              },
+              {
+                sortField: 'modified',
+                sortOrder: 'desc'
+              }
+            );
+          }
+        ],
+        Synced: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('contents'), {
+              query: {
+                $limit: 100
+              }
+            });
+          }
+        ],
+        Derived: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('layers'), {
+              query: {
+                source: 'derived',
+                $limit: 100
+              }
+            });
+          }
+        ],
+        Uploaded: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('layers'), {
+              query: {
+                source: 'uploaded',
+                $limit: 100
+              }
             });
           }
         ]
