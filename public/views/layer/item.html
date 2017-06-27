@@ -6,9 +6,10 @@
     <span class="status-text" ng-hide="isOk(layer)">{{layer.sync.status}}</span>
   </p>
   <p class="last-sync" ng-show="layer.sync.finishedAt">Last sync {{layer.sync.finishedAt | formatDate}}</p>
-  <p class="actions" ng-show="hasRole('editor')">
-    <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="isOk(layer)">Edit layer</a>
-    <a class="button" ng-click="resync()" ng-show="(isOk(layer) || hasError(layer)) && layer.source != 'uploaded'">
+  <p class="actions">
+    <a class="button" ui-sref="singleLayer({id:layer.id})">View layer</a>
+    <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="hasRole('editor') && isOk(layer)">Edit layer</a>
+    <a class="button" ng-click="resync()" ng-show="hasRole('editor') && (isOk(layer) || hasError(layer)) && layer.source != 'uploaded'">
       <span class="fa fa-refresh"></span>
       Resync layer
     </a>
@@ -16,8 +17,7 @@
   <p class="sync-err" ng-show="layer.sync.message">{{layer.sync.message}}</p>
 </td>
 <td class="main">
-  <h3>{{layer.name || '' | translate}}</h3>
-  <p class="item-id"><strong>ID</strong>: {{layer.id}}</p>
+  <h3><a ui-sref="singleLayer({id:layer.id})">{{layer.name || '' | translate}}</a></h3>
 </td>
 <td>
   <p class="tag">{{layer.geometryType || layer.type}}</p>

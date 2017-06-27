@@ -84,20 +84,29 @@ angular.module('domegis')
       }
     })
     .state('arcgis', {
-      url: '/arcgis/',
+      url: '/arcgis/?s&sort',
+      params: {
+        s: {
+          dynamic: true
+        },
+        sort: {
+          dynamic: true
+        }
+      },
       controller: 'QueryCtrl',
       templateUrl: '/views/query.html',
       resolve: {
         Content: [
           'esriService',
-          function(Esri) {
+          '$stateParams',
+          function(Esri, $stateParams) {
             return Esri.getContent(
-              '',
+              $stateParams.s || '',
               {
                 type: 'Feature Service',
               },
               {
-                sortField: 'modified',
+                sortField: $stateParams.sort || 'modified',
                 sortOrder: 'desc'
               }
             );

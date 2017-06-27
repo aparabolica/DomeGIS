@@ -399,6 +399,8 @@ angular.module('domegis')
 
 .controller('QueryCtrl', [
   '$scope',
+  '$state',
+  '$stateParams',
   'Content',
   'Synced',
   'Derived',
@@ -406,13 +408,13 @@ angular.module('domegis')
   'Server',
   'esriService',
   'MessageService',
-  function($scope, Content, Synced, Derived, Uploaded, Server, Esri, Message) {
+  function($scope, $state, $stateParams, Content, Synced, Derived, Uploaded, Server, Esri, Message) {
 
     var contentService = Server.service('contents');
 
     $scope.content = Content;
 
-    $scope.search = '';
+    $scope.search = $stateParams.s || '';
     $scope.query = {
       type: 'Feature Service'
     };
@@ -421,7 +423,7 @@ angular.module('domegis')
       start: 1
     };
 
-    $scope.sort = 'modified';
+    $scope.sort = $stateParams.sort || 'modified';
 
     $scope.doQuery = function() {
       $scope.params.start = 1;
@@ -434,6 +436,7 @@ angular.module('domegis')
         $scope.content = data;
         $scope.params.start = data.nextStart;
         $scope.params.total = data.total;
+        $state.go($state.current.name, {s: $scope.search, sort: $scope.sort});
       });
     };
 
