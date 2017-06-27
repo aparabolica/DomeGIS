@@ -1127,4 +1127,12 @@ angular.module('domegis')
     };
 
   }
+])
+
+.controller('CategoriesCtrl', [
+  '$scope',
+  'Categories',
+  function($scope, Categories) {
+    $scope.categories = Categories.data;
+  }
 ]);

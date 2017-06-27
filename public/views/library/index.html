@@ -37,7 +37,7 @@
             </tr>
           </thead>
           <tbody ng-repeat="item in filteredLayers = (layers | filter:search)" ng-class="{active: item.$viewLayers, synced: isSynced(item)}">
-            <tr ng-click="viewLayer(item)" ng-class="{clickable: isSynced(item) || hasRole('editor')}">
+            <tr class="clickable" ng-click="viewLayer(item)">
               <td></td>
               <td class="main">{{item.name | translate}}</td>
               <td>{{item.source}}</td>

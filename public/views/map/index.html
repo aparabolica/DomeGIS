@@ -30,9 +30,9 @@
             </td>
             <td>{{map.widgets.length}} widget(s)</td>
             <td>
-              <a ui-sref="editMap({id: map.id})">Edit</a>
+              <a ui-sref="editMap({id: map.id})" ng-show="hasRole('editor')">Edit</a>
               <a ui-sref="singleMap({id: map.id})">View</a>
-              <a href="javascript:void(0);" ng-click="remove(map)">Delete</a>
+              <a href="javascript:void(0);" ng-click="remove(map)" ng-show="hasRole('editor')">Delete</a>
             </td>
           </tr>
         </tbody>

@@ -44,7 +44,7 @@
           </tbody>
         </table>
         <p>
-          <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="isOk(layer)">Edit layer</a>
+          <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="isOk(layer) && hasRole('editor')">Edit layer</a>
         </p>
         <h3>Layer views</h3>
         <div class="views">

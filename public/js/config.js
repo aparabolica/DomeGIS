@@ -51,6 +51,54 @@ angular.module('domegis')
         ]
       }
     })
+    .state('login', {
+      url: '/login/',
+      templateUrl: '/views/login.html'
+    })
+    .state('login.forgot', {
+      url: 'forgot/',
+      templateUrl: '/views/forgotPwd.html'
+    })
+    .state('users', {
+      url: '/users/',
+      templateUrl: '/views/user/index.html',
+      controller: 'UserCtrl',
+      resolve: {
+        Auth: AuthDep,
+        Users: [
+          'Auth',
+          'Server',
+          function(Auth, Server) {
+            return Server.find(Server.service('users'), {
+              query: {
+                $limit: 100
+              }
+            });
+          }
+        ]
+      }
+    })
+    .state('usersEdit', {
+      url: '/users/edit/?id',
+      templateUrl: '/views/user/edit.html',
+      controller: 'UserEditCtrl',
+      resolve: {
+        Auth: AuthDep,
+        Edit: [
+          'Auth',
+          '$q',
+          '$stateParams',
+          'Server',
+          function(Auth, $q, $stateParams, Server) {
+            if($stateParams.id) {
+              return Server.get(Server.service('users'), $stateParams.id);
+            } else {
+              return {};
+            }
+          }
+        ]
+      }
+    })
     .state('library', {
       url: '/library/?source&s',
       params: {
@@ -173,54 +221,6 @@ angular.module('domegis')
                 $limit: 100
               }
             });
-          }
-        ]
-      }
-    })
-    .state('login', {
-      url: '/login/',
-      templateUrl: '/views/login.html'
-    })
-    .state('login.forgot', {
-      url: 'forgot/',
-      templateUrl: '/views/forgotPwd.html'
-    })
-    .state('users', {
-      url: '/users/',
-      templateUrl: '/views/user/index.html',
-      controller: 'UserCtrl',
-      resolve: {
-        Auth: AuthDep,
-        Users: [
-          'Auth',
-          'Server',
-          function(Auth, Server) {
-            return Server.find(Server.service('users'), {
-              query: {
-                $limit: 100
-              }
-            });
-          }
-        ]
-      }
-    })
-    .state('usersEdit', {
-      url: '/users/edit/?id',
-      templateUrl: '/views/user/edit.html',
-      controller: 'UserEditCtrl',
-      resolve: {
-        Auth: AuthDep,
-        Edit: [
-          'Auth',
-          '$q',
-          '$stateParams',
-          'Server',
-          function(Auth, $q, $stateParams, Server) {
-            if($stateParams.id) {
-              return Server.get(Server.service('users'), $stateParams.id);
-            } else {
-              return {};
-            }
           }
         ]
       }
@@ -451,7 +451,6 @@ angular.module('domegis')
         }
       ],
       resolve: {
-        Auth: AuthDep,
         Maps: [
           'Server',
           function(Server) {
@@ -469,6 +468,7 @@ angular.module('domegis')
       controller: 'MapEditCtrl',
       templateUrl: '/views/map/edit.html',
       resolve: {
+        Auth: AuthDep,
         Analyses: [
           'Server',
           function(Server) {
@@ -580,6 +580,20 @@ angular.module('domegis')
           function(Server, $stateParams) {
             var id = $stateParams.id;
             return Server.get(Server.service('analyses'), id);
+          }
+        ]
+      }
+    })
+    .state('layerCategory', {
+      url: '/library/categories/',
+      templateUrl: '/views/layers/categories.html',
+      controller: 'CategoriesCtrl',
+      resolve: {
+        Categories: [
+          'Server',
+          '$stateParams',
+          function(Server, $stateParams) {
+            return Server.find(Server.service('categories'));
           }
         ]
       }
