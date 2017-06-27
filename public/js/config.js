@@ -42,70 +42,92 @@ angular.module('domegis')
     $stateProvider
     .state('home', {
       url: '/',
-      controller: 'QueryCtrl',
-      templateUrl: '/views/query.html',
+      // controller: 'QueryCtrl',
+      // templateUrl: '/views/query.html',
       resolve: {
-        Content: [
-          'esriService',
-          function(Esri) {
-            return Esri.getContent(
-              '',
-              {
-                type: 'Feature Service',
-              },
-              {
-                sortField: 'modified',
-                sortOrder: 'desc'
-              }
-            );
+        Redirect: [
+          '$state',
+          function($state) {
+            $state.go('library');
+            return true;
           }
         ],
-        Synced: [
-          'Server',
-          function(Server) {
-            return Server.find(Server.service('contents'), {
-              query: {
-                $limit: 100
-              }
-            });
-          }
-        ],
-        Derived: [
-          'Server',
-          function(Server) {
-            return Server.find(Server.service('layers'), {
-              query: {
-                source: 'derived',
-                $limit: 100
-              }
-            });
-          }
-        ],
-        Uploaded: [
-          'Server',
-          function(Server) {
-            return Server.find(Server.service('layers'), {
-              query: {
-                source: 'uploaded',
-                $limit: 100
-              }
-            });
-          }
-        ]
+        // Content: [
+        //   'esriService',
+        //   function(Esri) {
+        //     return Esri.getContent(
+        //       '',
+        //       {
+        //         type: 'Feature Service',
+        //       },
+        //       {
+        //         sortField: 'modified',
+        //         sortOrder: 'desc'
+        //       }
+        //     );
+        //   }
+        // ],
+        // Synced: [
+        //   'Server',
+        //   function(Server) {
+        //     return Server.find(Server.service('contents'), {
+        //       query: {
+        //         $limit: 100
+        //       }
+        //     });
+        //   }
+        // ],
+        // Derived: [
+        //   'Server',
+        //   function(Server) {
+        //     return Server.find(Server.service('layers'), {
+        //       query: {
+        //         source: 'derived',
+        //         $limit: 100
+        //       }
+        //     });
+        //   }
+        // ],
+        // Uploaded: [
+        //   'Server',
+        //   function(Server) {
+        //     return Server.find(Server.service('layers'), {
+        //       query: {
+        //         source: 'uploaded',
+        //         $limit: 100
+        //       }
+        //     });
+        //   }
+        // ]
       }
     })
     .state('library', {
-      url: '/library/',
+      url: '/library/?source&s',
+      params: {
+        s: {
+          dynamic: true
+        }
+      },
       controller: 'LibraryCtrl',
       templateUrl: '/views/library/index.html',
       resolve: {
         Layers: [
           'Server',
-          function(Server) {
+          '$stateParams',
+          function(Server, $stateParams) {
+            var query = {
+              $limit: 100
+            };
+            if($stateParams.source) {
+              query['source'] = $stateParams.source;
+            }
+            if($stateParams.s) {
+              query['$or'] = [
+                { name: { $iLike: '%' + $stateParams.s + '%' } }
+              ];
+            }
             return Server.find(Server.service('layers'), {
-              query: {
-                $limit: 100
-              }
+              query: query
             });
           }
         ]

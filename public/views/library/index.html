@@ -12,12 +12,12 @@
 <section class="synced-container" class="clearfix">
   <header class="results-header">
     <div class="clearfix">
-      <h2>Collection</h2>
+      <h2>Layer Collection</h2>
       <nav>
-        <a href="javascript:void(0);" ng-click="setCollection('')" ng-class="{active:!collectionSource}">All layers</a>
-        <a href="javascript:void(0);" ng-click="setCollection('arcgis')" ng-class="{active:collectionSource == 'arcgis'}">ArcGIS content</a>
-        <a href="javascript:void(0);" ng-click="setCollection('uploaded')" ng-class="{active:collectionSource == 'uploaded'}">Uploaded layers</a>
-        <a href="javascript:void(0);" ng-click="setCollection('derived')" ng-class="{active:collectionSource == 'derived'}">Derived layers</a>
+        <a href="javascript:void(0);" ui-sref="library({source: ''})" ng-class="{active:!collectionSource}">All layers</a>
+        <a href="javascript:void(0);" ui-sref="library({source: 'arcgis'})" ng-class="{active:collectionSource == 'arcgis'}">ArcGIS</a>
+        <a href="javascript:void(0);" ui-sref="library({source: 'uploaded'})" ng-class="{active:collectionSource == 'uploaded'}">Uploaded layers</a>
+        <a href="javascript:void(0);" ui-sref="library({source: 'derived'})" ng-class="{active:collectionSource == 'derived'}">Derived layers</a>
       </nav>
     </div>
   </header>
@@ -32,6 +32,7 @@
               <td>Name</td>
               <td>Source</td>
               <td>Date</td>
+              <td>Status</td>
               <td ng-show="hasRole('editor')">Remove layer</td>
             </tr>
           </thead>
@@ -43,6 +44,14 @@
               <td>
                 {{item.createdAt | formatDate}}
                 <span class="modified">Updated: {{item.updatedAt | formatDate}}</span>
+              </td>
+              <td>
+                <p class="status-icon" ng-class="{ok: isOk(item), err: hasError(item)}">
+                  <span class="fa fa-refresh fa-spin" ng-hide="isOk(item) || hasError(item)"></span>
+                  <span class="fa fa-check-circle" ng-show="isOk(item)"></span>
+                  <span class="fa fa-times" ng-show="hasError(item)"></span>
+                  <span class="status-text" ng-hide="isOk(item)">{{item.sync.status}}</span>
+                </p>
               </td>
               <td ng-show="hasRole('editor')">
                 <a href="javascript:void(0);" ng-click="$event.stopPropagation(); removeLayer(item)" class="fa fa-remove"></a>

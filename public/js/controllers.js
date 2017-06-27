@@ -259,17 +259,37 @@ angular.module('domegis')
 .controller('LibraryCtrl', [
   '$scope',
   '$state',
+  '$stateParams',
   'Layers',
   'Server',
   'esriService',
   'MessageService',
-  function($scope, $state, Layers, Server, esriService, Message) {
+  function($scope, $state, $stateParams, Layers, Server, esriService, Message) {
+    //
+    // $scope.$watch(function() {
+    //   return $stateParams.source;
+    // }, function(source) {
+    // });
+
+    $scope.collectionSource = $stateParams.source;
 
     var layerService = Server.service('layers');
 
     $scope.layers = Layers.data;
 
+    $scope.$watch('search', _.debounce(function() {
+      $state.go('library', {s: $scope.search}, {reload: false});
+    }, 200));
+    $scope.search = $stateParams.s;
+
     console.log($scope.layers);
+
+    $scope.isOk = function(layer) {
+      return layer.sync.status == 'finished' || layer.sync.status == 'imported' || layer.sync.status == 'ok';
+    };
+    $scope.hasError = function(layer) {
+      return layer.sync.status == 'failed' || layer.sync.status == 'error';
+    };
 
     $scope.toggleLayers = function(item, isEditor) {
       if(item.$viewLayers) {

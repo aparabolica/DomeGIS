@@ -689,6 +689,9 @@ table.results {
     td {
       p {
         margin: 0;
+        &.tag {
+          margin: 0 .5rem 0 0;
+        }
       }
       .modified {
         display: block;
@@ -821,24 +824,28 @@ table.results {
   }
 }
 
+.status-icon {
+  color: #999;
+  font-size: 1.2em;
+  &.ok {
+    color: green;
+  }
+  &.failed {
+    color: red;
+  }
+}
+.status-text {
+  font-size: .8em;
+  display: block;
+}
+
 .layer-status-box {
   background: #f0f0f0;
   padding: 2rem;
   .status-icon {
     font-size: 2.2em;
     text-align: center;
-    color: #999;
     margin: 0 0 1.8rem;
-    &.ok {
-      color: green;
-    }
-    &.failed {
-      color: red;
-    }
-  }
-  .status-text {
-    display: block;
-    font-size: .8em;
   }
   .actions {
     .button {
@@ -847,6 +854,7 @@ table.results {
     }
   }
 }
+
 
 .layers-table {
   tr {
