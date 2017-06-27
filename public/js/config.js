@@ -593,7 +593,11 @@ angular.module('domegis')
           'Server',
           '$stateParams',
           function(Server, $stateParams) {
-            return Server.find(Server.service('categories'));
+            return Server.find(Server.service('categories'), {
+              query: {
+                $limit: 100
+              }
+            });
           }
         ]
       }

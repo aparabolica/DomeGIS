@@ -9,7 +9,7 @@
     </div>
   </div>
 </header>
-<section class="synced-container" class="clearfix">
+<section class="tabled-list clearfix">
   <header class="results-header">
     <div class="clearfix">
       <h2>Layer Collection</h2>
@@ -23,7 +23,7 @@
   </header>
   <div class="container">
     <div class="twelve columns">
-      <div class="uploaded-layers">
+      <div class="tabled-list-content">
         <p class="info" ng-hide="layers.length">No layers were found.</p>
         <table class="results" ng-show="filteredLayers.length && layers.length">
           <thead>
@@ -36,7 +36,7 @@
               <td ng-show="hasRole('editor')">Remove layer</td>
             </tr>
           </thead>
-          <tbody ng-repeat="item in filteredLayers = (layers | filter:search)" ng-class="{active: item.$viewLayers, synced: isSynced(item)}">
+          <tbody ng-repeat="item in filteredLayers = (layers | filter:search)">
             <tr class="clickable" ng-click="viewLayer(item)">
               <td></td>
               <td class="main">{{item.name | translate}}</td>
@@ -57,11 +57,6 @@
                 <a href="javascript:void(0);" ng-click="$event.stopPropagation(); removeLayer(item)" class="fa fa-remove"></a>
               </td>
             </tr>
-            <!-- <tr>
-              <td class="sub" colspan="6">
-                <div derived-item="item"></div>
-              </td>
-            </tr> -->
           </tbody>
         </table>
       </div>
