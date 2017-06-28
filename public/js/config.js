@@ -194,6 +194,23 @@ angular.module('domegis')
         ]
       }
     })
+    .state('layerCategory', {
+      url: '/library/categories/',
+      templateUrl: '/views/layer/categories.html',
+      controller: 'CategoriesCtrl',
+      resolve: {
+        Categories: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('categories'), {
+              query: {
+                $limit: 100
+              }
+            });
+          }
+        ]
+      }
+    })
     .state('singleLayer', {
       url: '/library/:id/',
       controller: 'SingleLayerCtrl',
@@ -580,24 +597,6 @@ angular.module('domegis')
           function(Server, $stateParams) {
             var id = $stateParams.id;
             return Server.get(Server.service('analyses'), id);
-          }
-        ]
-      }
-    })
-    .state('layerCategory', {
-      url: '/library/categories/',
-      templateUrl: '/views/layers/categories.html',
-      controller: 'CategoriesCtrl',
-      resolve: {
-        Categories: [
-          'Server',
-          '$stateParams',
-          function(Server, $stateParams) {
-            return Server.find(Server.service('categories'), {
-              query: {
-                $limit: 100
-              }
-            });
           }
         ]
       }
