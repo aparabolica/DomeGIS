@@ -1,4 +1,5 @@
 angular.module('domegis', [
+  'angular-loading-bar',
   'ngCookies',
   'ui.router',
   'ngFileUpload',
