@@ -220,6 +220,27 @@ module.exports = function() {
       });
   });
 
+  /*
+   * Categories association
+   */
+  app.use("/layers/:layerId/categories", {
+    find(params) {
+      const id = params.layerId;
+      var models = app.get("sequelize").models;
+      return models.categories.findAll({
+        include: [{ model: models.layers, where: { id: id } }]
+      });
+    },
+    create(data, params) {
+      const id = params.layerId;
+      var models = app.get("sequelize").models;
+      return models.categories.create(data).then(function(category) {
+        category.addLayer(id);
+        return category;
+      });
+    }
+  });
+
   // Initialize our service with any options it requires
   app.use("/layers", LayerService);
 
