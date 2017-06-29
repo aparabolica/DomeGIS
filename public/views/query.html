@@ -16,13 +16,13 @@
     </div>
   </div>
 </header>
+<header class="inner-sub-header">
+  <div class="clearfix">
+    <h2>ArcGIS Library</h2>
+  </div>
+  <p>Showing {{content.start}}-{{content.num}} out of {{content.total}} items.</p>
+</header>
 <section class="tabled-list clearfix" ng-show="token" infinite-scroll="pageEsri()" infinite-scroll-distance="3">
-  <header class="results-header">
-    <div class="clearfix">
-      <h2>ArcGIS Library</h2>
-    </div>
-    <p>Showing {{content.start}}-{{content.num}} out of {{content.total}} items.</p>
-  </header>
   <div class="container">
     <div class="twelve columns">
       <table class="results" ng-controller="ArcGisCtrl">

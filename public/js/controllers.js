@@ -336,9 +336,25 @@ angular.module('domegis')
 
     $scope.layer = Layer;
     $scope.views = Views.data;
+    console.log(typeof Layer);
 
     var layerService = Server.service('layers');
     var viewService = Server.service('views');
+    var categoryService = Server.service('categories');
+
+    console.log(layerService);
+
+    Server.find(categoryService, {
+      query: {
+        $limit: 100
+      }
+    }).then(function(data) {
+      $scope.categories = data.data;
+    });
+
+    $scope.toggleCategory = function(category) {
+      Layer.addCategory(category);
+    };
 
     $scope.isOk = function(layer) {
       return layer.sync.status == 'finished' || layer.sync.status == 'imported' || layer.sync.status == 'ok';

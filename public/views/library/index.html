@@ -9,18 +9,18 @@
     </div>
   </div>
 </header>
+<header class="inner-sub-header">
+  <div class="clearfix">
+    <h2>Layer Collection</h2>
+    <nav>
+      <a href="javascript:void(0);" ui-sref="library({source: ''})" ng-class="{active:!collectionSource}">All layers</a>
+      <a href="javascript:void(0);" ui-sref="library({source: 'arcgis'})" ng-class="{active:collectionSource == 'arcgis'}">ArcGIS</a>
+      <a href="javascript:void(0);" ui-sref="library({source: 'uploaded'})" ng-class="{active:collectionSource == 'uploaded'}">Uploaded layers</a>
+      <a href="javascript:void(0);" ui-sref="library({source: 'derived'})" ng-class="{active:collectionSource == 'derived'}">Derived layers</a>
+    </nav>
+  </div>
+</header>
 <section class="tabled-list clearfix">
-  <header class="results-header">
-    <div class="clearfix">
-      <h2>Layer Collection</h2>
-      <nav>
-        <a href="javascript:void(0);" ui-sref="library({source: ''})" ng-class="{active:!collectionSource}">All layers</a>
-        <a href="javascript:void(0);" ui-sref="library({source: 'arcgis'})" ng-class="{active:collectionSource == 'arcgis'}">ArcGIS</a>
-        <a href="javascript:void(0);" ui-sref="library({source: 'uploaded'})" ng-class="{active:collectionSource == 'uploaded'}">Uploaded layers</a>
-        <a href="javascript:void(0);" ui-sref="library({source: 'derived'})" ng-class="{active:collectionSource == 'derived'}">Derived layers</a>
-      </nav>
-    </div>
-  </header>
   <div class="container">
     <div class="twelve columns">
       <div class="tabled-list-content">

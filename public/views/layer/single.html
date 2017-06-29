@@ -72,15 +72,31 @@
     </div>
     <div class="row">
       <div class="twelve columns">
+        <header class="inner-sub-header">
+          <div class="clearfix">
+            <h3>Layer categories</h3>
+            <nav>
+              <a ui-sref="layerCategory">Manage categories</a>
+              <a ui-sref="editLayerCategory">+ Create new category</a>
+            </nav>
+          </div>
+        </header>
+        <section class="layer-categories">
+          <a class="category" ng-repeat="category in categories" ng-click="toggleCategory(category)">{{category.name}}</a>
+        </section>
+      </div>
+    </div>
+    <div class="row">
+      <div class="twelve columns">
+        <header class="inner-sub-header">
+          <div class="clearfix">
+            <h3>Layer views</h3>
+            <nav>
+              <a ui-sref="editView({layerId: layer.id})" ng-show="(hasRole('editor') || hasRole('author')) && (isOk(layer))">+ New view</a>
+            </nav>
+          </div>
+        </header>
         <section class="tabled-list">
-          <header class="results-header">
-            <div class="clearfix">
-              <h3>Layer views</h3>
-              <nav>
-                <a ui-sref="editView({layerId: layer.id})" ng-show="(hasRole('editor') || hasRole('author')) && (isOk(layer))">+ New view</a>
-              </nav>
-            </div>
-          </header>
           <p class="info" ng-hide="views.length">
             No views were found.
             <a ui-sref="editView({layerId: layer.id})" ng-show="(hasRole('editor') || hasRole('author')) && (isOk(layer))">Click here to create the first!</a>

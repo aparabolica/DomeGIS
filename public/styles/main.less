@@ -153,6 +153,7 @@ p.date {
   .modified {
     font-size: .8em;
     color: #999;
+    display: block;
   }
 }
 
@@ -616,6 +617,7 @@ table {
     nav {
       float: left;
       margin: 0 2rem 0 0;
+      line-height: inherit;
     }
     nav.head-nav {
       background: lighten(@blue, 5%);
@@ -637,47 +639,47 @@ table {
       }
     }
   }
-  .tabled-list {
-    margin: 0 -4rem;
-    .results-header {
-      padding: 2rem 4rem;
-      margin: -2rem 0 1rem;
-      background: #eee;
-      color: #333;
-      border-bottom: 1px solid #e0e0e0;
-      line-height: 2em;
-      h2,
-      h3 {
-        margin: 0;
-        float: left;
-        padding: 0;
-        font-weight: 600;
-        font-size: 1.4em;
-        line-height: inherit;
-      }
-      nav {
-        float: left;
-        margin-left: 1.5rem;
-        a {
-          display: inline-block;
-          font-size: .8em;
-          color: #666;
-          padding: 0 .8rem;
-          margin: 0 .5rem 0 0;
-          &:hover,
-          &.active {
-            color: #333;
-            background: #ddd;
-            text-decoration: none;
-          }
+  .inner-sub-header {
+    padding: 2rem 4rem;
+    margin: -2rem -4rem 1rem;
+    background: #eee;
+    color: #333;
+    border-bottom: 1px solid #e0e0e0;
+    line-height: 2em;
+    h2,
+    h3 {
+      margin: 0;
+      float: left;
+      padding: 0;
+      font-weight: 600;
+      font-size: 1.4em;
+      line-height: inherit;
+    }
+    nav {
+      float: left;
+      margin-left: 1.5rem;
+      a {
+        display: inline-block;
+        font-size: .8em;
+        color: #666;
+        padding: 0 .8rem;
+        margin: 0 .5rem 0 0;
+        &:hover,
+        &.active {
+          color: #333;
+          background: #ddd;
+          text-decoration: none;
         }
       }
-      p {
-        margin: 0;
-        padding: 0;
-        color: #666;
-      }
     }
+    p {
+      margin: 0;
+      padding: 0;
+      color: #666;
+    }
+  }
+  .tabled-list {
+    margin: 0 -4rem;
     .table-list-content {
       > p.info {
         box-shadow: 0 0 0;
@@ -685,6 +687,9 @@ table {
         padding: 2rem 0;
       }
     }
+  }
+  .layer-categories {
+    margin: 4rem 0 6rem;
   }
   .checkbox-label {
     font-weight: 400;
