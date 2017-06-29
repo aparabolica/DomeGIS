@@ -1131,8 +1131,76 @@ angular.module('domegis')
 
 .controller('CategoriesCtrl', [
   '$scope',
+  '$state',
+  'Server',
   'Categories',
-  function($scope, Categories) {
+  function($scope, $state, Server, Categories) {
     $scope.categories = Categories.data;
+    $scope.$on('server.categories.created', function(ev, data) {
+      $scope.categories.push(data);
+    });
+    $scope.$on('server.categories.removed', function(ev, data) {
+      $scope.categories = _.filter($scope.categories, function(item) {
+        return item.id !== data.id;
+      });
+    });
+    $scope.$on('server.categories.updated', function(ev, data) {
+      $scope.categories.forEach(function(category, i) {
+        if(category.id == data.id) {
+          $scope.categories[i] = data;
+        }
+      });
+    });
+    $scope.$on('server.categories.patched', function(ev, data) {
+      $scope.categories.forEach(function(category, i) {
+        if(category.id == data.id) {
+          $scope.categories[i] = data;
+        }
+      });
+    });
+    $scope.viewCategory = function(category) {
+      $state.go('editLayerCategory', {id: category.id});
+    };
+    $scope.removeCategory = function(category) {
+      if(confirm('Are you sure?')) {
+        Server.remove(Server.service('categories'), category.id).then(function() {
+          $scope.categories = _.filter($scope.categories, function(item) {
+            return item.id !== category.id;
+          });
+        });
+      }
+    };
+  }
+])
+
+.controller('CategoriesEditCtrl', [
+  '$scope',
+  '$state',
+  'Server',
+  'Edit',
+  'MessageService',
+  function($scope, $state, Server, Edit, Message) {
+
+    var categoryService = Server.service('categories');
+
+    $scope.category = angular.copy(Edit);
+
+    $scope.save = function(category) {
+      if(Edit.id) {
+        Server.update(categoryService, Edit.id, category).then(function(category) {
+          $scope.category = category;
+          $state.go('layerCategory');
+        }, function(err) {
+          Message.add(err.message);
+        });
+      } else {
+        Server.create(categoryService, category).then(function(category) {
+          $scope.category = category;
+          $state.go('layerCategory');
+        }, function(err) {
+          Message.add(err.message);
+        });
+      }
+    };
   }
 ]);

@@ -568,6 +568,7 @@ table {
     background: @blue;
     border-bottom: 1px solid lighten(@blue, 10%);
     color: #fff;
+    line-height: 2.5em;
     form {
       margin: 0 0 2rem;
     }
@@ -589,22 +590,33 @@ table {
       letter-spacing: 0;
       float: left;
       margin-right: 4rem;
+      font-size: 2em;
+      line-height: inherit;
     }
     h3 {
       font-size: 1em;
       margin: 0;
       color: rgba(255,255,255,0.5);
     }
-    nav.head-nav {
+    p {
+      line-height: inherit;
+    }
+    nav {
       float: left;
-      margin-top: 1.4rem;
+      margin: 0 2rem 0 0;
+    }
+    nav.head-nav {
       background: lighten(@blue, 5%);
-      padding: .5rem 1.5rem;
+      padding: 0rem 1.5rem;
       font-size: .8em;
       text-transform: uppercase;
       a {
         display: inline-block;
         color: lighten(@blue, 50%);
+        &:hover {
+          color: #fff;
+          text-decoration: none;
+        }
       }
     }
     &.form-header {

@@ -152,6 +152,7 @@ angular.module('domegis')
 .filter('langJoin', [
   function() {
     return function(input) {
+      input = input || '';
       return langJoin(input);
     }
   }
@@ -159,6 +160,7 @@ angular.module('domegis')
 .filter('langSplit', [
   function() {
     return function(input) {
+      input = input || '';
       return langSplit(input);
     }
   }

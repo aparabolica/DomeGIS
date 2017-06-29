@@ -199,6 +199,7 @@ angular.module('domegis')
       templateUrl: '/views/layer/categories.html',
       controller: 'CategoriesCtrl',
       resolve: {
+        Auth: AuthDep,
         Categories: [
           'Server',
           function(Server) {
@@ -207,6 +208,25 @@ angular.module('domegis')
                 $limit: 100
               }
             });
+          }
+        ]
+      }
+    })
+    .state('editLayerCategory', {
+      url: '/library/categories/edit/?id',
+      templateUrl: '/views/layer/edit-category.html',
+      controller: 'CategoriesEditCtrl',
+      resolve: {
+        Auth: AuthDep,
+        Edit: [
+          'Server',
+          '$stateParams',
+          function(Server, $stateParams) {
+            if($stateParams.id) {
+              return Server.get(Server.service('categories'), $stateParams.id);
+            } else {
+              return {};
+            }
           }
         ]
       }

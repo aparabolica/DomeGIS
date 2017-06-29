@@ -2,10 +2,13 @@
   <div class="container">
     <div class="twelve columns">
       <h2>Categories</h2>
-      <nav>
+      <!-- <nav>
         <form>
           <input type="text" ng-model="search" placeholder="Search anything"/>
         </form>
+      </nav> -->
+      <nav class="head-nav">
+        <a ui-sref="editLayerCategory">New category</a>
       </nav>
     </div>
   </div>
@@ -14,31 +17,23 @@
   <div class="container">
     <div class="twelve columns">
       <div class="tabled-list-content">
-        <p class="info" ng-hide="categories.length">No layers were found.</p>
+        <p class="info" ng-hide="categories.length">No categories were found.</p>
         <table class="results" ng-show="filteredCategories.length && categories.length">
           <thead>
             <tr>
               <td></td>
-              <td>Title</td>
-              <td>Source</td>
-              <td>Date</td>
-              <td>Status</td>
-              <td ng-show="hasRole('editor')">Remove layer</td>
+              <td>Name</td>
+              <td>Description</td>
+              <td ng-show="hasRole('editor')">Remove category</td>
             </tr>
           </thead>
           <tbody ng-repeat="item in filteredCategories = (categories | filter:search)">
             <tr class="clickable" ng-click="viewCategory(item)">
               <td></td>
-              <td class="main">{{item.title | translate}}</td>
-              <td>{{item.source}}</td>
-              <td>
-                {{item.createdAt | formatDate}}
-                <span class="modified">Updated: {{item.updatedAt | formatDate}}</span>
-              </td>
-              <td>
-              </td>
+              <td class="main">{{item.name}}</td>
+              <td>{{item.description}}</td>
               <td ng-show="hasRole('editor')">
-                <a href="javascript:void(0);" ng-click="$event.stopPropagation(); removeLayer(item)" class="fa fa-remove"></a>
+                <a href="javascript:void(0);" ng-click="$event.stopPropagation(); removeCategory(item)" class="fa fa-remove"></a>
               </td>
             </tr>
           </tbody>
