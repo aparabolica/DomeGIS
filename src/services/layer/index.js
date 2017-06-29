@@ -3,6 +3,7 @@
 var _ = require("underscore");
 var async = require("async");
 var service = require("feathers-sequelize");
+var errors = require("feathers-errors");
 var layer = require("./model");
 var hooks = require("./hooks");
 
@@ -238,6 +239,22 @@ module.exports = function() {
         category.addLayer(id);
         return category;
       });
+    },
+    remove(id, params) {
+      var models = app.get("sequelize").models;
+      const condition = {
+        layerId: params.layerId,
+        categoryId: params.query.categoryId && parseInt(params.query.categoryId)
+      };
+
+      return models.layerCategories
+        .destroy({ where: condition })
+        .then(function(result) {
+          return result;
+        })
+        .catch(function(err) {
+          return new errors.GeneralError("Error processing request.");
+        });
     }
   });
 
