@@ -328,10 +328,11 @@ angular.module('domegis')
 
 .controller('SingleLayerCtrl', [
   '$scope',
+  '$state',
   'Layer',
   'Views',
   'Server',
-  function($scope, Layer, Views, Server) {
+  function($scope, $state, Layer, Views, Server) {
 
     $scope.layer = Layer;
     $scope.views = Views.data;
@@ -392,6 +393,24 @@ angular.module('domegis')
 
     $scope.remove = function(layer) {
       Server.remove(layerService, layer.id);
+    };
+
+    $scope.user = Server.app.get('user');
+
+    $scope.openView = function(view) {
+      $state.go('generateMap', {views: view.id});
+    };
+    $scope.canEditView = function(view) {
+      if($scope.user) {
+        return $scope.user.roles.indexOf('editor') != -1 || $scope.user.id == view.creatorId;
+      } else {
+        return false;
+      }
+    };
+    $scope.removeView = function(view) {
+      if(confirm('Are you sure?')) {
+        Server.remove(viewService, view.id);
+      }
     };
 
   }

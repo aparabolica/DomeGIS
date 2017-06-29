@@ -46,11 +46,6 @@
         <p>
           <a class="button" ui-sref="editLayer({id:layer.id})" ng-show="isOk(layer) && hasRole('editor')">Edit layer</a>
         </p>
-        <h3>Layer views</h3>
-        <div class="views">
-          <div ng-repeat="view in views" view-item="view" class="view-item"></div>
-          <a class="button" ui-sref="editView({layerId: layer.id})" ng-show="(hasRole('editor') || hasRole('author')) && (isOk(layer))">Create new view</a>
-        </div>
       </div>
       <div class="three columns">
         <p class="date">
@@ -77,6 +72,44 @@
     </div>
     <div class="row">
       <div class="twelve columns">
+        <section class="tabled-list">
+          <header class="results-header">
+            <div class="clearfix">
+              <h3>Layer views</h3>
+              <nav>
+                <a ui-sref="editView({layerId: layer.id})" ng-show="(hasRole('editor') || hasRole('author')) && (isOk(layer))">+ New view</a>
+              </nav>
+            </div>
+          </header>
+          <p class="info" ng-hide="views.length">
+            No views were found.
+            <a ui-sref="editView({layerId: layer.id})" ng-show="(hasRole('editor') || hasRole('author')) && (isOk(layer))">Click here to create the first!</a>
+          </p>
+          <table class="results" ng-show="views.length">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Date</th>
+                <th ng-show="hasRole('editor') || hasRole('author')">Actions</th>
+              </tr>
+            </thead>
+            <tr ng-repeat="view in views" class="clickable" ng-click="openView(view)">
+              <td></td>
+              <td class="main">
+                <a ui-sref="generateMap({views: view.id})">{{view.name}}</a>
+              </td>
+              <td>
+                {{view.createdAt | formatDate}}
+                <span class="modified">Updated: {{view.updatedAt | formatDate}}</span>
+              </td>
+              <td ng-show="canEditView(view)" ng-click="$event.stopPropagation()">
+                <a ui-sref="editView({id: view.id})"><span class="fa fa-edit"></span></a>
+                <a href="javascript:void(0);" ng-click="removeView(view)"><span class="fa fa-remove"></span></a>
+              </td>
+            </tr>
+          </table>
+        </section>
       </div>
     </div>
   </div>
