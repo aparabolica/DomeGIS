@@ -584,6 +584,7 @@ angular.module('domegis')
       templateUrl: '/views/analysis/index.html',
       controller: 'AnalysisCtrl',
       resolve: {
+        Auth: AuthDep,
         Analyses: [
           'Server',
           function(Server) {

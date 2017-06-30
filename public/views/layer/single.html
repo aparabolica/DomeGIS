@@ -75,17 +75,17 @@
         <header class="inner-sub-header">
           <div class="clearfix">
             <h3>Layer categories</h3>
-            <nav>
+            <nav ng-show="hasRole('editor')">
               <a ui-sref="layerCategory">Manage categories</a>
               <a ui-sref="editLayerCategory">+ Create new category</a>
             </nav>
           </div>
         </header>
         <section class="layer-categories">
-          <p class="info" ng-hide="layerCategories.length">This layer has no categories. Click on the categories below to associate them to this layer.</p>
-          <a class="category" href="javascript:void(0);" ng-repeat="category in categories" ng-click="toggleCategory(category)" ng-class="{active: hasCategory(category)}">
+          <p class="info" ng-show="hasRole('editor') && !layerCategories.length">This layer has no categories. Click on the categories below to associate them to this layer.</p>
+          <a class="category" href="javascript:void(0);" ng-repeat="category in categories" ng-click="hasRole('editor') ? toggleCategory(category) : null" ng-class="{active: hasCategory(category)}" ng-hide="!hasRole('editor') && !hasCategory(category)">
             <span class="fa fa-square-o" ng-hide="hasCategory(category)"></span>
-            <span class="fa fa-check-square-o" ng-show="hasCategory(category)"></span>
+            <span class="fa fa-check-square-o" ng-show="hasCategory(category)" ng-hide="!hasRole('editor')"></span>
             {{category.name}}
           </a>
         </section>

@@ -2,7 +2,7 @@
   <div class="container">
     <div class="twelve columns">
       <h2>Analyses</h2>
-      <nav class="head-nav">
+      <nav class="head-nav" ng-show="hasRole('editor')">
         <a ui-sref="editAnalysis">New analysis</a>
       </nav>
     </div>
@@ -17,7 +17,7 @@
             <th>Analysis</th>
             <th>SQL Query</th>
             <th>Status</th>
-            <th>Actions</th>
+            <th ng-show="hasRole('editor')">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -38,7 +38,7 @@
               <span class="finished" ng-show="analysis.task.status == 'finished'">Query lasted {{getElapsedTime(analysis)}}</span><br/>
               <span class="last-execution" ng-show="analysis.task.status == 'finished'">Last executed {{analysis.task.finishedAt-1000 | fromNow}}</span>
             </td>
-            <td>
+            <td ng-show="hasRole('editor')">
               <span ng-hide="analysis.task.status == 'running'">
                 <a ui-sref="editAnalysis({id: analysis.id})">Edit</a>
                 <a ui-sref="singleAnalysis({id: analysis.id})">View</a>
