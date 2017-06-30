@@ -20,6 +20,18 @@ module.exports = function(hook) {
   var Layers = hook.app.service("layers");
   var fields = {};
 
+  var dbParams = hook.app.get("windshaftOpts").dbParams;
+  var pgConnectionString =
+    '"PG:host=' +
+    dbParams.dbhost +
+    " user=" +
+    dbParams.dbuser +
+    " dbname=" +
+    dbParams.dbname +
+    " password=" +
+    dbParams.dbpassword +
+    '"';
+
   function unzipFile() {
     var cmd = "unzip -o -d " + unzipPath + " " + filePath;
     return promiseFromChildProcess(exec(cmd));
@@ -27,7 +39,9 @@ module.exports = function(hook) {
 
   function zipToPostgresql() {
     var cmd =
-      'ogr2ogr --config PG_USE_COPY YES -f "PostgreSQL" "PG:host=postgres password=domegis user=domegis dbname=domegis " "' +
+      'ogr2ogr --config PG_USE_COPY YES -f "PostgreSQL" ' +
+      pgConnectionString +
+      ' "' +
       unzipPath +
       '" -t_srs "EPSG:3857" -lco GEOMETRY_NAME=geometry -lco FID=gid -lco PRECISION=no -nlt PROMOTE_TO_MULTI -nln ' +
       layer.id +
