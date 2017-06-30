@@ -4,6 +4,10 @@
       <nav>
         <form>
           <input type="text" ng-model="search" placeholder="Search anything"/>
+          <select ng-model="category">
+            <option value="" ng-selected="category == null">Select a category</option>
+            <option ng-repeat="cat in categories" value="{{cat.id}}" ng-selected="category == cat.id">{{cat.name}}</option>
+          </select>
         </form>
       </nav>
     </div>

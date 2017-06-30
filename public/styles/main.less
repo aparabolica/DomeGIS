@@ -598,6 +598,23 @@ table {
       margin: 0;
       // padding: 0;
     }
+    ::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+      color:    #fff;
+    }
+    :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+       color:    #fff;
+       opacity:  1;
+    }
+    ::-moz-placeholder { /* Mozilla Firefox 19+ */
+       color:    #fff;
+       opacity:  1;
+    }
+    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+       color:    #fff;
+    }
+    ::-ms-input-placeholder { /* Microsoft Edge */
+       color:    #fff;
+    }
     h1,
     h2 {
       letter-spacing: 0;
@@ -690,6 +707,34 @@ table {
   }
   .layer-categories {
     margin: 4rem 0 6rem;
+    .info {
+      margin-bottom: 4rem;
+    }
+    a.category {
+      padding: 1rem 2rem;
+      border: 1px solid #e7e7e7;
+      display: inline-block;
+      color: #999;
+      margin: 0 1rem 1rem 0;
+      .fa {
+        display: inline-block;
+        width: 15px;
+        margin-right: 1rem;
+      }
+      &.active {
+        background: @blue;
+        color: #fff;
+      }
+      &:hover,
+      &:active,
+      &:focus {
+        text-decoration: none;
+      }
+      &:hover {
+        background: @blue;
+        color: #fff;
+      }
+    }
   }
   .checkbox-label {
     font-weight: 400;

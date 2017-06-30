@@ -31,9 +31,27 @@ function isDerived (hook) {
   return hook.data.source == 'derived';
 }
 
+function filterByCategory() {
+  return function(hook) {
+    if(hook.params.query && hook.params.query.categoryId) {
+      var categoryId = hook.params.query.categoryId;
+      hook.params.sequelize = {
+        include: [{
+          model: hook.app.services.categories.Model,
+          where: { id: categoryId }
+        }]
+      };
+      delete hook.params.query.categoryId;
+    }
+    return hook;
+  }
+}
+
 exports.before = {
   all: [],
-  find: [],
+  find: [
+    filterByCategory(),
+  ],
   get: [],
   create: [
     auth.verifyToken(),

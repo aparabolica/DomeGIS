@@ -100,7 +100,7 @@ angular.module('domegis')
       }
     })
     .state('library', {
-      url: '/library/?source&s',
+      url: '/library/?source&s&category',
       params: {
         s: {
           dynamic: true
@@ -113,11 +113,15 @@ angular.module('domegis')
           'Server',
           '$stateParams',
           function(Server, $stateParams) {
+            console.log(Server.service('categories'));
             var query = {
               $limit: 100
             };
             if($stateParams.source) {
               query['source'] = $stateParams.source;
+            }
+            if($stateParams.category) {
+              query['categoryId'] = $stateParams.category;
             }
             if($stateParams.s) {
               query['$or'] = [
@@ -127,6 +131,16 @@ angular.module('domegis')
             return Server.find(Server.service('layers'), {
               query: query
             });
+          }
+        ],
+        Categories: [
+          'Server',
+          function(Server) {
+            return Server.find(Server.service('categories', {
+              query: {
+                $limit: 100
+              }
+            }));
           }
         ]
       }
@@ -246,6 +260,14 @@ angular.module('domegis')
             } else {
               return false;
             }
+          }
+        ],
+        LayerCategories: [
+          'Layer',
+          'Server',
+          function(Layer, Server) {
+            var layer = Server.layer(Layer);
+            return layer.getCategories();
           }
         ],
         Views: [

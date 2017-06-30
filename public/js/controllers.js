@@ -261,28 +261,29 @@ angular.module('domegis')
   '$state',
   '$stateParams',
   'Layers',
+  'Categories',
   'Server',
   'esriService',
   'MessageService',
-  function($scope, $state, $stateParams, Layers, Server, esriService, Message) {
-    //
-    // $scope.$watch(function() {
-    //   return $stateParams.source;
-    // }, function(source) {
-    // });
+  function($scope, $state, $stateParams, Layers, Categories, Server, esriService, Message) {
 
     $scope.collectionSource = $stateParams.source;
 
     var layerService = Server.service('layers');
 
     $scope.layers = Layers.data;
+    $scope.categories = Categories.data;
+
 
     $scope.$watch('search', _.debounce(function() {
       $state.go('library', {s: $scope.search}, {reload: false});
     }, 200));
     $scope.search = $stateParams.s;
 
-    console.log($scope.layers);
+    $scope.$watch('category', _.debounce(function() {
+      $state.go('library', {category: $scope.category});
+    }, 200));
+    $scope.category = $stateParams.category || null;
 
     $scope.isOk = function(layer) {
       return layer.sync.status == 'finished' || layer.sync.status == 'imported' || layer.sync.status == 'ok';
@@ -330,19 +331,20 @@ angular.module('domegis')
   '$scope',
   '$state',
   'Layer',
+  'LayerCategories',
   'Views',
   'Server',
-  function($scope, $state, Layer, Views, Server) {
+  function($scope, $state, Layer, LayerCategories, Views, Server) {
 
     $scope.layer = Layer;
     $scope.views = Views.data;
-    console.log(typeof Layer);
+    $scope.layerCategories = LayerCategories.data;
 
     var layerService = Server.service('layers');
     var viewService = Server.service('views');
     var categoryService = Server.service('categories');
 
-    console.log(layerService);
+    var layer = Server.layer(Layer);
 
     Server.find(categoryService, {
       query: {
@@ -352,8 +354,24 @@ angular.module('domegis')
       $scope.categories = data.data;
     });
 
+    $scope.hasCategory = function(category) {
+      return _.find($scope.layerCategories, function(cat) {
+        return cat.id == category.id;
+      });
+    };
+
     $scope.toggleCategory = function(category) {
-      Layer.addCategory(category);
+      if($scope.hasCategory(category)) {
+        layer.removeCategory(category).then(function() {
+          $scope.layerCategories = _.filter($scope.layerCategories, function(cat) {
+            return cat.id !== category.id;
+          });
+        });
+      } else {
+        layer.addCategory(category).then(function() {
+          $scope.layerCategories.push(category);
+        });
+      }
     };
 
     $scope.isOk = function(layer) {

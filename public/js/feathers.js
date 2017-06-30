@@ -23,6 +23,27 @@ angular.module('domegis')
       return deferred.promise;
     };
 
+    var Layer = function(layer) {
+      var url = '/layers/' + layer.id + '/categories';
+      return {
+        getCategories: function(category) {
+          return $http.get(url);
+        },
+        addCategory: function(category) {
+          return $http.post(url, {
+            categoryId: category.id
+          });
+        },
+        removeCategory: function(category) {
+          return $http.delete(url, {
+            params: {
+              categoryId: category.id
+            }
+          });
+        }
+      }
+    }
+
     return {
       app: app,
       auth: function(credentials) {
@@ -61,7 +82,8 @@ angular.module('domegis')
             callback.apply(service, args);
           });
         });
-      }
+      },
+      layer: Layer
     };
   }
 ])

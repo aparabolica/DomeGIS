@@ -82,7 +82,12 @@
           </div>
         </header>
         <section class="layer-categories">
-          <a class="category" ng-repeat="category in categories" ng-click="toggleCategory(category)">{{category.name}}</a>
+          <p class="info" ng-hide="layerCategories.length">This layer has no categories. Click on the categories below to associate them to this layer.</p>
+          <a class="category" href="javascript:void(0);" ng-repeat="category in categories" ng-click="toggleCategory(category)" ng-class="{active: hasCategory(category)}">
+            <span class="fa fa-square-o" ng-hide="hasCategory(category)"></span>
+            <span class="fa fa-check-square-o" ng-show="hasCategory(category)"></span>
+            {{category.name}}
+          </a>
         </section>
       </div>
     </div>
