@@ -2,7 +2,7 @@
   <div class="container">
     <div class="twelve columns">
       <h2>Maps</h2>
-      <nav class="head-nav">
+      <nav class="head-nav" ng-show="hasRole('editor')">
         <a ui-sref="editMap">New map</a>
       </nav>
     </div>
