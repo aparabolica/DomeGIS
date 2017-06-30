@@ -274,7 +274,6 @@ angular.module('domegis')
     $scope.layers = Layers.data;
     $scope.categories = Categories.data;
 
-
     $scope.$watch('search', _.debounce(function() {
       $state.go('library', {s: $scope.search}, {reload: false});
     }, 200));

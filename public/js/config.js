@@ -113,7 +113,6 @@ angular.module('domegis')
           'Server',
           '$stateParams',
           function(Server, $stateParams) {
-            console.log(Server.service('categories'));
             var query = {
               $limit: 100
             };
