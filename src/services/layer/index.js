@@ -233,12 +233,32 @@ module.exports = function() {
       });
     },
     create(data, params) {
-      const id = params.layerId;
-      var models = app.get("sequelize").models;
-      return models.categories.create(data).then(function(category) {
-        category.addLayer(id);
-        return category;
-      });
+      const { models } = app.get("sequelize");
+      const { layerId } = params;
+      var { categoryId } = data;
+
+      if (categoryId) {
+        categoryId = Number(categoryId);
+
+        // check if category exists and create association
+        return models.categories
+          .findById(categoryId)
+          .then(function(category) {
+            if (category) {
+              // return association if a new one was created
+              return category.addLayer(layerId);
+            } else return new errors.NotFound("Category not found.");
+          })
+          .catch(function(err) {
+            return new errors.GeneralError("Error processing request.");
+          });
+      } else {
+        // or just create a new category
+        return models.categories.create(data).then(function(category) {
+          category.addLayer(layerId);
+          return category;
+        });
+      }
     },
     remove(id, params) {
       var models = app.get("sequelize").models;
