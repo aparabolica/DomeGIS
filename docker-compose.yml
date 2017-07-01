@@ -2,8 +2,6 @@ version: '2'
 services:
   postgres:
     build: ./docker/postgres
-    volumes:
-      - ./data/postgres:/var/lib/postgresql/data
     ports:
       - 15432:5432
     environment:
@@ -23,6 +21,6 @@ services:
     environment:
       NODE_ENV: development
     volumes:
-      - .:/home/node/domegis
-      - /home/node/domegis/node_modules
-      - /home/node/domegis/bower_components
+      - .:/src
+      - /src/node_modules
+      - /src/bower_components

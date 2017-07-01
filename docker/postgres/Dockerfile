@@ -16,11 +16,7 @@ RUN apt-get update \
     python-all \
     rlwrap \
     software-properties-common \
-  && rm -rf /var/lib/apt/lists/*;
-
-# Install postgresql-server-dev
-RUN apt-get update \
-  && apt-get install -y --no-install-recommends\
+    # Install postgresql-server-dev
     postgresql-server-dev-9.6 \
   && rm -rf /var/lib/apt/lists/*;
 
@@ -28,19 +24,17 @@ RUN apt-get update \
 RUN mkdir -p /tmp && cd /tmp \
   && apt-get update \
   && apt-get download postgresql-plpython-9.6=9.6.3-1.pgdg80+1 \
-  && dpkg --force-all -i ./postgresql-plpython-9.6_9.6.3-1.pgdg80+1_amd64.deb \
-  && rm -rf /tmp
+  && dpkg --force-all -i ./postgresql-plpython-9.6_9.6.3-1.pgdg80+1_amd64.deb
 
 # Install pg_schema_triggers extension
 RUN mkdir -p /tmp && cd /tmp \
   && git clone https://github.com/CartoDB/pg_schema_triggers.git \
   && cd pg_schema_triggers \
-  && make && make install \
-  && rm -rf /tmp
+  && make && make install
 
 # Install cartodb-postgresql extension
 RUN mkdir -p /tmp && cd /tmp \
-  &&  git clone https://github.com/CartoDB/cartodb-postgresql.git \
+  && git clone https://github.com/CartoDB/cartodb-postgresql.git \
   && cd cartodb-postgresql \
   && make all install \
   && rm -rf /tmp
