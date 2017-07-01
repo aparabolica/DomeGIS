@@ -56,7 +56,7 @@
     "formidable": "1.0.17",
     "gdal": "0.9.3",
     "mailgun-js": "0.7.12",
-    "mapnik": "3.6.0",
+    "mapnik": "3.5.14",
     "moment": "2.17.0",
     "moment-timezone": "0.5.5",
     "ogr2ogr": "0.5.1",
