@@ -4,10 +4,9 @@ angular.module('domegis')
   '$state',
   'Server',
   '$scope',
-  '$rootScope',
   '$transitions',
   'MessageService',
-  function($state, Server, $scope, $rootScope, $transitions, Message) {
+  function($state, Server, $scope, $transitions, Message) {
 
     Server.auth().then(function() {
       $scope.token = Server.app.get('token');
