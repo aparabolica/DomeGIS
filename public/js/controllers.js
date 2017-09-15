@@ -4,8 +4,10 @@ angular.module('domegis')
   '$state',
   'Server',
   '$scope',
+  '$rootScope',
+  '$transitions',
   'MessageService',
-  function($state, Server, $scope, Message) {
+  function($state, Server, $scope, $rootScope, $transitions, Message) {
 
     Server.auth().then(function() {
       $scope.token = Server.app.get('token');
@@ -65,19 +67,22 @@ angular.module('domegis')
 
     $scope.bodyClass = [];
 
-    $scope.$on('$stateChangeStart', function(ev, toState, toParams) {
+    $transitions.onStart({}, function(trans) {
+      var state = trans.to();
+      var params = trans.params();
       $scope.bodyClass = [];
-      if(toState.name == 'generateMap' || toState.name == 'singleMap') {
+      if(state.name == 'generateMap' || state.name == 'singleMap') {
         $scope.bodyClass.push('map');
       }
-      if(toParams.full_legend) {
+      if(params.full_legend) {
         $scope.bodyClass.push('full-legend');
       }
       $scope.bodyClass.push('loading');
     });
 
-    $scope.$on('$stateChangeSuccess', function(ev, toState, toParams) {
-      if(toState.name == 'login' && $scope.token)
+    $transitions.onFinish({}, function(trans) {
+      var state = trans.to();
+      if(state.name == 'login' && $scope.token)
         $state.go('home');
       $scope.bodyClass = _.filter($scope.bodyClass, function(c) {
         return c != 'loading';
@@ -88,6 +93,7 @@ angular.module('domegis')
         });
       }
       $scope.bodyClass.push('loaded');
+      $scope.bodyClass = $scope.bodyClass;
     });
 
   }
@@ -934,11 +940,12 @@ angular.module('domegis')
   '$state',
   '$stateParams',
   '$filter',
+  '$transitions',
   'Data',
   'Layers',
   'Server',
   'MessageService',
-  function($http, $scope, $state, $stateParams, $filter, Data, Layers, Server, Message) {
+  function($http, $scope, $state, $stateParams, $filter, $transitions, Data, Layers, Server, Message) {
 
     var aceLoaded = function(editor) {
       var staticWordCompleter = {
@@ -996,8 +1003,9 @@ angular.module('domegis')
       $scope.loading = true;
       $state.go($state.current.name, {sql: $scope.sql}, {reload: true});
     };
-    $scope.$on('$stateChangeSuccess', function(ev, toState, toParams) {
-      if(toState == $state.current.name && toParams.sql) {
+    $transitions.onFinish({}, function(trans) {
+      var state = trans.to();
+      if(state.name == $state.current.name && to.params.sql) {
         $scope.loading = false;
       }
     });
