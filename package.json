@@ -12,10 +12,12 @@
   ],
   "license": "MIT",
   "repository": "https://github.com/aparabolica/DomeGIS",
-  "maintainers": [{
+  "maintainers": [
+    {
       "name": "Vitor George",
       "email": "vitor.george@aparabolica.com.br"
-    }, {
+    },
+    {
       "name": "Miguel Peixe",
       "email": "miguel.peixe@aparabolica.com.br"
     }
@@ -40,7 +42,7 @@
     "cors": "2.7.1",
     "csv-stringify": "1.0.4",
     "debug": "2.2.0",
-    "ejs": "2.5.1",
+    "ejs": "2.5.5",
     "express-less": "0.0.8",
     "feathers": "2.0.1",
     "feathers-authentication": "0.7.9",
@@ -57,7 +59,7 @@
     "gdal": "0.9.3",
     "mailgun-js": "0.7.12",
     "mapnik": "3.5.14",
-    "moment": "2.17.0",
+    "moment": "2.19.3",
     "moment-timezone": "0.5.5",
     "ogr2ogr": "0.5.1",
     "passport": "0.3.2",
